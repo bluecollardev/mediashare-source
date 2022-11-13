@@ -105,7 +105,7 @@ export const Account = ({ globalState }: PageProps) => {
         likes={likesCount}
         shared={sharedCount}
         shares={sharesCount}
-        showSocial={true}
+        showSocial={false}
         showActions={false}
         isCurrentUser={true}
         onProfileImageClicked={() => getDocument()}

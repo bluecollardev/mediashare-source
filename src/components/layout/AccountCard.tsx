@@ -25,6 +25,7 @@ export const AccountCard = ({
   title,
   username,
   email,
+  phoneNumber,
   image,
   likes,
   shares,
@@ -49,49 +50,53 @@ export const AccountCard = ({
   return (
     <>
       <Card mode="elevated" style={defaultStyles.card}>
-        <Card.Title
+        {/* <View
           style={defaultStyles.header}
-          left={() =>
-            image ? (
-              <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                <Avatar.Image size={108} source={{ uri: image }} />
-              </TouchableWithoutFeedback>
-            ) : (
-              <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                <Avatar.Icon size={108} icon="person" />
-              </TouchableWithoutFeedback>
-            )
-          }
           leftStyle={defaultStyles.left}
           title={<Title style={defaultStyles.titleText}>{title}</Title>}
           titleStyle={defaultStyles.title}
           subtitle={
-            <View>
-              {/* TODO: Fix username display on Android */}
-              {/*<Subheading style={{ ...defaultStyles.subtitleText, color: theme.colors.primary }}>@{username}</Subheading>*/}
-              <Subheading style={{ ...defaultStyles.subtitleText }}>{email}</Subheading>
-            </View>
+          
           }
           subtitleStyle={defaultStyles.subtitle}
-          right={() =>
-            showActions ? (
-              <Menu
-                visible={visible}
-                onDismiss={() => setVisible(false)}
-                anchor={
-                  <IconButton icon="more-vert" onPress={() => setVisible(!visible)}>
-                    Show menu
-                  </IconButton>
-                }
-              >
-                {isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" />}
-                {profile?.build?.forAdmin && !isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" />}
-              </Menu>
-            ) : null
-          }
           rightStyle={defaultStyles.right}
-        />
+        /> */}
         <Card.Content>
+          <View style={defaultStyles.cardContent}>
+            <View style={defaultStyles.left}>
+              {image ? (
+                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
+                  <Avatar.Image size={108} source={{ uri: image }} />
+                </TouchableWithoutFeedback>
+              ) : (
+                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
+                  <Avatar.Icon size={108} icon="person" />
+                </TouchableWithoutFeedback>
+              )}
+            </View>
+            <View style={defaultStyles.main}>
+              {title && (<Title style={defaultStyles.titleText}>{title}</Title>)}
+              {username && (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>)}
+              {email && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>)}
+              {phoneNumber && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>)}
+            </View>
+            <View style={defaultStyles.right}>
+              {showActions ? (
+                <Menu
+                  visible={visible}
+                  onDismiss={() => setVisible(false)}
+                  anchor={
+                    <IconButton icon="more-vert" onPress={() => setVisible(!visible)}>
+                      Show menu
+                    </IconButton>
+                  }
+                >
+                  {isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" />}
+                  {profile?.build?.forAdmin && !isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" />}
+                </Menu>
+              ) : null}
+            </View>
+          </View>
           {withoutName() && (
             <Card>
               <Card.Title
@@ -127,18 +132,26 @@ const defaultStyles = StyleSheet.create({
   card: {
     paddingBottom: 15,
   },
-  header: {
-    paddingTop: 30,
-    paddingBottom: 10,
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
   },
   title: {
-    marginLeft: 15,
     flexDirection: 'row',
     alignSelf: 'flex-start',
     justifyContent: 'flex-start',
   },
   subtitle: {
-    marginLeft: 15,
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
   },
   // TODO: Fix Typography line height on Android vs iOS
   titleText: {
@@ -149,7 +162,16 @@ const defaultStyles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'top',
   },
-  subtitleText: {
+  subtitleTextPrimary: {
+    fontSize: 13,
+    color: theme.colors.text,
+    fontFamily: theme.fonts.thin.fontFamily,
+    lineHeight: 16,
+    includeFontPadding: false,
+    textAlignVertical: 'top',
+    minHeight: 'auto',
+  },
+  subtitleTextSecondary: {
     fontSize: 13,
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,

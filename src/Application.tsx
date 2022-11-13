@@ -115,9 +115,9 @@ const MediaNavigation = () => {
 
 const AccountStackNavigator = createStackNavigator();
 const AccountNavigation = () => {
-  const user = useUser();
+  // const user = useUser();
   return (
-    <AccountStackNavigator.Navigator initialRouteName={user?.firstName ? 'account' : 'accountEdit'}>
+    <AccountStackNavigator.Navigator initialRouteName={'account'}>
       <AccountStackNavigator.Screen {...routeConfig.account} component={Account} />
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
       <AccountStackNavigator.Screen {...routeConfig.contact} component={Contact} />
