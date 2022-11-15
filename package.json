@@ -21,7 +21,9 @@
     "util:lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "util:sort-pkg": "npx sort-package-json",
     "util:update": "git pull --rebase",
-    "util:adb:map": "adb reverse tcp:5000 tcp:5000"
+    "util:adb:map": "adb reverse tcp:5000 tcp:5000",
+    "util:launch-invite-ios": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --ios",
+    "util:launch-invite-android": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --android"
   },
   "jest": {
     "moduleFileExtensions": [

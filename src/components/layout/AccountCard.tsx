@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, StyleSheet, TouchableWithoutFeedback, Platform } from 'react-native';
-import { Avatar, Caption, Title, Subheading, Card, Menu, IconButton } from 'react-native-paper';
+import { Avatar, Caption, Title, Subheading, Card, Menu, IconButton, Text } from 'react-native-paper';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { theme } from 'mediashare/styles';
 import * as R from 'remeda';
 
 interface AccountCardProps {
-  image: string;
+  image?: string;
   likes?: number;
   shares?: number;
   shared?: number;
-  title: string;
-  username: string;
-  email: string;
-  phoneNumber: string;
+  title?: string;
+  username?: string;
+  email?: string;
+  phoneNumber?: string;
+  text?: string;
   showSocial?: boolean;
   showActions?: boolean;
   onProfileImageClicked?: () => void;
@@ -26,6 +27,7 @@ export const AccountCard = ({
   username,
   email,
   phoneNumber,
+  text,
   image,
   likes,
   shares,
@@ -79,6 +81,7 @@ export const AccountCard = ({
               {username && (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>)}
               {email && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>)}
               {phoneNumber && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>)}
+              {text && (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>)}
             </View>
             <View style={defaultStyles.right}>
               {showActions ? (
@@ -170,6 +173,7 @@ const defaultStyles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'top',
     minHeight: 'auto',
+    maxWidth: 250
   },
   subtitleTextSecondary: {
     fontSize: 13,

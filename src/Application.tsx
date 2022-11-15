@@ -46,6 +46,7 @@ import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
+import Invitation from 'mediashare/components/pages/Invitation'
 import { Auth } from 'aws-amplify';
 import { loginAction } from './store/modules/user';
 
@@ -123,6 +124,7 @@ const AccountNavigation = () => {
       <AccountStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <AccountStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <AccountStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
+      <AccountStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
 };
@@ -241,6 +243,19 @@ function App() {
     'CircularStd-Book': require('./assets/fonts/CircularStd-Book.otf'),
     'CircularStd-Light': require('./assets/fonts/CircularStd-Light.otf'),
   });
+  
+  const linking = {
+    prefixes: ['mediashare://'],
+    config: {
+      screens: {
+        Account: {
+          screens: {
+            invitation: 'accept-invitation/:userId',
+          },
+        },
+      },
+    },
+  };
 
   const loading = useAppSelector((state) => state?.app?.loading);
   const { isLoggedIn } = useUser();
@@ -293,7 +308,7 @@ function App() {
             icon: (props) => <MaterialIcons {...props} />,
           }}
         >
-          <NavigationContainer>
+          <NavigationContainer linking={linking as any} >
             <RootNavigation isCurrentUser={isCurrentUser} isLoggedIn={isLoggedIn} />
           </NavigationContainer>
         </PaperProvider>
