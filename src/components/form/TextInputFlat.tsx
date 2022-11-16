@@ -5,11 +5,14 @@ import InputLabel from 'react-native-paper/src/components/TextInput/Label/InputL
 import TextInputAdornment, { TextInputAdornmentProps } from 'react-native-paper/src/components/TextInput/Adornment/TextInputAdornment';
 import type { RenderProps, ChildTextInputProps } from 'react-native-paper/src/components/TextInput/types';
 
+
 import {
   MAXIMIZED_LABEL_FONT_SIZE,
   MINIMIZED_LABEL_FONT_SIZE,
   LABEL_WIGGLE_X_OFFSET,
   ADORNMENT_SIZE,
+  // TODO: Fix this it doesn't exist!
+  // @ts-ignore
   FLAT_INPUT_OFFSET,
 } from 'react-native-paper/src/components/TextInput/constants';
 
@@ -62,6 +65,8 @@ const TextInputFlat = ({
   ...rest
 }: ChildTextInputProps) => {
   const isAndroid = Platform.OS === 'android';
+  // TODO: Remove this ignore and fix
+  // @ts-ignore
   const { colors, fonts } = theme;
   // Hack to use thin font style
   // const font = fonts.thin;
@@ -105,14 +110,24 @@ const TextInputFlat = ({
   let inputTextColor, activeColor, underlineColorCustom, placeholderColor, errorColor;
 
   if (disabled) {
+    // TODO: Remove this ignore and fix
+    // @ts-ignore
     inputTextColor = activeColor = color(colors.text).alpha(0.54).rgb().string();
+    // TODO: Remove this ignore and fix
+    // @ts-ignore
     placeholderColor = colors.disabled;
     underlineColorCustom = 'transparent';
   } else {
+    // TODO: Remove this ignore and fix
+    // @ts-ignore
     inputTextColor = colors.text;
     activeColor = error ? colors.error : activeUnderlineColor || colors.primary;
+    // TODO: Remove this ignore and fix
+    // @ts-ignore
     placeholderColor = colors.placeholder;
     errorColor = colors.error;
+    // TODO: Remove this ignore and fix
+    // @ts-ignore
     underlineColorCustom = underlineColor || colors.disabled;
   }
 

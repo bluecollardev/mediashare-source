@@ -89,7 +89,7 @@ const SignUpComponent = ({}: PageProps) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
-                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </>
                 )}
@@ -108,6 +108,7 @@ const SignUpComponent = ({}: PageProps) => {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
                     <TextInput
+                      autoComplete={false}
                       autoCapitalize="none"
                       label="password"
                       secureTextEntry
@@ -133,7 +134,7 @@ const SignUpComponent = ({}: PageProps) => {
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
                   <>
-                    <TextInput autoCapitalize="none" label="email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoComplete={false} autoCapitalize="none" label="email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.email?.message}</HelperText>
                   </>
                 )}
