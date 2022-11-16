@@ -1,10 +1,13 @@
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary'
+import { withGlobalStateConsumer } from 'mediashare/core/globalState'
+import { theme } from 'mediashare/styles'
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadProfile } from 'mediashare/store/modules/profile';
+import { acceptInvitation, loadUserConnections } from 'mediashare/store/modules/userConnections'
 import { useProfile } from 'mediashare/hooks/useProfile';
+import { useGoBack } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { FAB, Divider, Text, Card } from 'react-native-paper'
 import { PageContainer, PageProps, AccountCard, ActionButtons } from 'mediashare/components/layout'
 // import { StyleSheet } from 'react-native';
 // import { theme } from 'mediashare/styles';
@@ -12,8 +15,11 @@ import { PageContainer, PageProps, AccountCard, ActionButtons } from 'mediashare
 interface InvitationProps extends PageProps {}
 
 const Invitation = ({ route, globalState }: InvitationProps) => {
-  // const accountId = globalState?.user?._id;
+  const accountId = globalState?.user?._id;
+  
   const { userId } = route.params;
+  
+  const goBack = useGoBack();
 
   const dispatch = useDispatch();
 
@@ -28,7 +34,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
 
   // const [fabState, setFabState] = useState({ open: false });
   // const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
-
+  
   return (
     <ErrorBoundary>
       <PageContainer>
@@ -44,26 +50,22 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
         />
         <ActionButtons
           containerStyles={{ marginTop: 15 }}
-          onSecondaryClicked={() => {}}
-          onPrimaryClicked={() => {}}
+          onSecondaryClicked={() => goBack()}
+          onPrimaryClicked={() => accept()}
           primaryLabel="Accept"
+          primaryIcon="check"
+          secondaryLabel="Decline"
+          secondaryButtonStyles={{ backgroundColor: theme.colors.errorDark, width: 200, marginRight: 10 }}
         />
-        {/* !isSelectable && (
-        <FAB.Group
-          visible={true}
-          open={fabState.open}
-          icon={fabState.open ? 'close' : 'more-vert'}
-          actions={fabActions}
-          color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-          onStateChange={(open) => {
-            setFabState(open);
-          }}
-        />
-      ) */}
       </PageContainer>
     </ErrorBoundary>
   );
+  
+  async function accept() {
+    await dispatch(acceptInvitation({ userId: accountId, connectionId: userId }));
+    await dispatch(loadUserConnections());
+    goBack();
+  }
   
   /* async function createUserAWS(data: IFromInput) {
     try {
@@ -107,6 +109,6 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   } */
 };
 
-export default withLoadingSpinner(undefined)(Invitation);
+export default withLoadingSpinner(undefined)(withGlobalStateConsumer(Invitation));
 
 // const styles = StyleSheet.create({});

@@ -30,10 +30,10 @@ export interface CreateUserConnectionDto {
    * @type {string}
    * @memberof CreateUserConnectionDto
    */
-  createdAt: string;
+  createdAt?: string;
   /**
    * @type {string}
    * @memberof CreateUserConnectionDto
    */
-  updatedDate: string;
+  updatedDate?: string;
 }

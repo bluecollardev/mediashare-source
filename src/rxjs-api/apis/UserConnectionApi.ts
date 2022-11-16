@@ -20,8 +20,8 @@ export interface UserConnectionControllerCreateUserConnectionRequest {
 }
 
 export interface UserConnectionControllerSendEmailRequest {
-  userId?: any;
-  email?: any;
+  userId: any;
+  email: any;
 }
 
 /**
@@ -67,14 +67,14 @@ export class UserConnectionApi extends BaseAPI {
     { userId, email }: UserConnectionControllerSendEmailRequest,
     opts?: OperationOpts
   ): Observable<void | RawAjaxResponse<void>> {
-    const query: HttpQuery = {};
+    throwIfNullOrUndefined(userId, 'userId', 'userConnectionControllerSendEmail');
+    throwIfNullOrUndefined(email, 'email', 'userConnectionControllerSendEmail');
 
-    if (userId != null) {
-      query['userId'] = userId;
-    }
-    if (email != null) {
-      query['email'] = email;
-    }
+    const query: HttpQuery = {
+      // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+      userId: userId,
+      email: email,
+    };
 
     return this.request<void>(
       {

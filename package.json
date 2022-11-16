@@ -22,8 +22,12 @@
     "util:sort-pkg": "npx sort-package-json",
     "util:update": "git pull --rebase",
     "util:adb:map": "adb reverse tcp:5000 tcp:5000",
-    "util:launch-invite-ios": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --ios",
-    "util:launch-invite-android": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --android"
+    "invite-ios:bcdevlucas": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --ios",
+    "invite-ios:armos51": "npx uri-scheme open mediashare://accept-invitation/61907743a0c0e20021fa232f --ios",
+    "invite-ios:test": "npx uri-scheme open mediashare://accept-invitation/637147fefb4dfea595826d8d --ios",
+    "invite-android:bcdevlucas": "npx uri-scheme open mediashare://accept-invitation/6190693aa0c0e20021fa2324 --android",
+    "invite-android:armos51": "npx uri-scheme open mediashare://accept-invitation/61907743a0c0e20021fa232f --android",
+    "invite-android:test": "npx uri-scheme open mediashare://accept-invitation/637147fefb4dfea595826d8d --android"
   },
   "jest": {
     "moduleFileExtensions": [
