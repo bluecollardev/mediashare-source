@@ -7,6 +7,7 @@ import { clearPlaylists, getUserPlaylists } from 'mediashare/store/modules/playl
 import { loadUserConnections } from 'mediashare/store/modules/userConnections';
 import { useGoBack, useRouteName } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageActions, PageProps, ActionButtons, ContactList } from 'mediashare/components/layout';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,14 +36,16 @@ const ShareWith = ({}: PageProps) => {
   }, [loaded]);
 
   return (
-    <PageContainer>
-      <PageContent>
-        <ContactList contacts={users} showGroups={true} selectable={true} onChecked={updateSelectedUsers} showAll={true} />
-      </PageContent>
-      <PageActions>
-        <ActionButtons onSecondaryClicked={goBack} onPrimaryClicked={sharePlaylists} primaryLabel="Confirm" />
-      </PageActions>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <PageContent>
+          <ContactList contacts={users} showGroups={true} selectable={true} onChecked={updateSelectedUsers} showAll={true} />
+        </PageContent>
+        <PageActions>
+          <ActionButtons onSecondaryClicked={goBack} onPrimaryClicked={sharePlaylists} primaryLabel="Confirm" />
+        </PageActions>
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   async function loadData() {

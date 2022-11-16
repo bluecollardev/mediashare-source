@@ -8,6 +8,7 @@ import { CreateMediaItemDto, MediaCategoryType } from 'mediashare/rxjs-api';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   KeyboardAvoidingPageContent,
   PageActions,
@@ -52,50 +53,52 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const goToMediaItems = useMediaItems();
 
   return (
-    <PageContainer>
-      <KeyboardAvoidingPageContent>
-        <ScrollView>
-          <MediaCard
-            title={title}
-            description={description}
-            mediaSrc={mediaUri}
-            showThumbnail={!!mediaUri}
-            thumbnail={thumbnail}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
-            }}
-            availableTags={availableTags}
-            tags={selectedTagKeys}
-            tagOptions={options}
-            onTagChange={(e: any) => {
-              setSelectedTagKeys(e);
-            }}
-            onTitleChange={setTitle}
-            onDescriptionChange={setDescription}
-            isEdit={true}
-            isPlayable={true}
-            topDrawer={() =>
-              !mediaUri ? (
-                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
-                  <UploadPlaceholder uploading={uploading} uploaded={!!mediaUri} buttonText="Upload Media" />
-                </AppUpload>
-              ) : (
-                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
-                  <Button icon="cloud-upload" mode="outlined" dark color={theme.colors.default} compact>
-                    Replace Media
-                  </Button>
-                </AppUpload>
-              )
-            }
-          />
-        </ScrollView>
-      </KeyboardAvoidingPageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItem} loading={isSaved} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
-      </PageActions>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <KeyboardAvoidingPageContent>
+          <ScrollView>
+            <MediaCard
+              title={title}
+              description={description}
+              mediaSrc={mediaUri}
+              showThumbnail={!!mediaUri}
+              thumbnail={thumbnail}
+              category={category}
+              categoryOptions={options}
+              onCategoryChange={(e: any) => {
+                setCategory(e);
+              }}
+              availableTags={availableTags}
+              tags={selectedTagKeys}
+              tagOptions={options}
+              onTagChange={(e: any) => {
+                setSelectedTagKeys(e);
+              }}
+              onTitleChange={setTitle}
+              onDescriptionChange={setDescription}
+              isEdit={true}
+              isPlayable={true}
+              topDrawer={() =>
+                !mediaUri ? (
+                  <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                    <UploadPlaceholder uploading={uploading} uploaded={!!mediaUri} buttonText="Upload Media" />
+                  </AppUpload>
+                ) : (
+                  <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                    <Button icon="cloud-upload" mode="outlined" dark color={theme.colors.default} compact>
+                      Replace Media
+                    </Button>
+                  </AppUpload>
+                )
+              }
+            />
+          </ScrollView>
+        </KeyboardAvoidingPageContent>
+        <PageActions>
+          <ActionButtons onPrimaryClicked={saveItem} loading={isSaved} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
+        </PageActions>
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   async function onUploadStart() {

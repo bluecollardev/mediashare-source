@@ -27,12 +27,12 @@ export const FeedRecentlyPlayed = ({ list = [], displayNoContent = false }: Feed
   return (
     <View style={{ marginBottom: 15 }}>
       <SectionHeader title={`Resume Playing`} />
-      {sortedList && sortedList.length > 0 && (
+      {sortedList && sortedList.length > 0 ? (
         <FlatList horizontal={true} data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
-      )}
-      {noContentIsVisible && (
+      ) : null}
+      {noContentIsVisible ? (
         <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" />
-      )}
+      ) : null}
     </View>
   );
 

@@ -1,3 +1,4 @@
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary'
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadProfile } from 'mediashare/store/modules/profile';
@@ -29,22 +30,25 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   // const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
 
   return (
-    <PageContainer>
-      <AccountCard
-        title={fullName}
-        text={`@${username} has invited you to join their network on Mediashare.`}
-        image={imageSrc}
-        showSocial={false}
-        showActions={false}
-        isCurrentUser={false}
-      />
-      <ActionButtons
-        containerStyles={{ marginTop: 15 }}
-        onSecondaryClicked={() => {}}
-        onPrimaryClicked={() => {}}
-        primaryLabel="Accept"
-      />
-      {/* !isSelectable && (
+    <ErrorBoundary>
+      <PageContainer>
+        <AccountCard
+          title={fullName}
+          text={`@${username} has invited you to join their network on Mediashare.`}
+          image={imageSrc}
+          email={null}
+          phoneNumber={null}
+          showSocial={false}
+          showActions={false}
+          isCurrentUser={false}
+        />
+        <ActionButtons
+          containerStyles={{ marginTop: 15 }}
+          onSecondaryClicked={() => {}}
+          onPrimaryClicked={() => {}}
+          primaryLabel="Accept"
+        />
+        {/* !isSelectable && (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -57,7 +61,8 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
           }}
         />
       ) */}
-    </PageContainer>
+      </PageContainer>
+    </ErrorBoundary>
   );
   
   /* async function createUserAWS(data: IFromInput) {

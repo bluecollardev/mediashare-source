@@ -12,6 +12,7 @@ import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { titleValidator, descriptionValidator, categoryValidator } from 'mediashare/core/utils/validators';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -68,55 +69,57 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   }, [loaded, dispatch, globalState]);
 
   return (
-    <PageContainer>
-      <KeyboardAvoidingPageContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <ScrollView>
-          <MediaCard
-            title={title}
-            description={description}
-            showThumbnail={!!imageSrc}
-            thumbnail={imageSrc}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={setCategory as any}
-            availableTags={availableTags}
-            tags={selectedTagKeys}
-            tagOptions={options}
-            onTagChange={(e: any) => {
-              setSelectedTagKeys(e);
-            }}
-            onTitleChange={setTitle as any}
-            onDescriptionChange={setDescription as any}
-            isEdit={true}
-            topDrawer={() =>
-              !imageSrc ? (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
-                  <UploadPlaceholder buttonText="Add Cover Photo" />
-                </AppUpload>
-              ) : (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
-                  <Button
-                    icon="cloud-upload"
-                    mode="outlined"
-                    dark
-                    color={theme.colors.default}
-                    compact
-                    uppercase={false}
-                    style={styles.changeImageButton}
-                    labelStyle={styles.changeImageButtonLabel}
-                  >
-                    <Text>Change Cover Photo</Text>
-                  </Button>
-                </AppUpload>
-              )
-            }
-          />
-        </ScrollView>
-      </KeyboardAvoidingPageContent>
-      <PageActions>
-        <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
-      </PageActions>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <KeyboardAvoidingPageContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <ScrollView>
+            <MediaCard
+              title={title}
+              description={description}
+              showThumbnail={!!imageSrc}
+              thumbnail={imageSrc}
+              category={category}
+              categoryOptions={options}
+              onCategoryChange={setCategory as any}
+              availableTags={availableTags}
+              tags={selectedTagKeys}
+              tagOptions={options}
+              onTagChange={(e: any) => {
+                setSelectedTagKeys(e);
+              }}
+              onTitleChange={setTitle as any}
+              onDescriptionChange={setDescription as any}
+              isEdit={true}
+              topDrawer={() =>
+                !imageSrc ? (
+                  <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <UploadPlaceholder buttonText="Add Cover Photo" />
+                  </AppUpload>
+                ) : (
+                  <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <Button
+                      icon="cloud-upload"
+                      mode="outlined"
+                      dark
+                      color={theme.colors.default}
+                      compact
+                      uppercase={false}
+                      style={styles.changeImageButton}
+                      labelStyle={styles.changeImageButtonLabel}
+                    >
+                      <Text>Change Cover Photo</Text>
+                    </Button>
+                  </AppUpload>
+                )
+              }
+            />
+          </ScrollView>
+        </KeyboardAvoidingPageContent>
+        <PageActions>
+          <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
+        </PageActions>
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   async function savePlaylist() {

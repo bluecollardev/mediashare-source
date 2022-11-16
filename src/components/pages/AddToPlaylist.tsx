@@ -10,6 +10,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, PageContent, ActionButtons, MediaListType, MediaListItem, NoContent } from 'mediashare/components/layout';
 
 import { theme } from 'mediashare/styles';
@@ -62,26 +63,28 @@ export const AddToPlaylist = ({ route, globalState }: PageProps) => {
   }, []);
 
   return (
-    <PageContainer>
-      <PageContent>
-        <AddToPlaylistComponentWithSearch
-          globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
-          loadData={loadData}
-          searchTarget="media"
-          entities={entities}
-          viewMediaItem={viewMediaItem}
-          addItem={addItem}
-          removeItem={removeItem}
-        />
-        {loaded && entities.length === 0 && (
-          <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
-        )}
-      </PageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
-      </PageActions>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <PageContent>
+          <AddToPlaylistComponentWithSearch
+            globalState={globalState}
+            loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+            loadData={loadData}
+            searchTarget="media"
+            entities={entities}
+            viewMediaItem={viewMediaItem}
+            addItem={addItem}
+            removeItem={removeItem}
+          />
+          {loaded && entities.length === 0 ? (
+            <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
+          ) : null}
+        </PageContent>
+        <PageActions>
+          <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
+        </PageActions>
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   async function loadData() {

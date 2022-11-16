@@ -171,15 +171,15 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
       <>
         <PrivateNavigator.Screen name="Feed" component={FeedNavigation} listeners={navigationTabListeners} />
 
-        {(build.forFreeUser || build.forSubscriber || build.forAdmin) && (
+        {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
-        )}
+        ) : null}
 
-        {(build.forSubscriber || build.forAdmin) && (
+        {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Playlists" component={PlaylistsNavigation} listeners={navigationTabListeners} />
-        )}
+        ) : null}
 
-        {build.forAdmin && <PrivateNavigator.Screen name="Media" component={MediaNavigation} listeners={navigationTabListeners} />}
+        {build.forAdmin ? <PrivateNavigator.Screen name="Media" component={MediaNavigation} listeners={navigationTabListeners} /> : null}
       </>
     </PrivateNavigator.Navigator>
   );

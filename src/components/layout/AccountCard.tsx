@@ -23,15 +23,15 @@ interface AccountCardProps {
 }
 
 export const AccountCard = ({
-  title,
-  username,
-  email,
-  phoneNumber,
-  text,
-  image,
-  likes,
-  shares,
-  shared,
+  title = null,
+  username = null,
+  email = null,
+  phoneNumber = null,
+  text = null,
+  image = null,
+  likes = null,
+  shares = null,
+  shared = null,
   showSocial = false,
   showActions = false,
   isCurrentUser = false,
@@ -77,11 +77,11 @@ export const AccountCard = ({
               )}
             </View>
             <View style={defaultStyles.main}>
-              {title && (<Title style={defaultStyles.titleText}>{title}</Title>)}
-              {username && (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>)}
-              {email && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>)}
-              {phoneNumber && (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>)}
-              {text && (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>)}
+              {title ? (<Title style={defaultStyles.titleText}>{title}</Title>) : null}
+              {username ? (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>) : null}
+              {email ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>) : null}
+              {phoneNumber ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>) : null}
+              {text ? (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>) : null}
             </View>
             <View style={defaultStyles.right}>
               {showActions ? (
@@ -94,13 +94,13 @@ export const AccountCard = ({
                     </IconButton>
                   }
                 >
-                  {isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" />}
-                  {profile?.build?.forAdmin && !isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" />}
+                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" /> : null}
+                  {profile?.build?.forAdmin && !isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" /> : null}
                 </Menu>
               ) : null}
             </View>
           </View>
-          {withoutName() && (
+          {withoutName() ? (
             <Card>
               <Card.Title
                 title="A name is required"
@@ -108,9 +108,9 @@ export const AccountCard = ({
                 // right={(props) => <IconButton {...props} icon="more-vert" onPress={() => {}} />}
               />
             </Card>
-          )}
+          ) : null}
         </Card.Content>
-        {showSocial && (
+        {showSocial ? (
           <View style={defaultStyles.social}>
             <View style={defaultStyles.labelledElement}>
               <Subheading>{likes}</Subheading>
@@ -125,7 +125,7 @@ export const AccountCard = ({
               <Caption>Shared</Caption>
             </View>
           </View>
-        )}
+        ) : null}
       </Card>
     </>
   );

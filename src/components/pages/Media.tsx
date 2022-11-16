@@ -12,6 +12,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
 import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -109,68 +110,70 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   ];
 
   return (
-    <PageContainer>
-      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        <AppDialog
-          leftActionLabel="Cancel"
-          rightActionLabel="Delete"
-          leftActionCb={() => closeDeleteDialog()}
-          rightActionCb={() => confirmItemsToDelete()}
-          onDismiss={closeDeleteDialog}
-          showDialog={showDeleteDialog}
-          title="Delete Media Items"
-          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-          color={theme.colors.white}
-          buttonColor={theme.colors.error}
-        />
-        <MediaComponentWithSearch
-          globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
-          loadData={loadData}
-          searchTarget="media"
-          key={clearSelectionKey}
-          navigation={navigation}
-          list={entities}
-          showActions={!isSelectable}
-          selectable={isSelectable}
-          onViewDetail={onEditItem}
-          onChecked={updateSelection}
-        />
-        {loaded && entities.length === 0 && (
-          <NoContent
-            onPress={addMedia}
-            messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
-            icon="add-circle"
+    <ErrorBoundary>
+      <PageContainer>
+        <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          <AppDialog
+            leftActionLabel="Cancel"
+            rightActionLabel="Delete"
+            leftActionCb={() => closeDeleteDialog()}
+            rightActionCb={() => confirmItemsToDelete()}
+            onDismiss={closeDeleteDialog}
+            showDialog={showDeleteDialog}
+            title="Delete Media Items"
+            subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+            color={theme.colors.white}
+            buttonColor={theme.colors.error}
           />
-        )}
-      </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.delete && (
-        <PageActions>
-          <ActionButtons
-            onPrimaryClicked={openDeleteDialog}
-            onSecondaryClicked={cancelItemsToDelete}
-            primaryLabel="Delete"
-            primaryIcon="delete"
-            primaryButtonStyles={styles.deleteActionButton}
+          <MediaComponentWithSearch
+            globalState={globalState}
+            loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+            loadData={loadData}
+            searchTarget="media"
+            key={clearSelectionKey}
+            navigation={navigation}
+            list={entities}
+            showActions={!isSelectable}
+            selectable={isSelectable}
+            onViewDetail={onEditItem}
+            onChecked={updateSelection}
           />
-        </PageActions>
-      )}
-      {!isSelectable && (
-        <FAB.Group
-          visible={true}
-          open={fabState.open}
-          icon={fabState.open ? 'close' : 'more-vert'}
-          actions={fabActions}
-          color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-          onStateChange={(open) => {
-            // open && setOpen(!open);
-            setState(open);
-          }}
-          // onPress={() => setOpen(!open)}
-        />
-      )}
-    </PageContainer>
+          {loaded && entities.length === 0 ? (
+            <NoContent
+              onPress={addMedia}
+              messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
+              icon="add-circle"
+            />
+          ) : null}
+        </KeyboardAvoidingPageContent>
+        {isSelectable && actionMode === actionModes.delete ? (
+          <PageActions>
+            <ActionButtons
+              onPrimaryClicked={openDeleteDialog}
+              onSecondaryClicked={cancelItemsToDelete}
+              primaryLabel="Delete"
+              primaryIcon="delete"
+              primaryButtonStyles={styles.deleteActionButton}
+            />
+          </PageActions>
+        ) : null}
+        {!isSelectable ? (
+          <FAB.Group
+            visible={true}
+            open={fabState.open}
+            icon={fabState.open ? 'close' : 'more-vert'}
+            actions={fabActions}
+            color={theme.colors.text}
+            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+            onStateChange={(open) => {
+              // open && setOpen(!open);
+              setState(open);
+            }}
+            // onPress={() => setOpen(!open)}
+          />
+        ) : null}
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   /**

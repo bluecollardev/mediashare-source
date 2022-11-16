@@ -4,6 +4,7 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { mapAvailableTags } from 'mediashare/store/modules/tags';
 import { useAppSelector } from 'mediashare/store';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard } from 'mediashare/components/layout';
 import { AuthorProfileDto } from 'mediashare/rxjs-api';
 
@@ -29,34 +30,36 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
   const mappedTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
 
   return (
-    <PageContainer>
-      <PageContent>
-        <ScrollView>
-          <MediaCard
-            key={_id}
-            title={title}
-            authorProfile={authorProfile}
-            description={description}
-            mediaSrc={uri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
-              // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
-            }}
-            category={category}
-            availableTags={mappedTags}
-            tags={tagKeys}
-            showSocial={true}
-            showActions={false}
-            isPlayable={true}
-            likes={likesCount}
-            shares={shareCount}
-            views={viewCount}
-          />
-        </ScrollView>
-      </PageContent>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <PageContent>
+          <ScrollView>
+            <MediaCard
+              key={_id}
+              title={title}
+              authorProfile={authorProfile}
+              description={description}
+              mediaSrc={uri}
+              showThumbnail={true}
+              thumbnail={thumbnail}
+              thumbnailStyle={{
+                // TODO: Can we do this automatically from video metadata?
+                aspectRatio: 1 / 1,
+              }}
+              category={category}
+              availableTags={mappedTags}
+              tags={tagKeys}
+              showSocial={true}
+              showActions={false}
+              isPlayable={true}
+              likes={likesCount}
+              shares={shareCount}
+              views={viewCount}
+            />
+          </ScrollView>
+        </PageContent>
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 

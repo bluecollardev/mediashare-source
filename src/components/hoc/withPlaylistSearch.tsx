@@ -54,7 +54,7 @@ export const withPlaylistSearch = (WrappedComponent: any) => {
 
     return (
       <>
-        {(forcedSearchMode ? forcedSearchMode : searchIsActive) && (
+        {(forcedSearchMode ? forcedSearchMode : searchIsActive) ? (
           <>
             <Searchbar
               style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
@@ -102,7 +102,7 @@ export const withPlaylistSearch = (WrappedComponent: any) => {
             />
             <Divider />
           </>
-        )}
+        ) : null}
         <WrappedComponent globalState={globalState} {...rest} />
       </>
     );

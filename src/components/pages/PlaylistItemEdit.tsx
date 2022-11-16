@@ -11,6 +11,7 @@ import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
 import { View, ScrollView } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, KeyboardAvoidingPageContent, PageActions, PageProps } from 'mediashare/components/layout/PageContainer';
 import { AppDialog } from 'mediashare/components/layout/AppDialog';
 import { MediaCard } from 'mediashare/components/layout/MediaCard';
@@ -73,89 +74,91 @@ const PlaylistItemEdit = ({
   }
 
   return (
-    <PageContainer>
-      <KeyboardAvoidingPageContent>
-        <AppDialog
-          leftActionLabel="Cancel"
-          rightActionLabel="Delete"
-          leftActionCb={() => setShowDialog(false)}
-          rightActionCb={() => deleteItem()}
-          onDismiss={() => setShowDialog(false)}
-          showDialog={showDialog}
-          title="Delete Media Item"
-          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-          color={theme.colors.white}
-          buttonColor={theme.colors.error}
-        />
-        <ScrollView>
-          <MediaCard
-            key={playlistItemId}
-            title={title}
-            description={description}
-            sortIndex={String(sortIndex)}
-            mediaSrc={documentUri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
-              // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
-            }}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
-            }}
-            availableTags={availableTags}
-            tags={selectedTagKeys}
-            tagOptions={options}
-            onTagChange={(e: any) => {
-              setSelectedTagKeys(e);
-            }}
-            onTitleChange={setTitle}
-            onDescriptionChange={setDescription}
-            onSortIndexChange={setSortIndex}
-            isEdit={true}
-            isPlayable={true}
-            topDrawer={() => (
-              <View style={styles.itemControls}>
-                <View style={{ flex: 0, width: 54 }}>
-                  <Button
-                    icon="delete-forever"
-                    mode="text"
-                    dark
-                    compact
-                    color={theme.colors.white}
-                    style={styles.deleteItemButton}
-                    onPress={() => setShowDialog(true)}
-                  >
-                    {' '}
-                  </Button>
-                </View>
-                <View style={{ flex: 4 }}>
-                  <AppUpload uploadMode="photo" onUploadComplete={setThumbnail}>
-                    <Button
-                      icon="cloud-upload"
-                      mode="outlined"
-                      dark
-                      color={theme.colors.default}
-                      compact
-                      uppercase={false}
-                      style={styles.changeImageButton}
-                      labelStyle={styles.changeImageButtonLabel}
-                    >
-                      Change Preview Image
-                    </Button>
-                  </AppUpload>
-                </View>
-              </View>
-            )}
+    <ErrorBoundary>
+      <PageContainer>
+        <KeyboardAvoidingPageContent>
+          <AppDialog
+            leftActionLabel="Cancel"
+            rightActionLabel="Delete"
+            leftActionCb={() => setShowDialog(false)}
+            rightActionCb={() => deleteItem()}
+            onDismiss={() => setShowDialog(false)}
+            showDialog={showDialog}
+            title="Delete Media Item"
+            subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+            color={theme.colors.white}
+            buttonColor={theme.colors.error}
           />
-        </ScrollView>
-      </KeyboardAvoidingPageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItem} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" />
-      </PageActions>
-    </PageContainer>
+          <ScrollView>
+            <MediaCard
+              key={playlistItemId}
+              title={title}
+              description={description}
+              sortIndex={String(sortIndex)}
+              mediaSrc={documentUri}
+              showThumbnail={true}
+              thumbnail={thumbnail}
+              thumbnailStyle={{
+                // TODO: Can we do this automatically from video metadata?
+                aspectRatio: 1 / 1,
+              }}
+              category={category}
+              categoryOptions={options}
+              onCategoryChange={(e: any) => {
+                setCategory(e);
+              }}
+              availableTags={availableTags}
+              tags={selectedTagKeys}
+              tagOptions={options}
+              onTagChange={(e: any) => {
+                setSelectedTagKeys(e);
+              }}
+              onTitleChange={setTitle}
+              onDescriptionChange={setDescription}
+              onSortIndexChange={setSortIndex}
+              isEdit={true}
+              isPlayable={true}
+              topDrawer={() => (
+                <View style={styles.itemControls}>
+                  <View style={{ flex: 0, width: 54 }}>
+                    <Button
+                      icon="delete-forever"
+                      mode="text"
+                      dark
+                      compact
+                      color={theme.colors.white}
+                      style={styles.deleteItemButton}
+                      onPress={() => setShowDialog(true)}
+                    >
+                      {' '}
+                    </Button>
+                  </View>
+                  <View style={{ flex: 4 }}>
+                    <AppUpload uploadMode="photo" onUploadComplete={setThumbnail}>
+                      <Button
+                        icon="cloud-upload"
+                        mode="outlined"
+                        dark
+                        color={theme.colors.default}
+                        compact
+                        uppercase={false}
+                        style={styles.changeImageButton}
+                        labelStyle={styles.changeImageButtonLabel}
+                      >
+                        Change Preview Image
+                      </Button>
+                    </AppUpload>
+                  </View>
+                </View>
+              )}
+            />
+          </ScrollView>
+        </KeyboardAvoidingPageContent>
+        <PageActions>
+          <ActionButtons onPrimaryClicked={saveItem} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" />
+        </PageActions>
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   function getInitialPlaylistItemTags() {

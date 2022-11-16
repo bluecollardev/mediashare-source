@@ -50,7 +50,7 @@ const AppHeaderComponent = ({
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-      {back && <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} />}
+      {back ? <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} /> : null}
       <Appbar.Content
         title={title}
         titleStyle={{
@@ -58,10 +58,10 @@ const AppHeaderComponent = ({
           fontFamily: theme.fonts.medium.fontFamily,
         }}
       />
-      {showDisplayControls && renderDisplayControls()}
-      {searchable && <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} />}
-      {showNotificationsMenu && <Appbar.Action icon="notifications" onPress={() => undefined} />}
-      {showAccountMenu && <Appbar.Action icon="person" onPress={() => goToAccount()} />}
+      {showDisplayControls ? renderDisplayControls() : null}
+      {searchable ? <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} /> : null}
+      {showNotificationsMenu ? <Appbar.Action icon="notifications" onPress={() => undefined} /> : null}
+      {showAccountMenu ? <Appbar.Action icon="person" onPress={() => goToAccount()} /> : null}
     </Appbar.Header>
   );
 
@@ -82,8 +82,8 @@ const AppHeaderComponent = ({
   function renderDisplayControls() {
     return (
       <>
-        {displayMode === 'article' && <Appbar.Action icon="view-list" color="#ffffff" onPress={() => viewAsList()} />}
-        {displayMode === 'list' && <Appbar.Action icon="article" color="#ffffff" onPress={() => viewAsArticles()} />}
+        {displayMode === 'article' ? <Appbar.Action icon="view-list" color="#ffffff" onPress={() => viewAsList()} /> : null}
+        {displayMode === 'list' ? <Appbar.Action icon="article" color="#ffffff" onPress={() => viewAsArticles()} /> : null}
       </>
     );
   }

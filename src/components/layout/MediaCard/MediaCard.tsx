@@ -115,7 +115,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
   return isEdit ? (
     <View>
-      {showMediaPreview && (
+      {showMediaPreview ? (
         <DisplayPreviewOrVideo
           key={mediaSrc}
           mediaSrc={mediaSrc}
@@ -124,8 +124,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           thumbnail={thumbnail}
           style={thumbnailStyle}
         />
-      )}
-      {topDrawer && <TopDrawer />}
+      ) : null}
+      {topDrawer ? <TopDrawer /> : null}
       <View style={defaultStyles.container}>
         <Card elevation={elevation as any} style={{ marginTop: 25, marginBottom: 15 }}>
           <TextField
@@ -137,7 +137,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             disabled={isReadOnly}
           />
         </Card>
-        {sortIndex !== undefined && (
+        {sortIndex !== undefined ? (
           <Card elevation={elevation as any} style={{ marginBottom: 15 }}>
             <TextField
               keyboardType="numeric"
@@ -150,7 +150,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               disabled={isReadOnly}
             />
           </Card>
-        )}
+        ) : null}
         <Card elevation={elevation as any} style={{ marginBottom: 15 }}>
           <SectionedMultiSelect
             colors={components.multiSelect.colors}
@@ -211,7 +211,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     </View>
   ) : (
     <Card style={defaultStyles.card} elevation={elevation as any}>
-      {showMediaPreview && (
+      {showMediaPreview ? (
         <DisplayPreviewOrVideo
           key={mediaSrc}
           mediaSrc={mediaSrc}
@@ -220,7 +220,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           thumbnail={thumbnail}
           style={thumbnailStyle}
         />
-      )}
+      ) : null}
       {/* Had to use actual text spaces to space this out for some reason not going to look into it now... */}
       <MediaCardTitle
         title={title}
@@ -234,9 +234,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         <MediaCardTags tags={mappedSelectedTags} />
       </Card.Content>
       <Card.Content style={{ marginTop: 0, marginBottom: 30 }}>
-        {showSocial && <MediaCardSocial likes={likes} shares={shares} views={views} />}
+        {showSocial ? <MediaCardSocial likes={likes} shares={shares} views={views} /> : null}
         {children}
-        {showDescription && <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph>}
+        {showDescription ? <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph> : null}
       </Card.Content>
     </Card>
   );

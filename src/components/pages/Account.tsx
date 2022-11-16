@@ -18,6 +18,7 @@ import { FAB, Divider, Card, IconButton } from 'react-native-paper';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { useGoToLogin, useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigation';
 import { useUser } from 'mediashare/hooks/useUser';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AccountCard, AppDialog } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
@@ -84,81 +85,83 @@ export const Account = ({ globalState }: PageProps) => {
     ];
   }
   return (
-    <PageContainer>
-      <AppDialog
-        leftActionLabel="Cancel"
-        rightActionLabel="Revoke Access"
-        leftActionCb={() => closeUnshareDialog()}
-        rightActionCb={() => confirmItemsToUnshare()}
-        onDismiss={closeUnshareDialog}
-        showDialog={showUnshareDialog}
-        title="Revoke Access"
-        subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-      />
-      <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
-      <AccountCard
-        title={fullName}
-        username={username}
-        email={email}
-        phoneNumber={phoneNumber}
-        image={user.imageSrc}
-        likes={likesCount}
-        shared={sharedCount}
-        shares={sharesCount}
-        showSocial={false}
-        showActions={false}
-        isCurrentUser={true}
-        onProfileImageClicked={() => getDocument()}
-      />
-      <Divider />
-      <Card elevation={0} style={styles.sectionHeader}>
-        <Card.Title
-          titleStyle={styles.sectionHeaderTitle}
-          title="My Connections"
-          right={(props) => (
-            <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
-          )}
+    <ErrorBoundary>
+      <PageContainer>
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Revoke Access"
+          leftActionCb={() => closeUnshareDialog()}
+          rightActionCb={() => confirmItemsToUnshare()}
+          onDismiss={closeUnshareDialog}
+          showDialog={showUnshareDialog}
+          title="Revoke Access"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
-      </Card>
-      {/* <Highlights highlights={state.highlights} /> */}
-      {!build.forFreeUser && (
-        <ScrollView style={{ width: layout.width, height: layout.height }}>
-          <ContactList
-            key={clearSelectionKey}
-            contacts={contacts}
-            showGroups={false}
-            showActions={!isSelectable}
-            onViewDetail={viewProfileById}
-            selectable={isSelectable}
-            onChecked={updateSelection}
-          />
-        </ScrollView>
-      )}
-      {isSelectable && actionMode === actionModes.delete && (
-        <PageActions>
-          <ActionButtons
-            onPrimaryClicked={openUnshareDialog}
-            onSecondaryClicked={cancelItemsToUnshare}
-            primaryLabel="Revoke Access"
-            primaryButtonStyles={styles.deleteActionButton}
-          />
-        </PageActions>
-      )}
-      {!isSelectable && (
-        <FAB.Group
-          visible={true}
-          open={fabState.open}
-          icon={fabState.open ? 'close' : 'more-vert'}
-          actions={fabActions}
-          color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-          onStateChange={(open) => {
-            // open && setOpen(!open);
-            setFabState(open);
-          }}
+        <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
+        <AccountCard
+          title={fullName}
+          username={username}
+          email={email}
+          phoneNumber={phoneNumber}
+          image={user.imageSrc}
+          likes={likesCount}
+          shared={sharedCount}
+          shares={sharesCount}
+          showSocial={false}
+          showActions={false}
+          isCurrentUser={true}
+          onProfileImageClicked={() => getDocument()}
         />
-      )}
-    </PageContainer>
+        <Divider />
+        <Card elevation={0} style={styles.sectionHeader}>
+          <Card.Title
+            titleStyle={styles.sectionHeaderTitle}
+            title="My Connections"
+            right={(props) => (
+              <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
+            )}
+          />
+        </Card>
+        {/* <Highlights highlights={state.highlights} /> */}
+        {!build.forFreeUser ? (
+          <ScrollView style={{ width: layout.width, height: layout.height }}>
+            <ContactList
+              key={clearSelectionKey}
+              contacts={contacts}
+              showGroups={false}
+              showActions={!isSelectable}
+              onViewDetail={viewProfileById}
+              selectable={isSelectable}
+              onChecked={updateSelection}
+            />
+          </ScrollView>
+        ) : null}
+        {isSelectable && actionMode === actionModes.delete ? (
+          <PageActions>
+            <ActionButtons
+              onPrimaryClicked={openUnshareDialog}
+              onSecondaryClicked={cancelItemsToUnshare}
+              primaryLabel="Revoke Access"
+              primaryButtonStyles={styles.deleteActionButton}
+            />
+          </PageActions>
+        ) : null}
+        {!isSelectable ? (
+          <FAB.Group
+            visible={true}
+            open={fabState.open}
+            icon={fabState.open ? 'close' : 'more-vert'}
+            actions={fabActions}
+            color={theme.colors.text}
+            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+            onStateChange={(open) => {
+              // open && setOpen(!open);
+              setFabState(open);
+            }}
+          />
+        ) : null}
+      </PageContainer>
+    </ErrorBoundary>
   );
 
   async function loadData() {

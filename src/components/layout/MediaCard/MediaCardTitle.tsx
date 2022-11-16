@@ -36,8 +36,8 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
       subtitle={
         <View style={defaultStyles.subtitle}>
           <View style={defaultStyles.createdBy}>
-            {authorProfile?.authorName && <Text style={defaultStyles.author}>{authorProfile?.authorName}</Text>}
-            {authorProfile?.authorUsername && <Text style={defaultStyles.username}>@{authorProfile?.authorUsername}</Text>}
+            {authorProfile?.authorName ? <Text style={defaultStyles.author}>{authorProfile?.authorName}</Text> : null}
+            {authorProfile?.authorUsername ? <Text style={defaultStyles.username}>@{authorProfile?.authorUsername}</Text> : null}
           </View>
         </View>
       }
@@ -54,7 +54,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
             }
           : undefined
       }
-      right={(buttonProps: any) => showActions && <IconButton {...buttonProps} icon="more-vert" onPress={onActionsClicked} />}
+      right={(buttonProps: any) => showActions ? <IconButton {...buttonProps} icon="more-vert" onPress={onActionsClicked} /> : null}
     />
   ) : null;
 };

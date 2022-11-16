@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -64,81 +65,83 @@ const ConfirmComponent = ({}: PageProps) => {
   };
 
   return (
-    <PageContainer>
-      <KeyboardAvoidingPageContent>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            height: '100%',
-            justifyContent: 'center',
-          }}
-        >
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text variant="displayLarge" style={{ fontSize: 20, paddingBottom: 10 }}>
-              Verification your account
-            </Text>
-            <Controller
-              control={control}
-              name="username"
-              rules={{
-                required: 'required',
-                minLength: {
-                  value: 4,
-                  message: 'Too short!',
-                },
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <>
-                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                  <HelperText type="error">{errors.username?.message}</HelperText>
-                </>
-              )}
-            />
-            <Controller
-              control={control}
-              name="code"
-              rules={{
-                required: 'required',
-              }}
-              render={({ field: { onChange, onBlur, value } }) => (
-                <>
-                  <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                  <HelperText type="error">{errors.code?.message}</HelperText>
-                </>
-              )}
-            />
-
-            <Button
-              style={{
-                borderRadius: 10,
-                padding: 5,
-              }}
-              mode="contained"
-              onPress={handleSubmit(onSubmit)}
-            >
-              Confirm code
-            </Button>
-
-            <Button
-              style={{
-                borderRadius: 10,
-                padding: 5,
-                marginTop: 15,
-              }}
-              mode="outlined"
-              onPress={handleResendCode}
-            >
-              Resend code
-            </Button>
-
-            <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
-              Back to sign in
-            </Button>
-          </View>
-          {element}
-        </ScrollView>
-      </KeyboardAvoidingPageContent>
-    </PageContainer>
+    <ErrorBoundary>
+      <PageContainer>
+        <KeyboardAvoidingPageContent>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              height: '100%',
+              justifyContent: 'center',
+            }}
+          >
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text variant="displayLarge" style={{ fontSize: 20, paddingBottom: 10 }}>
+                Verification your account
+              </Text>
+              <Controller
+                control={control}
+                name="username"
+                rules={{
+                  required: 'required',
+                  minLength: {
+                    value: 4,
+                    message: 'Too short!',
+                  },
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <HelperText type="error">{errors.username?.message}</HelperText>
+                  </>
+                )}
+              />
+              <Controller
+                control={control}
+                name="code"
+                rules={{
+                  required: 'required',
+                }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <>
+                    <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <HelperText type="error">{errors.code?.message}</HelperText>
+                  </>
+                )}
+              />
+          
+              <Button
+                style={{
+                  borderRadius: 10,
+                  padding: 5,
+                }}
+                mode="contained"
+                onPress={handleSubmit(onSubmit)}
+              >
+                Confirm code
+              </Button>
+          
+              <Button
+                style={{
+                  borderRadius: 10,
+                  padding: 5,
+                  marginTop: 15,
+                }}
+                mode="outlined"
+                onPress={handleResendCode}
+              >
+                Resend code
+              </Button>
+          
+              <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
+                Back to sign in
+              </Button>
+            </View>
+            {element}
+          </ScrollView>
+        </KeyboardAvoidingPageContent>
+      </PageContainer>
+    </ErrorBoundary>
   );
 };
 

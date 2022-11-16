@@ -32,14 +32,14 @@ export const MediaListItemDescription = ({
   const { authorProfile, description = '', itemCount = 0 } = data;
   return (
     <View style={styles.details}>
-      {(showAuthor || showUsername) && (
+      {(showAuthor || showUsername) ? (
         <View style={styles.createdBy}>
-          {showAuthor && <Text style={styles.author}>{authorProfile?.authorName}</Text>}
-          {showUsername && <Text style={styles.username}>@{authorProfile?.authorUsername}</Text>}
+          {showAuthor ? <Text style={styles.author}>{authorProfile?.authorName}</Text> : null}
+          {showUsername ? <Text style={styles.username}>@{authorProfile?.authorUsername}</Text> : null}
         </View>
-      )}
-      {showItemCount && <Text style={{ ...styles.videoCount }}>{itemCount} videos</Text>}
-      {showDescription && <Text style={styles.description}>{shortenText(description || '', maxChars)}</Text>}
+      ) : null}
+      {showItemCount ? <Text style={{ ...styles.videoCount }}>{itemCount} videos</Text> : null}
+      {showDescription ? <Text style={styles.description}>{shortenText(description || '', maxChars)}</Text> : null}
     </View>
   );
 };

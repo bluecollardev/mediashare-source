@@ -27,7 +27,7 @@ export const FeedTags = ({ list = [], onViewDetailClicked, displayNoContent = fa
   return (
     <View style={{ marginTop: 20, marginBottom: 15 }}>
       <SectionHeader title={`Popular Tags`} />
-      {displayTags && displayTags.length > 0 && (
+      {displayTags && displayTags.length > 0 ? (
         <>
           <View style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: dimensions.w, marginBottom: 10 }}>
             {displayTags.map((tag) => renderVirtualizedListItem(tag))}
@@ -44,10 +44,10 @@ export const FeedTags = ({ list = [], onViewDetailClicked, displayNoContent = fa
             List All Tags
           </Button>
         </>
-      )}
-      {noContentIsVisible && (
+      ) : null}
+      {noContentIsVisible ? (
         <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" />
-      )}
+      ) : null}
     </View>
   );
 

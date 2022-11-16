@@ -53,22 +53,22 @@ export const ListItem: React.FC<ListItemProps> = ({
           selectable ? (
             <View style={defaultStyles.leftOuterWrapper}>
               <Checkbox status={isChecked ? 'checked' : 'indeterminate'} color={isChecked ? theme.colors.success : theme.colors.disabled} />
-              {avatar && (
+              {avatar ? (
                 <View style={defaultStyles.avatarWrapper}>
                   <Avatar.Image source={avatar ? { uri: avatar } : undefined} size={40} />
                 </View>
-              )}
+              ) : null}
             </View>
           ) : showLetterLabel || avatar ? (
             <View style={defaultStyles.leftOuterWrapper}>
-              {showLetterLabel && (
-                <View style={defaultStyles.letterLabelWrapper}>{showLetterLabel && <Headline style={defaultStyles.headline}>{title[0]}</Headline>}</View>
-              )}
-              {avatar && (
+              {showLetterLabel ? (
+                <View style={defaultStyles.letterLabelWrapper}>{showLetterLabel ? <Headline style={defaultStyles.headline}>{title[0]}</Headline> : null}</View>
+              ) : null}
+              {avatar ? (
                 <View style={defaultStyles.avatarWrapper}>
                   <Avatar.Image source={avatar ? { uri: avatar } : undefined} size={40} />
                 </View>
-              )}
+              ) : null}
             </View>
           ) : (
             <View style={defaultStyles.leftOuterWrapperHidden} />
@@ -79,11 +79,11 @@ export const ListItem: React.FC<ListItemProps> = ({
             <IconButton icon={iconRight} iconColor={iconRightColor} onPress={() => onViewDetail(itemId)} />
           ) : (
             <View>
-              {showFollow && (
+              {showFollow ? (
                 <Button mode={selectable ? 'contained' : 'outlined'} style={defaultStyles.followButton} disabled={selectable}>
                   Following
                 </Button>
-              )}
+              ) : null}
             </View>
           );
         }}
