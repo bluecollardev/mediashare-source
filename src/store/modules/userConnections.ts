@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { CreateUserConnectionDto, UserDto } from 'mediashare/rxjs-api';
+import { UserDto } from 'mediashare/rxjs-api';
 import { makeActions } from 'mediashare/store/factory';
 import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
@@ -10,12 +10,12 @@ export const userConnectionsActions = makeActions(userConnectionsActionNames);
 
 export const sendEmail = createAsyncThunk(userConnectionsActions.userSendMail.type, async ({ userId, email }: { userId: string; email: string }, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.userConnection.userConnectionControllerSendEmail({ userId, email }).toPromise();
+  return await api.user.userControllerSendEmail({ userId, email }).toPromise();
 });
 
 export const acceptInvitation = createAsyncThunk(userConnectionsActions.acceptInvitation.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.userConnection.userConnectionControllerCreateUserConnection({ createUserConnectionDto: { userId, connectionId } }).toPromise();
+  return await api.user.userControllerCreateUserConnection({ userConnectionDto: { userId, connectionId } }).toPromise();
 });
 
 export const loadUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async (opts = undefined, { extra }) => {

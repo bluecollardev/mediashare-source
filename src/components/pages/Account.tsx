@@ -16,23 +16,21 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useWindowDimensions, ScrollView, StyleSheet } from 'react-native';
 import { FAB, Divider, Card, IconButton } from 'react-native-paper';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { useGoToLogin, useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigation';
+import { useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigation';
 import { useUser } from 'mediashare/hooks/useUser';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AccountCard, AppDialog } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
-import { removeShareItemAllByUserId } from 'mediashare/store/modules/shareItems';
+import { removeAllShareItemsByUserId } from 'mediashare/store/modules/shareItems';
 import ModalSheet from '../layout/InviteModal';
-import { signOut } from 'mediashare/core/aws/auth';
 
 const actionModes = { delete: 'delete', default: 'default' };
 const awsUrl = Config.AWS_URL;
 
 export const Account = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
-
-  const goToLogin = useGoToLogin();
+  
   const viewAccount = useRouteWithParams(routeNames.account);
   const editProfile = useRouteWithParams(routeNames.accountEdit);
   const viewProfileById = useViewProfileById();
@@ -89,12 +87,12 @@ export const Account = ({ globalState }: PageProps) => {
       <PageContainer>
         <AppDialog
           leftActionLabel="Cancel"
-          rightActionLabel="Revoke Access"
+          rightActionLabel="Delete Connection"
           leftActionCb={() => closeUnshareDialog()}
           rightActionCb={() => confirmItemsToUnshare()}
           onDismiss={closeUnshareDialog}
           showDialog={showUnshareDialog}
-          title="Revoke Access"
+          title="Delete Connection"
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
         <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
@@ -141,7 +139,7 @@ export const Account = ({ globalState }: PageProps) => {
             <ActionButtons
               onPrimaryClicked={openUnshareDialog}
               onSecondaryClicked={cancelItemsToUnshare}
-              primaryLabel="Revoke Access"
+              primaryLabel="Delete Connections"
               primaryButtonStyles={styles.deleteActionButton}
             />
           </PageActions>
@@ -234,7 +232,7 @@ export const Account = ({ globalState }: PageProps) => {
   }
 
   async function unshareItems() {
-    await dispatch(removeShareItemAllByUserId(selectedItems));
+    await dispatch(removeAllShareItemsByUserId(selectedItems));
     setSelectedItems([]);
     await dispatch(loadUserConnections());
   }

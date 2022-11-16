@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { removeShareItem, readShareItem, removeShareItemAll, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
+import { removeShareItem, readShareItem, removeAllShareItems, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -59,22 +59,22 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
       <PageContainer>
         <AppDialog
           leftActionLabel="Cancel"
-          rightActionLabel="Revoke Access"
+          rightActionLabel="Revoke Access to All Selected"
           leftActionCb={() => closeUnshareDialog()}
           rightActionCb={() => confirmItemsToUnshare()}
           onDismiss={closeUnshareDialog}
           showDialog={showUnshareDialog}
-          title="Revoke Access"
+          title="Revoke Access to All Selected"
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
         <AppDialog
           leftActionLabel="Cancel"
-          rightActionLabel="Revoke Access"
+          rightActionLabel="Revoke Access to All Selected"
           leftActionCb={() => closeUnshareItemDialog()}
           rightActionCb={() => confirmItemToUnshare()}
           onDismiss={closeUnshareItemDialog}
           showDialog={showUnshareItemDialog}
-          title="Revoke Access"
+          title="Revoke Access to All Selected"
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
         <AccountCard
@@ -102,7 +102,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
             <ActionButtons
               onPrimaryClicked={openUnshareDialog}
               onSecondaryClicked={cancelItemsToUnshare}
-              primaryLabel="Revoke Access"
+              primaryLabel="Revoke Access to All Selected"
               primaryButtonStyles={styles.deleteActionButton}
             />
           </PageActions>
@@ -180,7 +180,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
   }
 
   async function unshareItems() {
-    await dispatch(removeShareItemAll(selectedItems));
+    await dispatch(removeAllShareItems(selectedItems));
     await dispatch(findItemsSharedByMe());
     await dispatch(findItemsSharedWithMe());
     setSelectedItems([]);

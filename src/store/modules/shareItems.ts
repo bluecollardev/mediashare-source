@@ -8,11 +8,11 @@ import { ApiService } from 'mediashare/store/apis';
 const shareItemActionNames = [
   'get_share_item',
   'remove_share_item',
-  'remove_share_item_all',
+  'remove_all_share_items',
   'find_items_shared_by_user',
   'find_items_shared_with_user',
   'read_share_item',
-  'remove_share_item_all_by_user_id',
+  'remove_all_share_items_by_user_id',
 ] as const;
 
 export const shareItemsActions = makeActions(shareItemActionNames);
@@ -32,12 +32,12 @@ export const removeShareItem = createAsyncThunk(shareItemsActions.removeShareIte
   return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
 });
 
-export const removeShareItemAll = createAsyncThunk(shareItemsActions.removeShareItemAll.type, async (shareIds: string[], { extra }) => {
+export const removeAllShareItems = createAsyncThunk(shareItemsActions.removeAllShareItems.type, async (shareIds: string[], { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerRemoveShareItemAll({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
+  return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
 });
 
-export const removeShareItemAllByUserId = createAsyncThunk(shareItemsActions.removeShareItemAllByUserId.type, async (shareUserIds: string[], { extra }) => {
+export const removeAllShareItemsByUserId = createAsyncThunk(shareItemsActions.removeAllShareItemsByUserId.type, async (shareUserIds: string[], { extra }) => {
   const { api } = extra as { api: ApiService };
   return await api.shareItems.shareItemControllerRemoveShareItemAllByUserId({ shareItemsByUserIdDto: { shareItemByUserIds: shareUserIds } }).toPromise();
 });
