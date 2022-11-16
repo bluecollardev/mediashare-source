@@ -231,7 +231,7 @@ export const Account = ({ globalState }: PageProps) => {
 
   async function deleteConnections() {
     console.log(selectedConnections);
-    await dispatch(removeUserConnections([]));
+    await dispatch(removeUserConnections({ userId, connectionIds: selectedConnections }));
     setSelectedConnections([]);
     await dispatch(loadUserConnections());
   }

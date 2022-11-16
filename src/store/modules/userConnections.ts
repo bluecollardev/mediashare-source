@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { UserDto } from 'mediashare/rxjs-api';
+import { UserConnectionDto, UserDto } from 'mediashare/rxjs-api'
 import { makeActions } from 'mediashare/store/factory';
 import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
@@ -28,9 +28,10 @@ export const removeUserConnection = createAsyncThunk(userConnectionsActions.remo
   return await api.user.userControllerRemoveUserConnection({ userConnectionDto: { userId, connectionId } }).toPromise();
 });
 
-export const removeUserConnections = createAsyncThunk(userConnectionsActions.removeUserConnections.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, { extra }) => {
+export const removeUserConnections = createAsyncThunk(userConnectionsActions.removeUserConnections.type, async ({ userId, connectionIds }: { userId: string; connectionIds: string[] }, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.user.userControllerRemoveUserConnections({ userConnectionDto: [{ userId, connectionId }] }).toPromise();
+  const userConnections = connectionIds.map((connectionId) => ({ userId, connectionId }));
+  return await api.user.userControllerRemoveUserConnections({ userConnectionDto: userConnections }).toPromise();
 });
 
 export interface UserConnectionsState {
