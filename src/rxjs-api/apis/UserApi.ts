@@ -31,6 +31,10 @@ export interface UserControllerRemoveUserConnectionRequest {
   userConnectionDto: UserConnectionDto;
 }
 
+export interface UserControllerRemoveUserConnectionsRequest {
+  userConnectionDto: Array<UserConnectionDto>;
+}
+
 export interface UserControllerSendEmailRequest {
   userId: any;
   email: any;
@@ -88,7 +92,7 @@ export class UserApi extends BaseAPI {
 
     return this.request<void>(
       {
-        url: '/api/user/connections',
+        url: '/api/user/connections/create',
         method: 'POST',
         headers,
         body: userConnectionDto,
@@ -218,8 +222,39 @@ export class UserApi extends BaseAPI {
 
     return this.request<void>(
       {
-        url: '/api/user/connections',
-        method: 'DELETE',
+        url: '/api/user/connection/remove',
+        method: 'POST',
+        headers,
+        body: userConnectionDto,
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
+  userControllerRemoveUserConnections({ userConnectionDto }: UserControllerRemoveUserConnectionsRequest): Observable<void>;
+  userControllerRemoveUserConnections(
+    { userConnectionDto }: UserControllerRemoveUserConnectionsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>>;
+  userControllerRemoveUserConnections(
+    { userConnectionDto }: UserControllerRemoveUserConnectionsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(userConnectionDto, 'userConnectionDto', 'userControllerRemoveUserConnections');
+
+    const headers: HttpHeaders = {
+      'Content-Type': 'application/json',
+      ...(this.configuration.username != null && this.configuration.password != null
+        ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }
+        : undefined),
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/user/connections/remove',
+        method: 'POST',
         headers,
         body: userConnectionDto,
       },

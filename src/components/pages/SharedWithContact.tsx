@@ -58,8 +58,10 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
     <ErrorBoundary>
       <PageContainer>
         <AppDialog
+          key={showUnshareDialog as unknown as string}
           leftActionLabel="Cancel"
-          rightActionLabel="Revoke Access to All Selected"
+          rightActionLabel="Confirm"
+          buttonColor={theme.colors.error}
           leftActionCb={() => closeUnshareDialog()}
           rightActionCb={() => confirmItemsToUnshare()}
           onDismiss={closeUnshareDialog}
@@ -68,8 +70,10 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
         <AppDialog
+          key={showUnshareItemDialog as unknown as string}
           leftActionLabel="Cancel"
-          rightActionLabel="Revoke Access to All Selected"
+          rightActionLabel="Confirm"
+          buttonColor={theme.colors.error}
           leftActionCb={() => closeUnshareItemDialog()}
           rightActionCb={() => confirmItemToUnshare()}
           onDismiss={closeUnshareItemDialog}
