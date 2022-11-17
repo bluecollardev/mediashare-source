@@ -6,18 +6,19 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import { createMaterialBottomTabNavigator as createBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialBottomTabNavigator as createBottomTabNavigator } from 'mediashare/lib/material-bottom-tabs';
 import { Provider as PaperProvider, Text, Card } from 'react-native-paper';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Linking } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Amplify, { Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { store, useAppSelector } from './store';
-import { routeConfig } from './routes';
+import { routeConfig, routeNames } from './routes'
+import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user'
 import { useUser } from 'mediashare/hooks/useUser';
 import { theme } from './styles';
 import { useFonts } from 'expo-font';
-
+import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { createBottomTabListeners } from './screenListeners';
 import { GlobalStateProps, withGlobalStateProvider } from './core/globalState';
 
@@ -48,7 +49,6 @@ import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
 import Invitation from 'mediashare/components/pages/Invitation'
 import { Auth } from 'aws-amplify';
-import { loginAction } from './store/modules/user';
 
 // Map route names to icons
 export const tabNavigationIconsMap = {
@@ -147,8 +147,11 @@ interface PrivateMainNavigationProps {
   globalState: GlobalStateProps;
 }
 const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
-  const { build } = globalState;
+  const { build, isAcceptingInvitationFrom, openInvitation = () => {} } = globalState;
   const navigationTabListeners = createBottomTabListeners(globalState);
+  if (isAcceptingInvitationFrom) {
+    openInvitation();
+  }
   return (
     <PrivateNavigator.Navigator
       initialRouteName="Playlists"
@@ -211,6 +214,7 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
       </View>
     );
   }
+  
   return (
     <RootNavigator.Navigator>
       {isCurrentUser ? (
@@ -226,6 +230,8 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
     </RootNavigator.Navigator>
   );
 };
+
+const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 
 Amplify.configure({
   ...awsmobile,
@@ -243,21 +249,9 @@ function App() {
     'CircularStd-Book': require('./assets/fonts/CircularStd-Book.otf'),
     'CircularStd-Light': require('./assets/fonts/CircularStd-Light.otf'),
   });
-  
-  const linking = {
-    prefixes: ['mediashare://'],
-    config: {
-      screens: {
-        Account: {
-          screens: {
-            invitation: 'accept-invitation/:userId',
-          },
-        },
-      },
-    },
-  };
 
   const loading = useAppSelector((state) => state?.app?.loading);
+  
   const { isLoggedIn } = useUser();
   const [isCurrentUser, setIsCurrentUser] = useState(undefined);
   const dispatch = useDispatch();
@@ -267,15 +261,28 @@ function App() {
     await dispatch(loginAction({ accessToken: authUser.signInUserSession.accessToken.jwtToken, idToken: authUser.signInUserSession.idToken.jwtToken }));
     setIsCurrentUser(authUser);
   };
-
+  
   useEffect(() => {
     let mount = true;
-    fetchData().catch((error) => {
+  
+    if (!isLoggedIn) {
+      Linking.addEventListener('url', ({ url }) => {
+        console.log(`incoming link from: ${url}`);
+        const connectionId = url.split('/').pop();
+        dispatch(setIsAcceptingInvitationAction(connectionId));
+      });
+    } else {
+      // Clean up listeners
+      Linking.removeAllListeners('url');
+    }
+    
+    fetchData().catch(() => {
       if (mount) {
         setIsCurrentUser(null);
       }
     });
     return () => {
+      Linking.removeAllListeners('url');
       setIsCurrentUser(null);
       mount = false;
     };
@@ -308,8 +315,8 @@ function App() {
             icon: (props) => <MaterialIcons {...props} />,
           }}
         >
-          <NavigationContainer linking={linking as any} >
-            <RootNavigation isCurrentUser={isCurrentUser} isLoggedIn={isLoggedIn} />
+          <NavigationContainer>
+            <RootNavigationWithGlobalState isCurrentUser={isCurrentUser} isLoggedIn={isLoggedIn} />
           </NavigationContainer>
         </PaperProvider>
       </Provider>

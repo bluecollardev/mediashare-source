@@ -1,11 +1,11 @@
+import { usePageRoute } from 'mediashare/hooks/navigation'
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { compose } from 'recompose';
 import { useAppSelector } from 'mediashare/store';
 import { useUser } from 'mediashare/hooks/useUser';
-import { loadUser } from 'mediashare/store/modules/user';
+import { loadUser, setIsAcceptingInvitationAction } from 'mediashare/store/modules/user'
 import { getTags } from 'mediashare/store/modules/tags';
-import { findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { BcRolesType, ProfileDto, Tag } from 'mediashare/rxjs-api';
 
 export interface GlobalStateProps {
@@ -20,6 +20,8 @@ export interface GlobalStateProps {
     forSubscriber: boolean;
     forAdmin: boolean;
   };
+  openInvitation?: () => void;
+  isAcceptingInvitationFrom?: string;
   loadUserData?: () => void;
   search?: any;
   searchIsActive?: boolean;
@@ -49,13 +51,15 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
 
     const loading = useAppSelector((state) => state?.app?.loading);
     const tags = useAppSelector((state) => state?.tags?.entities || []);
-
+    
     const [searchIsActive, setSearchIsActive] = useState(false);
     const [searchFilters, setSearchFilters] = useState(INITIAL_SEARCH_FILTERS);
     const [displayMode, setDisplayMode] = useState(INITIAL_DISPLAY_MODE);
 
     const user = useUser();
     const { roles, isLoggedIn, build } = user;
+    
+    const isAcceptingInvitationFrom = useAppSelector((state) => state?.user?.isAcceptingInvitationFrom);
 
     const dispatch = useDispatch();
 
@@ -67,7 +71,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
       if (isLoggedIn) {
         loadTags().then();
       }
-    }, [isLoggedIn]);
+    }, [isLoggedIn, isAcceptingInvitationFrom]);
 
     const providerValue = getProviderValue() as GlobalStateProps;
 
@@ -86,21 +90,29 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         user,
         roles,
         build,
+        isAcceptingInvitationFrom,
+        openInvitation,
         loadUserData,
         openSearchConsole,
         closeSearchConsole,
         searchIsActive,
         setSearchIsActive,
+        searchIsFiltering,
         setSearchFilters,
         search: {
           filters: { ...searchFilters },
         },
-        searchIsFiltering,
         tags,
         displayMode,
         setDisplayMode,
       } as GlobalStateProps;
       return value;
+    }
+    
+    async function openInvitation() {
+      const goToInvitation = usePageRoute('Account', 'invitation');
+      await dispatch(setIsAcceptingInvitationAction(undefined));
+      goToInvitation({ userId: isAcceptingInvitationFrom });
     }
 
     async function loadUserData() {

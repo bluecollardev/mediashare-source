@@ -8,9 +8,14 @@ import { AuthorizeDto, ProfileDto, UpdateUserDto, BcRolesType } from 'mediashare
 import { pick, clone } from 'remeda';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const userActionNames = ['login', 'logout', 'load_user', 'update_account'] as const;
+const userActionNames = ['login', 'logout', 'load_user', 'update_account', 'set_is_accepting_invitation'] as const;
 
 export const userActions = makeActions(userActionNames);
+
+export const setIsAcceptingInvitationAction = createAsyncThunk(userActions.setIsAcceptingInvitation.type, async (connectionId: string) => {
+  console.log(`setIsAcceptingInvitationAction for user: ${connectionId}`);
+  return connectionId;
+});
 
 export const loginAction = createAsyncThunk(userActions.login.type, async (authorizeDto: AuthorizeDto, { extra }) => {
   const { api } = extra as { api: ApiService };
@@ -59,12 +64,14 @@ export const defaultUserProfile: Pick<
 };
 
 interface UserState {
+  isAcceptingInvitationFrom?: string;
   entity: Partial<typeof defaultUserProfile> | undefined;
   loading: boolean;
   loaded: boolean;
 }
 
 export const userInitialState: UserState = {
+  isAcceptingInvitationFrom: undefined,
   entity: clone(defaultUserProfile),
   loading: false,
   loaded: false,
@@ -93,6 +100,18 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(setIsAcceptingInvitationAction.pending, reducePendingState())
+      .addCase(setIsAcceptingInvitationAction.rejected, reduceRejectedState())
+      .addCase(setIsAcceptingInvitationAction.fulfilled, (state, action) => {
+        const newState = {
+          ...state,
+          isAcceptingInvitationFrom: action.payload,
+          loading: false,
+          loaded: true,
+        };
+        console.log(newState);
+        return newState;
+      })
       .addCase(loginAction.pending, reducePendingState())
       .addCase(loginAction.rejected, reduceRejectedState())
       .addCase(loginAction.fulfilled, (state, action) => ({
