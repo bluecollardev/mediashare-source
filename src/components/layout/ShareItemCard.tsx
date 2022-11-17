@@ -40,7 +40,7 @@ export function ShareItemCard({ date, title, onDelete, onView, onChecked, image,
         onViewDetail={onDelete}
         onChecked={onChecked}
         iconLeft="remove-circle"
-        iconLeftColor={theme.colors.error}
+        iconLeftColor={theme.colors.textDarker}
       />
       <Divider />
     </View>
