@@ -102,20 +102,18 @@ export const Browse = ({
   }, []);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <Card>
-          <Card.Content>
-            {globalState?.displayMode === 'list' ? <SharedList globalState={globalState} /> : null}
-            {globalState?.displayMode === 'article' ? (
-              <ScrollView>
-                <SharedBlock globalState={globalState} />
-              </ScrollView>
-            ) : null}
-          </Card.Content>
-        </Card>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <Card>
+        <Card.Content>
+          {globalState?.displayMode === 'list' ? <SharedList globalState={globalState} /> : null}
+          {globalState?.displayMode === 'article' ? (
+            <ScrollView>
+              <SharedBlock globalState={globalState} />
+            </ScrollView>
+          ) : null}
+        </Card.Content>
+      </Card>
+    </PageContainer>
   );
 
   async function loadData() {

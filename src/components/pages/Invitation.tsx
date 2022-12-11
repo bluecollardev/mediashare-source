@@ -36,29 +36,27 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   // const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
   
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <AccountCard
-          title={fullName}
-          text={`@${username} has invited you to join their network on Mediashare.`}
-          image={imageSrc}
-          email={null}
-          phoneNumber={null}
-          showSocial={false}
-          showActions={false}
-          isCurrentUser={false}
-        />
-        <ActionButtons
-          containerStyles={{ marginTop: 15 }}
-          onSecondaryClicked={() => goBack()}
-          onPrimaryClicked={() => accept()}
-          primaryLabel="Accept"
-          primaryIcon="check"
-          secondaryLabel="Decline"
-          secondaryButtonStyles={{ backgroundColor: theme.colors.errorDark, width: 200, marginRight: 10 }}
-        />
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <AccountCard
+        title={fullName}
+        text={`@${username} has invited you to join their network on Mediashare.`}
+        image={imageSrc}
+        email={null}
+        phoneNumber={null}
+        showSocial={false}
+        showActions={false}
+        isCurrentUser={false}
+      />
+      <ActionButtons
+        containerStyles={{ marginTop: 15 }}
+        onSecondaryClicked={() => goBack()}
+        onPrimaryClicked={() => accept()}
+        primaryLabel="Accept"
+        primaryIcon="check"
+        secondaryLabel="Decline"
+        secondaryButtonStyles={{ backgroundColor: theme.colors.errorDark, width: 200, marginRight: 10 }}
+      />
+    </PageContainer>
   );
   
   async function accept() {

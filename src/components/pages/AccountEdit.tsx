@@ -49,51 +49,49 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent>
-          <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.formContainer}>
-            <View>
-              <AccountCard
-                title={fullName}
-                username={state?.username}
-                email={state?.email}
-                phoneNumber={state?.phoneNumber}
-                image={state?.imageSrc}
-                likes={state?.likesCount}
-                shared={state?.sharedCount}
-                shares={state?.sharesCount}
-                showSocial={true}
-                showActions={true}
-                isCurrentUser={true}
-                onProfileImageClicked={() => getDocument()}
-              />
-            </View>
-        
-            <View style={styles.formSection}>
-              <TextField label="Account Type" value={state?.role} disabled={true} />
-              <TextField onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username} disabled={!isLoaded} />
-            </View>
-            <View style={styles.formSection}>
-              <TextField onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
-              <TextField onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
-            </View>
-            <View style={styles.formSection}>
-              <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email} disabled={!isLoaded} />
-              <TextField onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
-            </View>
-        
-            <ActionButtons
-              disablePrimary={withoutName()}
-              disableSecondary={withoutName()}
-              onSecondaryClicked={cancel}
-              onPrimaryClicked={save}
-              primaryLabel="Save"
+    <PageContainer>
+      <KeyboardAvoidingPageContent>
+        <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.formContainer}>
+          <View>
+            <AccountCard
+              title={fullName}
+              username={state?.username}
+              email={state?.email}
+              phoneNumber={state?.phoneNumber}
+              image={state?.imageSrc}
+              likes={state?.likesCount}
+              shared={state?.sharedCount}
+              shares={state?.sharesCount}
+              showSocial={true}
+              showActions={true}
+              isCurrentUser={true}
+              onProfileImageClicked={() => getDocument()}
             />
-          </ScrollView>
-        </KeyboardAvoidingPageContent>
-      </PageContainer>
-    </ErrorBoundary>
+          </View>
+      
+          <View style={styles.formSection}>
+            <TextField label="Account Type" value={state?.role} disabled={true} />
+            <TextField onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username} disabled={!isLoaded} />
+          </View>
+          <View style={styles.formSection}>
+            <TextField onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
+            <TextField onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
+          </View>
+          <View style={styles.formSection}>
+            <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email} disabled={!isLoaded} />
+            <TextField onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
+          </View>
+      
+          <ActionButtons
+            disablePrimary={withoutName()}
+            disableSecondary={withoutName()}
+            onSecondaryClicked={cancel}
+            onPrimaryClicked={save}
+            primaryLabel="Save"
+          />
+        </ScrollView>
+      </KeyboardAvoidingPageContent>
+    </PageContainer>
   );
 
   // eslint-disable-next-line no-shadow

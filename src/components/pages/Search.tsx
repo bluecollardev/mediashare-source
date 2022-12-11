@@ -89,44 +89,42 @@ export const Search = ({ globalState }: PageProps) => {
   console.log(searchResults);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <SearchComponent
-            globalState={globalState}
-            loaded={loaded}
-            loadData={loadData}
-            searchTarget="playlists"
-            forcedSearchMode={true}
-            key={clearSelectionKey}
-            list={searchResults}
-            onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
-            selectable={isSelectable}
-            showActions={!isSelectable}
-            onChecked={updateSelection}
-          />
-          {searchResults.length === 0 ? <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" /> : null}
-        </KeyboardAvoidingPageContent>
-        {isSelectable && actionMode === actionModes.share ? (
-          <PageActions>
-            <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
-          </PageActions>
-        ) : null}
-        {!isSelectable && searchResults.length > 0 ? (
-          <FAB.Group
-            visible={true}
-            open={fabState.open}
-            icon={fabState.open ? 'close' : 'more-vert'}
-            actions={fabActions}
-            color={theme.colors.text}
-            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-            onStateChange={(open) => {
-              setFabState(open);
-            }}
-          />
-        ) : null}
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <SearchComponent
+          globalState={globalState}
+          loaded={loaded}
+          loadData={loadData}
+          searchTarget="playlists"
+          forcedSearchMode={true}
+          key={clearSelectionKey}
+          list={searchResults}
+          onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
+          selectable={isSelectable}
+          showActions={!isSelectable}
+          onChecked={updateSelection}
+        />
+        {searchResults.length === 0 ? <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" /> : null}
+      </KeyboardAvoidingPageContent>
+      {isSelectable && actionMode === actionModes.share ? (
+        <PageActions>
+          <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
+        </PageActions>
+      ) : null}
+      {!isSelectable && searchResults.length > 0 ? (
+        <FAB.Group
+          visible={true}
+          open={fabState.open}
+          icon={fabState.open ? 'close' : 'more-vert'}
+          actions={fabActions}
+          color={theme.colors.text}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          onStateChange={(open) => {
+            setFabState(open);
+          }}
+        />
+      ) : null}
+    </PageContainer>
   );
 
   async function loadData() {

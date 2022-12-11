@@ -53,52 +53,50 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const goToMediaItems = useMediaItems();
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent>
-          <ScrollView>
-            <MediaCard
-              title={title}
-              description={description}
-              mediaSrc={mediaUri}
-              showThumbnail={!!mediaUri}
-              thumbnail={thumbnail}
-              category={category}
-              categoryOptions={options}
-              onCategoryChange={(e: any) => {
-                setCategory(e);
-              }}
-              availableTags={availableTags}
-              tags={selectedTagKeys}
-              tagOptions={options}
-              onTagChange={(e: any) => {
-                setSelectedTagKeys(e);
-              }}
-              onTitleChange={setTitle}
-              onDescriptionChange={setDescription}
-              isEdit={true}
-              isPlayable={true}
-              topDrawer={() =>
-                !mediaUri ? (
-                  <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
-                    <UploadPlaceholder uploading={uploading} uploaded={!!mediaUri} buttonText="Upload Media" />
-                  </AppUpload>
-                ) : (
-                  <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
-                    <Button icon="cloud-upload" mode="outlined" dark color={theme.colors.default} compact>
-                      Replace Media
-                    </Button>
-                  </AppUpload>
-                )
-              }
-            />
-          </ScrollView>
-        </KeyboardAvoidingPageContent>
-        <PageActions>
-          <ActionButtons onPrimaryClicked={saveItem} loading={isSaved} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
-        </PageActions>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <KeyboardAvoidingPageContent>
+        <ScrollView>
+          <MediaCard
+            title={title}
+            description={description}
+            mediaSrc={mediaUri}
+            showThumbnail={!!mediaUri}
+            thumbnail={thumbnail}
+            category={category}
+            categoryOptions={options}
+            onCategoryChange={(e: any) => {
+              setCategory(e);
+            }}
+            availableTags={availableTags}
+            tags={selectedTagKeys}
+            tagOptions={options}
+            onTagChange={(e: any) => {
+              setSelectedTagKeys(e);
+            }}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+            isEdit={true}
+            isPlayable={true}
+            topDrawer={() =>
+              !mediaUri ? (
+                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                  <UploadPlaceholder uploading={uploading} uploaded={!!mediaUri} buttonText="Upload Media" />
+                </AppUpload>
+              ) : (
+                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                  <Button icon="cloud-upload" mode="outlined" dark color={theme.colors.default} compact>
+                    Replace Media
+                  </Button>
+                </AppUpload>
+              )
+            }
+          />
+        </ScrollView>
+      </KeyboardAvoidingPageContent>
+      <PageActions>
+        <ActionButtons onPrimaryClicked={saveItem} loading={isSaved} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" disablePrimary={!isValid()} />
+      </PageActions>
+    </PageContainer>
   );
 
   async function onUploadStart() {

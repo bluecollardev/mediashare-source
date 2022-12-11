@@ -110,122 +110,120 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   }
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <PageContent>
-          <AppDialog
-            leftActionLabel="Cancel"
-            rightActionLabel="Delete"
-            leftActionCb={() => setShowDeleteDialog(false)}
-            rightActionCb={() => deletePlaylist()}
-            onDismiss={() => setShowDeleteDialog(false)}
-            showDialog={showDeleteDialog}
-            title="Delete Playlist"
-            subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-            color={theme.colors.white}
-            buttonColor={theme.colors.error}
-          />
-          <ScrollView>
-            <MediaCard
-              key={_id}
-              title={title}
-              authorProfile={authorProfile}
-              description={description}
-              showThumbnail={true}
-              thumbnail={imageSrc}
-              thumbnailStyle={{
-                // TODO: Can we do this automatically from video metadata?
-                aspectRatio: 1 / 1,
-              }}
-              category={category}
-              availableTags={mappedTags}
-              tags={tagKeys}
-              showSocial={true}
-              showActions={false}
-              likes={likesCount}
-              shares={shareCount}
-              views={viewCount}
+    <PageContainer>
+      <PageContent>
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => setShowDeleteDialog(false)}
+          rightActionCb={() => deletePlaylist()}
+          onDismiss={() => setShowDeleteDialog(false)}
+          showDialog={showDeleteDialog}
+          title="Delete Playlist"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <ScrollView>
+          <MediaCard
+            key={_id}
+            title={title}
+            authorProfile={authorProfile}
+            description={description}
+            showThumbnail={true}
+            thumbnail={imageSrc}
+            thumbnailStyle={{
+              // TODO: Can we do this automatically from video metadata?
+              aspectRatio: 1 / 1,
+            }}
+            category={category}
+            availableTags={mappedTags}
+            tags={tagKeys}
+            showSocial={true}
+            showActions={false}
+            likes={likesCount}
+            shares={shareCount}
+            views={viewCount}
+          >
+            {/* TODO: Make this work and add it back in! */}
+            {/* <Button
+              icon="live-tv"
+              color={theme.colors.default}
+              mode="outlined"
+              styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
+              compact
+              dark
+              onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
             >
-              {/* TODO: Make this work and add it back in! */}
-              {/* <Button
-                icon="live-tv"
-                color={theme.colors.default}
-                mode="outlined"
-                styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
-                compact
-                dark
-                onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
-              >
-                Play From Beginning
-              </Button>
-              <Divider /> */}
-              {!allowEdit && playlistMediaItems.length > 0 ? (
-                <ActionButtons
-                  containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
-                  showSecondary={false}
-                  showPrimary={true}
-                  onPrimaryClicked={async () => {
-                    playFromBeginning({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
-                  }}
-                  primaryLabel="Play from Beginning"
-                  primaryIcon="live-tv"
-                />
-              ) : null}
-              {!build.forFreeUser && allowEdit ? (
-                <ActionButtons
-                  containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
-                  showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
-                  secondaryIcon="remove"
-                  onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
-                  secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
-                  disablePrimary={actionMode === actionModes.delete}
-                  primaryLabel="Add Items To Playlist"
-                  primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
-                  onPrimaryClicked={() => addToPlaylist({ playlistId })}
-                />
-              ) : null}
-              <MediaList
-                key={clearSelectionKey}
-                list={playlistMediaItems}
-                showThumbnail={true}
-                selectable={isSelectable}
-                showActions={!isSelectable}
-                onViewDetail={activatePlaylistDetail}
-                addItem={onAddItem}
-                removeItem={onRemoveItem}
-                actionIconRight={allowEdit ? 'edit' : undefined}
-              />
-            </MediaCard>
-          </ScrollView>
-          <PageActions>
-            {isSelectable ? (
+              Play From Beginning
+            </Button>
+            <Divider /> */}
+            {!allowEdit && playlistMediaItems.length > 0 ? (
               <ActionButtons
-                onPrimaryClicked={confirmDeletePlaylistItems}
-                onSecondaryClicked={cancelDeletePlaylistItems}
-                primaryLabel="Remove"
-                primaryIconColor={theme.colors.error}
-                primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+                containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
+                showSecondary={false}
+                showPrimary={true}
+                onPrimaryClicked={async () => {
+                  playFromBeginning({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
+                }}
+                primaryLabel="Play from Beginning"
+                primaryIcon="live-tv"
               />
             ) : null}
-          </PageActions>
-        </PageContent>
-        {!build.forFreeUser && !isSelectable ? (
-          <FAB.Group
-            visible={true}
-            open={fabState.open}
-            icon={fabState.open ? 'close' : 'more-vert'}
-            actions={fabActions}
-            color={theme.colors.text}
-            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-            onStateChange={(open) => {
-              // open && setOpen(!open);
-              setFabState(open);
-            }}
-            onPress={() => undefined}
-          />
-        ) : null}
-      </PageContainer>
-    </ErrorBoundary>
+            {!build.forFreeUser && allowEdit ? (
+              <ActionButtons
+                containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
+                showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
+                secondaryIcon="remove"
+                onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
+                secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
+                disablePrimary={actionMode === actionModes.delete}
+                primaryLabel="Add Items To Playlist"
+                primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
+                onPrimaryClicked={() => addToPlaylist({ playlistId })}
+              />
+            ) : null}
+            <MediaList
+              key={clearSelectionKey}
+              list={playlistMediaItems}
+              showThumbnail={true}
+              selectable={isSelectable}
+              showActions={!isSelectable}
+              onViewDetail={activatePlaylistDetail}
+              addItem={onAddItem}
+              removeItem={onRemoveItem}
+              actionIconRight={allowEdit ? 'edit' : undefined}
+            />
+          </MediaCard>
+        </ScrollView>
+        <PageActions>
+          {isSelectable ? (
+            <ActionButtons
+              onPrimaryClicked={confirmDeletePlaylistItems}
+              onSecondaryClicked={cancelDeletePlaylistItems}
+              primaryLabel="Remove"
+              primaryIconColor={theme.colors.error}
+              primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+            />
+          ) : null}
+        </PageActions>
+      </PageContent>
+      {!build.forFreeUser && !isSelectable ? (
+        <FAB.Group
+          visible={true}
+          open={fabState.open}
+          icon={fabState.open ? 'close' : 'more-vert'}
+          actions={fabActions}
+          color={theme.colors.text}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          onStateChange={(open) => {
+            // open && setOpen(!open);
+            setFabState(open);
+          }}
+          onPress={() => undefined}
+        />
+      ) : null}
+    </PageContainer>
   );
 
   async function loadData() {

@@ -31,22 +31,20 @@ export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
   }, [loaded, globalState, searchFilters]);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <PageContent>
-          {loaded && entities.length > 0 ? <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} /> : null}
-          {loaded && entities.length === 0 ? (
-            <NoContent
-              messageButtonText="There are no items in your S3 bucket to import. Please choose another bucket or add files to this bucket to continue."
-              icon="cloud-download"
-            />
-          ) : null}
-        </PageContent>
-        <PageActions>
-          <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Add Media" onSecondaryClicked={goToMediaItems} />
-        </PageActions>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <PageContent>
+        {loaded && entities.length > 0 ? <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} /> : null}
+        {loaded && entities.length === 0 ? (
+          <NoContent
+            messageButtonText="There are no items in your S3 bucket to import. Please choose another bucket or add files to this bucket to continue."
+            icon="cloud-download"
+          />
+        ) : null}
+      </PageContent>
+      <PageActions>
+        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Add Media" onSecondaryClicked={goToMediaItems} />
+      </PageActions>
+    </PageContainer>
   );
 
   function renderVirtualizedListItem(item) {

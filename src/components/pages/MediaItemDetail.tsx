@@ -30,36 +30,34 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
   const mappedTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <PageContent>
-          <ScrollView>
-            <MediaCard
-              key={_id}
-              title={title}
-              authorProfile={authorProfile}
-              description={description}
-              mediaSrc={uri}
-              showThumbnail={true}
-              thumbnail={thumbnail}
-              thumbnailStyle={{
-                // TODO: Can we do this automatically from video metadata?
-                aspectRatio: 1 / 1,
-              }}
-              category={category}
-              availableTags={mappedTags}
-              tags={tagKeys}
-              showSocial={true}
-              showActions={false}
-              isPlayable={true}
-              likes={likesCount}
-              shares={shareCount}
-              views={viewCount}
-            />
-          </ScrollView>
-        </PageContent>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <PageContent>
+        <ScrollView>
+          <MediaCard
+            key={_id}
+            title={title}
+            authorProfile={authorProfile}
+            description={description}
+            mediaSrc={uri}
+            showThumbnail={true}
+            thumbnail={thumbnail}
+            thumbnailStyle={{
+              // TODO: Can we do this automatically from video metadata?
+              aspectRatio: 1 / 1,
+            }}
+            category={category}
+            availableTags={mappedTags}
+            tags={tagKeys}
+            showSocial={true}
+            showActions={false}
+            isPlayable={true}
+            likes={likesCount}
+            shares={shareCount}
+            views={viewCount}
+          />
+        </ScrollView>
+      </PageContent>
+    </PageContainer>
   );
 };
 

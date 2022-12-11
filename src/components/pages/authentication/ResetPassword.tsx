@@ -75,84 +75,82 @@ const ResetPasswordComponent = ({}: PageProps) => {
   };
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent>
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
-              height: '100%',
-              justifyContent: 'center',
-            }}
-          >
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Text variant="displayLarge" style={{ fontSize: 20, paddingBottom: 10 }}>
-                Reset your password{' '}
-              </Text>
-              <Controller
-                control={control}
-                name="username"
-                rules={{
-                  required: 'required',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                    <HelperText type="error">{errors.username?.message}</HelperText>
-                  </>
-                )}
-              />
-          
-              {showCode ? (
+    <PageContainer>
+      <KeyboardAvoidingPageContent>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Text variant="displayLarge" style={{ fontSize: 20, paddingBottom: 10 }}>
+              Reset your password{' '}
+            </Text>
+            <Controller
+              control={control}
+              name="username"
+              rules={{
+                required: 'required',
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <Controller
-                    control={control}
-                    name="code"
-                    rules={{
-                      required: 'required',
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <>
-                        <TextInput autoComplete={false} autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                        <HelperText type="error">{errors.code?.message}</HelperText>
-                      </>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="newPassword"
-                    rules={{
-                      required: 'required',
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                      <>
-                        <TextInput autoComplete={false} autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                        <HelperText type="error">{errors.newPassword?.message}</HelperText>
-                      </>
-                    )}
-                  />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
-              ) : null}
-              <Button
-                style={{
-                  borderRadius: 10,
-                  padding: 5,
-                }}
-                mode="contained"
-                onPress={handleSubmit(onSubmit)}
-              >
-                {showCode ? 'Confirm' : 'Send code'}
-              </Button>
-          
-              <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
-                Back to sign in
-              </Button>
-            </View>
-            {element}
-          </ScrollView>
-        </KeyboardAvoidingPageContent>
-      </PageContainer>
-    </ErrorBoundary>
+              )}
+            />
+        
+            {showCode ? (
+              <>
+                <Controller
+                  control={control}
+                  name="code"
+                  rules={{
+                    required: 'required',
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      <TextInput autoComplete={false} autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <HelperText type="error">{errors.code?.message}</HelperText>
+                    </>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="newPassword"
+                  rules={{
+                    required: 'required',
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <>
+                      <TextInput autoComplete={false} autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <HelperText type="error">{errors.newPassword?.message}</HelperText>
+                    </>
+                  )}
+                />
+              </>
+            ) : null}
+            <Button
+              style={{
+                borderRadius: 10,
+                padding: 5,
+              }}
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+            >
+              {showCode ? 'Confirm' : 'Send code'}
+            </Button>
+        
+            <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
+              Back to sign in
+            </Button>
+          </View>
+          {element}
+        </ScrollView>
+      </KeyboardAvoidingPageContent>
+    </PageContainer>
   );
 };
 

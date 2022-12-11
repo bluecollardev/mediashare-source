@@ -101,72 +101,70 @@ export const Playlists = ({ globalState }: PageProps) => {
       : [{ icon: 'add-circle', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }];
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <AppDialog
-            leftActionLabel="Cancel"
-            rightActionLabel="Delete"
-            leftActionCb={() => closeDeleteDialog()}
-            rightActionCb={() => confirmPlaylistsToDelete()}
-            onDismiss={closeDeleteDialog}
-            showDialog={showDeleteDialog}
-            title="Delete Playlists"
-            subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-            color={theme.colors.white}
-            buttonColor={theme.colors.error}
-          />
-          <PlaylistsComponentWithSearch
-            globalState={globalState}
-            loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
-            loadData={loadData}
-            searchTarget="playlists"
-            key={clearSelectionKey}
-            list={entities}
-            onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
-            selectable={isSelectable}
-            showActions={!isSelectable}
-            onChecked={updateSelection}
-          />
-          {loaded && entities.length === 0 ? (
-            <NoContent
-              onPress={() => createPlaylist()}
-              messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
-              icon="add-circle"
-            />
-          ) : null}
-        </KeyboardAvoidingPageContent>
-        {isSelectable && actionMode === actionModes.share ? (
-          <PageActions>
-            <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
-          </PageActions>
-        ) : null}
-        {isSelectable && actionMode === actionModes.delete ? (
-          <PageActions>
-            <ActionButtons
-              onPrimaryClicked={openDeleteDialog}
-              onSecondaryClicked={cancelPlaylistsToDelete}
-              primaryLabel="Delete"
-              primaryIcon="delete"
-              primaryButtonStyles={styles.deleteActionButton}
-            />
-          </PageActions>
-        ) : null}
-        {!isSelectable ? (
-          <FAB.Group
-            visible={true}
-            open={fabState.open}
-            icon={fabState.open ? 'close' : 'more-vert'}
-            actions={fabActions}
-            color={theme.colors.text}
-            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-            onStateChange={(open) => {
-              setFabState(open);
-            }}
+    <PageContainer>
+      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => closeDeleteDialog()}
+          rightActionCb={() => confirmPlaylistsToDelete()}
+          onDismiss={closeDeleteDialog}
+          showDialog={showDeleteDialog}
+          title="Delete Playlists"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <PlaylistsComponentWithSearch
+          globalState={globalState}
+          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loadData={loadData}
+          searchTarget="playlists"
+          key={clearSelectionKey}
+          list={entities}
+          onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
+          selectable={isSelectable}
+          showActions={!isSelectable}
+          onChecked={updateSelection}
+        />
+        {loaded && entities.length === 0 ? (
+          <NoContent
+            onPress={() => createPlaylist()}
+            messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
+            icon="add-circle"
           />
         ) : null}
-      </PageContainer>
-    </ErrorBoundary>
+      </KeyboardAvoidingPageContent>
+      {isSelectable && actionMode === actionModes.share ? (
+        <PageActions>
+          <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
+        </PageActions>
+      ) : null}
+      {isSelectable && actionMode === actionModes.delete ? (
+        <PageActions>
+          <ActionButtons
+            onPrimaryClicked={openDeleteDialog}
+            onSecondaryClicked={cancelPlaylistsToDelete}
+            primaryLabel="Delete"
+            primaryIcon="delete"
+            primaryButtonStyles={styles.deleteActionButton}
+          />
+        </PageActions>
+      ) : null}
+      {!isSelectable ? (
+        <FAB.Group
+          visible={true}
+          open={fabState.open}
+          icon={fabState.open ? 'close' : 'more-vert'}
+          actions={fabActions}
+          color={theme.colors.text}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          onStateChange={(open) => {
+            setFabState(open);
+          }}
+        />
+      ) : null}
+    </PageContainer>
   );
 
   async function loadData() {

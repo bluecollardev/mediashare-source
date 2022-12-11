@@ -79,85 +79,83 @@ export const Account = ({ globalState }: PageProps) => {
     ];
   }
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
-        <AppDialog
-          key={showDeleteDialog as unknown as string}
-          leftActionLabel="Cancel"
-          rightActionLabel="Delete Connection"
-          buttonColor={theme.colors.error}
-          leftActionCb={() => closeDeleteDialog}
-          rightActionCb={() => confirmConnectionsToDelete()}
-          onDismiss={closeDeleteDialog}
-          showDialog={showDeleteDialog}
-          title="Delete Connection"
-          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+    <PageContainer>
+      <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
+      <AppDialog
+        key={showDeleteDialog as unknown as string}
+        leftActionLabel="Cancel"
+        rightActionLabel="Delete Connection"
+        buttonColor={theme.colors.error}
+        leftActionCb={() => closeDeleteDialog}
+        rightActionCb={() => confirmConnectionsToDelete()}
+        onDismiss={closeDeleteDialog}
+        showDialog={showDeleteDialog}
+        title="Delete Connection"
+        subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+      />
+      <AccountCard
+        title={fullName}
+        username={username}
+        email={email}
+        phoneNumber={phoneNumber}
+        image={user.imageSrc}
+        likes={likesCount}
+        shared={sharedCount}
+        shares={sharesCount}
+        showSocial={false}
+        showActions={false}
+        isCurrentUser={true}
+        onProfileImageClicked={() => getDocument()}
+      />
+      <Divider />
+      <Card elevation={0} style={styles.sectionHeader}>
+        <Card.Title
+          titleStyle={styles.sectionHeaderTitle}
+          title="My Connections"
+          right={(props) => (
+            <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
+          )}
         />
-        <AccountCard
-          title={fullName}
-          username={username}
-          email={email}
-          phoneNumber={phoneNumber}
-          image={user.imageSrc}
-          likes={likesCount}
-          shared={sharedCount}
-          shares={sharesCount}
-          showSocial={false}
-          showActions={false}
-          isCurrentUser={true}
-          onProfileImageClicked={() => getDocument()}
+      </Card>
+      {/* <Highlights highlights={state.highlights} /> */}
+      {!build.forFreeUser ? (
+        <ScrollView style={{ width: layout.width, height: layout.height }}>
+          <ContactList
+            key={clearSelectionKey}
+            contacts={contacts}
+            showGroups={false}
+            showActions={!isSelectable}
+            onViewDetail={viewProfileById}
+            selectable={isSelectable}
+            onChecked={updateSelection}
+          />
+        </ScrollView>
+      ) : null}
+      {isSelectable && actionMode === actionModes.delete ? (
+        <PageActions>
+          <ActionButtons
+            onPrimaryClicked={() => openDeleteDialog()}
+            onSecondaryClicked={() => cancelConnectionsToDelete()}
+            primaryLabel="Delete Connections"
+            primaryButtonStyles={styles.deleteActionButton}
+          />
+        </PageActions>
+      ) : null}
+      {!isSelectable ? (
+        <FAB.Group
+          visible={true}
+          open={fabState.open}
+          icon={fabState.open ? 'close' : 'more-vert'}
+          actions={fabActions}
+          color={theme.colors.text}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          onStateChange={(open) => {
+            // open && setOpen(!open);
+            setFabState(open);
+          }}
         />
-        <Divider />
-        <Card elevation={0} style={styles.sectionHeader}>
-          <Card.Title
-            titleStyle={styles.sectionHeaderTitle}
-            title="My Connections"
-            right={(props) => (
-              <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
-            )}
-          />
-        </Card>
-        {/* <Highlights highlights={state.highlights} /> */}
-        {!build.forFreeUser ? (
-          <ScrollView style={{ width: layout.width, height: layout.height }}>
-            <ContactList
-              key={clearSelectionKey}
-              contacts={contacts}
-              showGroups={false}
-              showActions={!isSelectable}
-              onViewDetail={viewProfileById}
-              selectable={isSelectable}
-              onChecked={updateSelection}
-            />
-          </ScrollView>
-        ) : null}
-        {isSelectable && actionMode === actionModes.delete ? (
-          <PageActions>
-            <ActionButtons
-              onPrimaryClicked={() => openDeleteDialog()}
-              onSecondaryClicked={() => cancelConnectionsToDelete()}
-              primaryLabel="Delete Connections"
-              primaryButtonStyles={styles.deleteActionButton}
-            />
-          </PageActions>
-        ) : null}
-        {!isSelectable ? (
-          <FAB.Group
-            visible={true}
-            open={fabState.open}
-            icon={fabState.open ? 'close' : 'more-vert'}
-            actions={fabActions}
-            color={theme.colors.text}
-            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-            onStateChange={(open) => {
-              // open && setOpen(!open);
-              setFabState(open);
-            }}
-          />
-        ) : null}
-      </PageContainer>
-    </ErrorBoundary>
+      ) : null}
+    </PageContainer>
   );
 
   async function loadData() {

@@ -63,28 +63,26 @@ export const AddToPlaylist = ({ route, globalState }: PageProps) => {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <PageContent>
-          <AddToPlaylistComponentWithSearch
-            globalState={globalState}
-            loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
-            loadData={loadData}
-            searchTarget="media"
-            entities={entities}
-            viewMediaItem={viewMediaItem}
-            addItem={addItem}
-            removeItem={removeItem}
-          />
-          {loaded && entities.length === 0 ? (
-            <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
-          ) : null}
-        </PageContent>
-        <PageActions>
-          <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
-        </PageActions>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <PageContent>
+        <AddToPlaylistComponentWithSearch
+          globalState={globalState}
+          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loadData={loadData}
+          searchTarget="media"
+          entities={entities}
+          viewMediaItem={viewMediaItem}
+          addItem={addItem}
+          removeItem={removeItem}
+        />
+        {loaded && entities.length === 0 ? (
+          <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
+        ) : null}
+      </PageContent>
+      <PageActions>
+        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
+      </PageActions>
+    </PageContainer>
   );
 
   async function loadData() {

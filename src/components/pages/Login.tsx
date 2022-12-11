@@ -63,98 +63,96 @@ const LoginComponent = ({}: PageProps) => {
   };
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent>
-          <ScrollView
-            contentContainerStyle={{
-              flexGrow: 1,
-              height: '100%',
-              justifyContent: 'center',
-            }}
-          >
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Card elevation={0}>
-                <Card.Cover
-                  resizeMode="contain"
-                  source={require('mediashare/assets/logo/mediashare/256.png')}
-                  style={{ backgroundColor: theme.colors.background }}
-                />
-              </Card>
-              <View style={{ paddingVertical: 10 }}>
-                <Text variant="displayLarge" style={{ fontSize: 20 }}>
-                  Sign in to account
-                </Text>
-              </View>
-              <Controller
-                control={control}
-                name="username"
-                rules={{
-                  required: 'required',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => {
-                  return (
-                    <View>
-                      <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
-                      <HelperText type="error">{errors.username?.message}</HelperText>
-                    </View>
-                  );
-                }}
+    <PageContainer>
+      <KeyboardAvoidingPageContent>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            height: '100%',
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Card elevation={0}>
+              <Card.Cover
+                resizeMode="contain"
+                source={require('mediashare/assets/logo/mediashare/256.png')}
+                style={{ backgroundColor: theme.colors.background }}
               />
-          
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  required: 'required',
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <>
-                    <TextInput
-                      autoComplete={false}
-                      autoCapitalize="none"
-                      label="password"
-                      secureTextEntry
-                      textContentType="password"
-                      value={value}
-                      onBlur={onBlur}
-                      onChangeText={(value) => onChange(value)}
-                    />
-                    <HelperText type="error">{errors.password?.message}</HelperText>
-                  </>
-                )}
-              />
-          
-              <Button
-                style={{
-                  borderRadius: 10,
-                  padding: 5,
-                }}
-                mode="contained"
-                onPress={handleSubmit(onSubmit)}
-              >
-                Sign In
-              </Button>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingTop: 10,
-                }}
-              >
-                <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleForgotPassword}>
-                  Forgot password?
-                </Button>
-                <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleSignUp}>
-                  Don't have an account?
-                </Button>
-              </View>
-              {element}
+            </Card>
+            <View style={{ paddingVertical: 10 }}>
+              <Text variant="displayLarge" style={{ fontSize: 20 }}>
+                Sign in to account
+              </Text>
             </View>
-          </ScrollView>
-        </KeyboardAvoidingPageContent>
-      </PageContainer>
-    </ErrorBoundary>
+            <Controller
+              control={control}
+              name="username"
+              rules={{
+                required: 'required',
+              }}
+              render={({ field: { onChange, onBlur, value } }) => {
+                return (
+                  <View>
+                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <HelperText type="error">{errors.username?.message}</HelperText>
+                  </View>
+                );
+              }}
+            />
+        
+            <Controller
+              control={control}
+              name="password"
+              rules={{
+                required: 'required',
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <>
+                  <TextInput
+                    autoComplete={false}
+                    autoCapitalize="none"
+                    label="password"
+                    secureTextEntry
+                    textContentType="password"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={(value) => onChange(value)}
+                  />
+                  <HelperText type="error">{errors.password?.message}</HelperText>
+                </>
+              )}
+            />
+        
+            <Button
+              style={{
+                borderRadius: 10,
+                padding: 5,
+              }}
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+            >
+              Sign In
+            </Button>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingTop: 10,
+              }}
+            >
+              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleForgotPassword}>
+                Forgot password?
+              </Button>
+              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleSignUp}>
+                Don't have an account?
+              </Button>
+            </View>
+            {element}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingPageContent>
+    </PageContainer>
   );
 };
 

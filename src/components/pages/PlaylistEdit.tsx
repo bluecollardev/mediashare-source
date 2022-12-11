@@ -80,128 +80,126 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <KeyboardAvoidingPageContent>
-          <AppDialog
-            leftActionLabel="Cancel"
-            rightActionLabel="Delete"
-            leftActionCb={() => setShowDeleteDialog(false)}
-            rightActionCb={() => deletePlaylist()}
-            onDismiss={() => setShowDeleteDialog(false)}
-            showDialog={showDeleteDialog}
-            title="Delete Playlist"
-            subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-            color={theme.colors.white}
-            buttonColor={theme.colors.error}
-          />
-          <ScrollView>
-            <MediaCard
-              title={title}
-              description={description}
-              showThumbnail={true}
-              thumbnail={imageSrc}
-              thumbnailStyle={{
-                // TODO: Can we do this automatically from video metadata?
-                aspectRatio: 1 / 1,
-              }}
-              category={category}
-              categoryOptions={options}
-              onCategoryChange={(e: any) => {
-                setCategory(e);
-              }}
-              availableTags={availableTags}
-              tags={selectedTagKeys}
-              tagOptions={options}
-              onTagChange={(e: any) => {
-                setSelectedTagKeys(e);
-              }}
-              onTitleChange={setTitle}
-              onDescriptionChange={setDescription}
-              isEdit={true}
-              isReadOnly={selectedItems && selectedItems.length > 0}
-              topDrawer={() =>
-                imageSrc ? (
-                  <View style={styles.itemControls}>
-                    <View style={{ flex: 0, width: 54 }}>
+    <PageContainer>
+      <KeyboardAvoidingPageContent>
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => setShowDeleteDialog(false)}
+          rightActionCb={() => deletePlaylist()}
+          onDismiss={() => setShowDeleteDialog(false)}
+          showDialog={showDeleteDialog}
+          title="Delete Playlist"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <ScrollView>
+          <MediaCard
+            title={title}
+            description={description}
+            showThumbnail={true}
+            thumbnail={imageSrc}
+            thumbnailStyle={{
+              // TODO: Can we do this automatically from video metadata?
+              aspectRatio: 1 / 1,
+            }}
+            category={category}
+            categoryOptions={options}
+            onCategoryChange={(e: any) => {
+              setCategory(e);
+            }}
+            availableTags={availableTags}
+            tags={selectedTagKeys}
+            tagOptions={options}
+            onTagChange={(e: any) => {
+              setSelectedTagKeys(e);
+            }}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+            isEdit={true}
+            isReadOnly={selectedItems && selectedItems.length > 0}
+            topDrawer={() =>
+              imageSrc ? (
+                <View style={styles.itemControls}>
+                  <View style={{ flex: 0, width: 54 }}>
+                    <Button
+                      icon="delete-forever"
+                      mode="outlined"
+                      dark
+                      compact
+                      color={theme.colors.white}
+                      style={styles.deleteItemButton}
+                      onPress={() => setShowDeleteDialog(true)}
+                    >
+                      {' '}
+                    </Button>
+                  </View>
+                  <View style={{ flex: 4 }}>
+                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
                       <Button
-                        icon="delete-forever"
+                        icon="cloud-upload"
                         mode="outlined"
                         dark
+                        color={theme.colors.default}
                         compact
-                        color={theme.colors.white}
-                        style={styles.deleteItemButton}
-                        onPress={() => setShowDeleteDialog(true)}
+                        uppercase={false}
+                        style={styles.changeImageButton}
+                        labelStyle={styles.changeImageButtonLabel}
                       >
-                        {' '}
+                        <Text>Change Cover Photo</Text>
                       </Button>
-                    </View>
-                    <View style={{ flex: 4 }}>
-                      <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
-                        <Button
-                          icon="cloud-upload"
-                          mode="outlined"
-                          dark
-                          color={theme.colors.default}
-                          compact
-                          uppercase={false}
-                          style={styles.changeImageButton}
-                          labelStyle={styles.changeImageButtonLabel}
-                        >
-                          <Text>Change Cover Photo</Text>
-                        </Button>
-                      </AppUpload>
-                    </View>
+                    </AppUpload>
                   </View>
-                ) : (
-                  <View style={styles.itemControls}>
-                    <View style={{ flex: 1 }}>
-                      <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
-                        <UploadPlaceholder buttonText="Add Cover Photo" />
-                      </AppUpload>
-                    </View>
+                </View>
+              ) : (
+                <View style={styles.itemControls}>
+                  <View style={{ flex: 1 }}>
+                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                      <UploadPlaceholder buttonText="Add Cover Photo" />
+                    </AppUpload>
                   </View>
-                )
-              }
-            >
-              <ActionButtons
-                containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
-                showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
-                secondaryIcon="remove"
-                onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
-                secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
-                disablePrimary={actionMode === actionModes.delete}
-                primaryLabel="Add Items To Playlist"
-                primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
-                onPrimaryClicked={() => addToPlaylist({ playlistId })}
-              />
-              <MediaList
-                key={clearSelectionKey}
-                list={playlistMediaItems}
-                showThumbnail={true}
-                selectable={isSelectable}
-                showActions={!isSelectable}
-                onViewDetail={(item) => viewMediaItem({ mediaId: item._id, uri: item.uri })}
-                addItem={onAddItem}
-                removeItem={onRemoveItem}
-              />
-            </MediaCard>
-          </ScrollView>
-        </KeyboardAvoidingPageContent>
-        <PageActions>
-          {!isSelectable ? <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" /> : null}
-          {isSelectable ? (
+                </View>
+              )
+            }
+          >
             <ActionButtons
-              onPrimaryClicked={confirmDeletePlaylistItems}
-              onSecondaryClicked={cancelDeletePlaylistItems}
-              primaryLabel="Remove"
-              primaryIconColor={theme.colors.error}
-              primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+              containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
+              showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
+              secondaryIcon="remove"
+              onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
+              secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
+              disablePrimary={actionMode === actionModes.delete}
+              primaryLabel="Add Items To Playlist"
+              primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
+              onPrimaryClicked={() => addToPlaylist({ playlistId })}
             />
-          ) : null}
-        </PageActions>
-      </PageContainer>
-    </ErrorBoundary>
+            <MediaList
+              key={clearSelectionKey}
+              list={playlistMediaItems}
+              showThumbnail={true}
+              selectable={isSelectable}
+              showActions={!isSelectable}
+              onViewDetail={(item) => viewMediaItem({ mediaId: item._id, uri: item.uri })}
+              addItem={onAddItem}
+              removeItem={onRemoveItem}
+            />
+          </MediaCard>
+        </ScrollView>
+      </KeyboardAvoidingPageContent>
+      <PageActions>
+        {!isSelectable ? <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" /> : null}
+        {isSelectable ? (
+          <ActionButtons
+            onPrimaryClicked={confirmDeletePlaylistItems}
+            onSecondaryClicked={cancelDeletePlaylistItems}
+            primaryLabel="Remove"
+            primaryIconColor={theme.colors.error}
+            primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+          />
+        ) : null}
+      </PageActions>
+    </PageContainer>
   );
 
   function getInitialPlaylistTags() {

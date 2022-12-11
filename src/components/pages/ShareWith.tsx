@@ -36,16 +36,14 @@ const ShareWith = ({}: PageProps) => {
   }, [loaded]);
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <PageContent>
-          <ContactList contacts={users} showGroups={true} selectable={true} onChecked={updateSelectedUsers} showAll={true} />
-        </PageContent>
-        <PageActions>
-          <ActionButtons onSecondaryClicked={goBack} onPrimaryClicked={sharePlaylists} primaryLabel="Confirm" />
-        </PageActions>
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <PageContent>
+        <ContactList contacts={users} showGroups={true} selectable={true} onChecked={updateSelectedUsers} showAll={true} />
+      </PageContent>
+      <PageActions>
+        <ActionButtons onSecondaryClicked={goBack} onPrimaryClicked={sharePlaylists} primaryLabel="Confirm" />
+      </PageActions>
+    </PageContainer>
   );
 
   async function loadData() {

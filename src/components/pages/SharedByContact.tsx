@@ -55,77 +55,75 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
   const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <AppDialog
-          key={showUnshareDialog as unknown as string}
-          leftActionLabel="Cancel"
-          rightActionLabel="Confirm"
-          buttonColor={theme.colors.error}
-          leftActionCb={() => closeUnshareDialog()}
-          rightActionCb={() => confirmItemsToUnshare()}
-          onDismiss={closeUnshareDialog}
-          showDialog={showUnshareDialog}
-          title="Revoke Access to All Selected"
-          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-        />
-        <AppDialog
-          key={showUnshareItemDialog as unknown as string}
-          leftActionLabel="Cancel"
-          rightActionLabel="Confirm"
-          buttonColor={theme.colors.error}
-          leftActionCb={() => closeUnshareItemDialog()}
-          rightActionCb={() => confirmItemToUnshare()}
-          onDismiss={closeUnshareItemDialog}
-          showDialog={showUnshareItemDialog}
-          title="Revoke Access to All Selected"
-          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-        />
-        <AccountCard
-          title={fullName}
-          username={username}
-          email={email}
-          phoneNumber={phoneNumber}
-          image={imageSrc}
-          showSocial={false}
-          showActions={false}
-          isCurrentUser={false}
-        />
-        <Divider />
-        <SharedList
-          key={clearSelectionKey}
-          selectable={isSelectable}
-          showActions={!isSelectable}
-          onDelete={openUnshareItemDialog}
-          onView={viewItem}
-          sharedItems={itemsSharedByContact}
-          onChecked={updateSelection}
-        />
-        {isSelectable && actionMode === actionModes.delete ? (
-          <PageActions>
-            <ActionButtons
-              onPrimaryClicked={openUnshareDialog}
-              onSecondaryClicked={cancelItemsToUnshare}
-              primaryLabel="Revoke Access to All Selected"
-              primaryButtonStyles={styles.deleteActionButton}
-            />
-          </PageActions>
-        ) : null}
-        {!isSelectable ? (
-          <FAB.Group
-            visible={true}
-            open={fabState.open}
-            icon={fabState.open ? 'close' : 'more-vert'}
-            actions={fabActions}
-            color={theme.colors.text}
-            fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-            onStateChange={(open) => {
-              setFabState(open);
-            }}
+    <PageContainer>
+      <AppDialog
+        key={showUnshareDialog as unknown as string}
+        leftActionLabel="Cancel"
+        rightActionLabel="Confirm"
+        buttonColor={theme.colors.error}
+        leftActionCb={() => closeUnshareDialog()}
+        rightActionCb={() => confirmItemsToUnshare()}
+        onDismiss={closeUnshareDialog}
+        showDialog={showUnshareDialog}
+        title="Revoke Access to All Selected"
+        subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+      />
+      <AppDialog
+        key={showUnshareItemDialog as unknown as string}
+        leftActionLabel="Cancel"
+        rightActionLabel="Confirm"
+        buttonColor={theme.colors.error}
+        leftActionCb={() => closeUnshareItemDialog()}
+        rightActionCb={() => confirmItemToUnshare()}
+        onDismiss={closeUnshareItemDialog}
+        showDialog={showUnshareItemDialog}
+        title="Revoke Access to All Selected"
+        subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+      />
+      <AccountCard
+        title={fullName}
+        username={username}
+        email={email}
+        phoneNumber={phoneNumber}
+        image={imageSrc}
+        showSocial={false}
+        showActions={false}
+        isCurrentUser={false}
+      />
+      <Divider />
+      <SharedList
+        key={clearSelectionKey}
+        selectable={isSelectable}
+        showActions={!isSelectable}
+        onDelete={openUnshareItemDialog}
+        onView={viewItem}
+        sharedItems={itemsSharedByContact}
+        onChecked={updateSelection}
+      />
+      {isSelectable && actionMode === actionModes.delete ? (
+        <PageActions>
+          <ActionButtons
+            onPrimaryClicked={openUnshareDialog}
+            onSecondaryClicked={cancelItemsToUnshare}
+            primaryLabel="Revoke Access to All Selected"
+            primaryButtonStyles={styles.deleteActionButton}
           />
-        ) : null}
-      </PageContainer>
-    </ErrorBoundary>
+        </PageActions>
+      ) : null}
+      {!isSelectable ? (
+        <FAB.Group
+          visible={true}
+          open={fabState.open}
+          icon={fabState.open ? 'close' : 'more-vert'}
+          actions={fabActions}
+          color={theme.colors.text}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          onStateChange={(open) => {
+            setFabState(open);
+          }}
+        />
+      ) : null}
+    </PageContainer>
   );
 
   async function viewItem(playlistId: string, shareItemId: string) {

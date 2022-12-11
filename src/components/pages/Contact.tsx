@@ -43,50 +43,48 @@ const Contact = ({ route, globalState }: ContactProps) => {
   // const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
 
   return (
-    <ErrorBoundary>
-      <PageContainer>
-        <AccountCard
-          title={fullName}
-          username={username}
-          email={email}
-          phoneNumber={phoneNumber}
-          image={imageSrc}
-          showSocial={false}
-          showActions={false}
-          isCurrentUser={false}
-        />
-        <Divider />
-        <ListItem
-          key={'sharedByContact'}
-          title="Items They're Sharing"
-          description={`${itemsSharedByContact?.length || 0} shared items`}
-          itemId={'sharedByContact'}
-          showActions={true}
-          onViewDetail={() => viewSharedByContact(userId)}
-        />
-        <ListItem
-          key={'sharedWithContact'}
-          title="Items You're Sharing"
-          description={`${itemsSharedWithContact?.length || 0} shared items`}
-          itemId={'sharedWithContact'}
-          showActions={true}
-          onViewDetail={() => viewSharedWithContact(userId)}
-        />
-        {/* !isSelectable && (
-        <FAB.Group
-          visible={true}
-          open={fabState.open}
-          icon={fabState.open ? 'close' : 'more-vert'}
-          actions={fabActions}
-          color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-          onStateChange={(open) => {
-            setFabState(open);
-          }}
-        />
-      ) */}
-      </PageContainer>
-    </ErrorBoundary>
+    <PageContainer>
+      <AccountCard
+        title={fullName}
+        username={username}
+        email={email}
+        phoneNumber={phoneNumber}
+        image={imageSrc}
+        showSocial={false}
+        showActions={false}
+        isCurrentUser={false}
+      />
+      <Divider />
+      <ListItem
+        key={'sharedByContact'}
+        title="Items They're Sharing"
+        description={`${itemsSharedByContact?.length || 0} shared items`}
+        itemId={'sharedByContact'}
+        showActions={true}
+        onViewDetail={() => viewSharedByContact(userId)}
+      />
+      <ListItem
+        key={'sharedWithContact'}
+        title="Items You're Sharing"
+        description={`${itemsSharedWithContact?.length || 0} shared items`}
+        itemId={'sharedWithContact'}
+        showActions={true}
+        onViewDetail={() => viewSharedWithContact(userId)}
+      />
+      {/* !isSelectable && (
+      <FAB.Group
+        visible={true}
+        open={fabState.open}
+        icon={fabState.open ? 'close' : 'more-vert'}
+        actions={fabActions}
+        color={theme.colors.text}
+        fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+        onStateChange={(open) => {
+          setFabState(open);
+        }}
+      />
+    ) */}
+    </PageContainer>
   );
 };
 
