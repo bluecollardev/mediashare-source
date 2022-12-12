@@ -51,8 +51,8 @@ import { Auth } from 'aws-amplify';
 
 // Map route names to icons
 export const tabNavigationIconsMap = {
-  Shared: 'share',
   Search: 'search',
+  Shared: 'share',
   Library: 'subscriptions',
 };
 
@@ -174,11 +174,9 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
     >
       <>
         <PrivateNavigator.Screen name="Shared" component={NetworkNavigation} listeners={navigationTabListeners} />
-
         {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
         ) : null}
-
         {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         ) : null}
