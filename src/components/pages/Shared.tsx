@@ -62,20 +62,20 @@ export const Shared = ({ globalState }: PageProps) => {
   let fabActions = [];
   if (build.forFreeUser) {
     fabActions = [
-      { icon: 'logout', onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'edit', onPress: () => editProfile({ userId: user._id }), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'edit', label: `Edit`, onPress: () => editProfile({ userId: user._id }), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
     ];
   } else if (build.forSubscriber) {
     fabActions = [
-      { icon: 'logout', onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'person-remove', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-      { icon: 'person-add', onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'person-remove', label: `Delete Contact`, onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+      { icon: 'person-add', label: `Invite Contact`, onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   } else if (build.forAdmin) {
     fabActions = [
-      { icon: 'logout', onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'person-remove', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-      { icon: 'person-add', onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'person-remove', label: `Delete Contact`, onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+      { icon: 'person-add', label: `Invite Contact`, onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   }
   return (

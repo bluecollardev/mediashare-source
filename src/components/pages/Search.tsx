@@ -86,7 +86,7 @@ export const Search = ({ globalState }: PageProps) => {
   const [fabState, setFabState] = useState({ open: false });
   const fabActions =
     searchResults.length > 0
-      ? [{ icon: 'share', onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
+      ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
 
   console.log('search results filtering');
