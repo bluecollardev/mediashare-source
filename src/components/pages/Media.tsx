@@ -104,9 +104,9 @@ export const Media = ({ navigation, globalState }: PageProps) => {
 
   const [fabState, setState] = useState({ open: false });
   const fabActions = [
-    { icon: 'delete-forever', onPress: activateDeleteMode, color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-    { icon: 'cloud-download', onPress: addFromFeed, color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-    { icon: 'add-circle', onPress: addMedia, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+    { icon: 'delete-forever', label: `Delete`, onPress: activateDeleteMode, color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+    { icon: 'cloud-download', label: `Import From S3`, onPress: addFromFeed, color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+    { icon: 'add-circle', label: `Add Media`, onPress: addMedia, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
   ];
 
   return (
