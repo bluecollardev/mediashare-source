@@ -31,7 +31,7 @@ const routeConfig = {
   playlists: {
     name: 'playlists',
     options: {
-      title: 'Playlists',
+      title: 'My Playlists',
       header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccountMenu={true} />,
     },
   },

@@ -73,6 +73,7 @@ export const Playlists = ({ globalState }: PageProps) => {
 
   const shareWith = useRouteName(routeNames.shareWith);
   const createPlaylist = useRouteName(routeNames.playlistAdd);
+  const manageMedia = useRouteName(routeNames.media);
   const viewPlaylist = useViewPlaylistById();
 
   const [isSelectable, setIsSelectable] = useState(false);
@@ -96,7 +97,8 @@ export const Playlists = ({ globalState }: PageProps) => {
       ? [
           { icon: 'delete-forever', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
           { icon: 'share', onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-          { icon: 'add-circle', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+          { icon: 'playlist-add', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+          { icon: 'video-library', onPress: () => manageMedia(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
         ]
       : [{ icon: 'add-circle', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }];
 

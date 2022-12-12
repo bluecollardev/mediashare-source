@@ -54,8 +54,7 @@ import { Auth } from 'aws-amplify';
 export const tabNavigationIconsMap = {
   Shared: 'share',
   Search: 'search',
-  Playlists: 'play-circle-outline',
-  Media: 'video-library',
+  Library: 'subscriptions',
 };
 
 const FeedStackNavigator = createStackNavigator();
@@ -84,33 +83,23 @@ const SearchNavigation = () => {
   );
 };
 
-const PlaylistsStackNavigator = createStackNavigator();
-const PlaylistsNavigation = () => {
+const LibraryStackNavigator = createStackNavigator();
+const LibraryNavigation = () => {
   return (
-    <PlaylistsStackNavigator.Navigator>
-      <PlaylistsStackNavigator.Screen {...routeConfig.playlists} component={Playlists} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.playlistAdd} component={PlaylistAdd} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.addItemsToPlaylist} component={AddToPlaylist} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.playlistEdit} component={PlaylistEdit} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.mediaItemEdit} component={MediaItemEdit} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
-      <PlaylistsStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
-    </PlaylistsStackNavigator.Navigator>
-  );
-};
-
-const MediaStackNavigator = createStackNavigator();
-const MediaNavigation = () => {
-  return (
-    <MediaStackNavigator.Navigator>
-      <MediaStackNavigator.Screen {...routeConfig.media} component={Media} />
-      <MediaStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
-      <MediaStackNavigator.Screen {...routeConfig.addFromFeed} component={AddFromFeed} />
-      <MediaStackNavigator.Screen {...routeConfig.mediaItemEdit} component={MediaItemEdit} />
-      <MediaStackNavigator.Screen {...routeConfig.mediaItemAdd} component={MediaItemAdd} />
-    </MediaStackNavigator.Navigator>
+    <LibraryStackNavigator.Navigator initialRouteName={'playlists'}>
+      <LibraryStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
+      <LibraryStackNavigator.Screen {...routeConfig.playlists} component={Playlists} />
+      <LibraryStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
+      <LibraryStackNavigator.Screen {...routeConfig.playlistAdd} component={PlaylistAdd} />
+      <LibraryStackNavigator.Screen {...routeConfig.playlistEdit} component={PlaylistEdit} />
+      <LibraryStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
+      <LibraryStackNavigator.Screen {...routeConfig.addItemsToPlaylist} component={AddToPlaylist} />
+      <LibraryStackNavigator.Screen {...routeConfig.media} component={Media} />
+      <LibraryStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
+      <LibraryStackNavigator.Screen {...routeConfig.mediaItemEdit} component={MediaItemEdit} />
+      <LibraryStackNavigator.Screen {...routeConfig.mediaItemAdd} component={MediaItemAdd} />
+      <LibraryStackNavigator.Screen {...routeConfig.addFromFeed} component={AddFromFeed} />
+    </LibraryStackNavigator.Navigator>
   );
 };
 
@@ -189,10 +178,8 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
         ) : null}
 
         {(build.forSubscriber || build.forAdmin) ? (
-          <PrivateNavigator.Screen name="Playlists" component={PlaylistsNavigation} listeners={navigationTabListeners} />
+          <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         ) : null}
-
-        {build.forAdmin ? <PrivateNavigator.Screen name="Media" component={MediaNavigation} listeners={navigationTabListeners} /> : null}
       </>
     </PrivateNavigator.Navigator>
   );
