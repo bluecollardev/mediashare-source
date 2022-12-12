@@ -173,10 +173,10 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
       })}
     >
       <>
-        <PrivateNavigator.Screen name="Shared" component={NetworkNavigation} listeners={navigationTabListeners} />
         {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
         ) : null}
+        <PrivateNavigator.Screen name="Shared" component={NetworkNavigation} listeners={navigationTabListeners} />
         {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         ) : null}

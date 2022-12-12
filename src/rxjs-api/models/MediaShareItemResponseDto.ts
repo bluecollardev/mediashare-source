@@ -19,107 +19,102 @@ import {
 
 /**
  * @export
- * @interface PlaylistItemResponseDto
+ * @interface MediaShareItemResponseDto
  */
-export interface PlaylistItemResponseDto {
+export interface MediaShareItemResponseDto {
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     readonly _id: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     readonly createdAt: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     readonly updatedDate?: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     createdBy: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     userId: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     title: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     summary: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     description: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     uri: string;
     /**
      * @type {string}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     thumbnail: string;
     /**
      * @type {boolean}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     isPlayable?: boolean;
     /**
      * @type {MediaCategoryType}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     category?: MediaCategoryType;
     /**
      * @type {Array<TagKeyValue>}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     tags: Array<TagKeyValue> | null;
     /**
-     * @type {string}
-     * @memberof PlaylistItemResponseDto
-     */
-    playlistId: string;
-    /**
-     * @type {string}
-     * @memberof PlaylistItemResponseDto
-     */
-    mediaId: string;
-    /**
-     * @type {number}
-     * @memberof PlaylistItemResponseDto
-     */
-    sortIndex: number;
-    /**
      * @type {AuthorProfileDto}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     authorProfile: AuthorProfileDto;
     /**
      * @type {number}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     shareCount: number;
     /**
      * @type {number}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     viewCount: number;
     /**
      * @type {number}
-     * @memberof PlaylistItemResponseDto
+     * @memberof MediaShareItemResponseDto
      */
     likesCount: number;
+    /**
+     * @type {string}
+     * @memberof MediaShareItemResponseDto
+     */
+    shareId: string;
+    /**
+     * @type {string}
+     * @memberof MediaShareItemResponseDto
+     */
+    mediaItemId: string;
 }

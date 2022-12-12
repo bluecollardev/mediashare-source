@@ -1,3 +1,4 @@
+import { a } from 'aws-amplify'
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -5,7 +6,13 @@ import { ScrollView } from 'react-native';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { getPlaylistById, removeUserPlaylist, selectMappedPlaylistMediaItems, updateUserPlaylist } from 'mediashare/store/modules/playlist';
+import {
+  addUserPlaylist,
+  getPlaylistById,
+  removeUserPlaylist,
+  selectMappedPlaylistMediaItems,
+  updateUserPlaylist,
+} from 'mediashare/store/modules/playlist'
 import { addPlaylistItem } from 'mediashare/store/modules/playlistItem';
 import { getUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
 import { loadUsers } from 'mediashare/store/modules/users';
@@ -22,7 +29,13 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { FAB } from 'react-native-paper';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
-import { AuthorProfileDto, MediaCategoryType, PlaylistItem, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import {
+  AuthorProfileDto,
+  CreatePlaylistDto,
+  MediaCategoryType,
+  PlaylistItem,
+  PlaylistResponseDto,
+} from 'mediashare/rxjs-api'
 import { theme } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -136,8 +149,13 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
         <AppDialog
           leftActionLabel="Cancel"
           rightActionLabel="Confirm"
-          leftActionCb={() => setShowAddToLibraryDialog(false)}
-          rightActionCb={() => undefined}
+          leftActionCb={() => {
+            setShowAddToLibraryDialog(false);
+          }}
+          rightActionCb={async () => {
+            await clonePlaylist();
+            setShowAddToLibraryDialog(false);
+          }}
           onDismiss={() => setShowAddToLibraryDialog(false)}
           showDialog={showAddToLibraryDialog}
           title="Save Playlist to Library"
@@ -263,6 +281,23 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   async function cancelSharePlaylist() {
     dispatch(selectPlaylist({ isChecked: false, plist: selected as PlaylistResponseDto }));
   }
+  
+  async function clonePlaylist() {
+    const dto: CreatePlaylistDto = {
+      ...selected as CreatePlaylistDto,
+      _id: undefined,
+      cloneOf: selected._id,
+      mediaIds: selected.mediaItems.map(item => item._id),
+    } as CreatePlaylistDto;
+    
+    // @ts-ignore TODO: Fix types on dispatch?
+    const { payload } = await dispatch(addUserPlaylist(dto));
+    const playlistId = payload._id;
+    await dispatch(getUserPlaylists({}));
+    await dispatch(getPlaylistById(playlistId));
+    setIsSaved(false);
+    edit(playlistId);
+  }
 
   async function editPlaylist() {
     edit({ playlistId });
@@ -270,7 +305,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
 
   async function deletePlaylist() {
     await dispatch(removeUserPlaylist(playlistId));
-    await dispatch(getUserPlaylists());
+    await dispatch(getUserPlaylists({}));
     await goToPlaylists();
   }
 

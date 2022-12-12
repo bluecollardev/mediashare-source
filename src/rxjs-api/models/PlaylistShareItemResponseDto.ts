@@ -21,97 +21,107 @@ import {
 
 /**
  * @export
- * @interface PlaylistResponseDto
+ * @interface PlaylistShareItemResponseDto
  */
-export interface PlaylistResponseDto {
+export interface PlaylistShareItemResponseDto {
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     readonly _id: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     readonly createdAt: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     readonly updatedDate?: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     createdBy: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     userId: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     cloneOf: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     title: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     description: string;
     /**
      * @type {string}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     imageSrc: string;
     /**
      * @type {Array<string>}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     mediaIds: Array<string> | null;
     /**
      * @type {PlaylistCategoryType}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     category?: PlaylistCategoryType;
     /**
      * @type {Array<TagKeyValue>}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     tags: Array<TagKeyValue> | null;
     /**
      * @type {AuthorProfileDto}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     authorProfile: AuthorProfileDto;
     /**
      * @type {Array<MediaItem>}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     mediaItems: Array<MediaItem>;
     /**
      * @type {Array<PlaylistItemResponseDto>}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     playlistItems: Array<PlaylistItemResponseDto>;
     /**
      * @type {number}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     shareCount: number;
     /**
      * @type {number}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     viewCount: number;
     /**
      * @type {number}
-     * @memberof PlaylistResponseDto
+     * @memberof PlaylistShareItemResponseDto
      */
     likesCount: number;
+    /**
+     * @type {string}
+     * @memberof PlaylistShareItemResponseDto
+     */
+    shareId: string;
+    /**
+     * @type {string}
+     * @memberof PlaylistShareItemResponseDto
+     */
+    playlistId: string;
 }
