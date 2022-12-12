@@ -128,7 +128,8 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                       mode="outlined"
                       dark
                       compact
-                      color={theme.colors.white}
+                      textColor={theme.colors.white}
+                      buttonColor={theme.colors.error}
                       style={styles.deleteItemButton}
                       onPress={() => setShowDeleteDialog(true)}
                     >
@@ -141,7 +142,8 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                         icon="cloud-upload"
                         mode="outlined"
                         dark
-                        color={theme.colors.default}
+                        textColor={theme.colors.white}
+                        buttonColor={theme.colors.surface}
                         compact
                         uppercase={false}
                         style={styles.changeImageButton}
@@ -307,7 +309,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
 
   async function deletePlaylist() {
     await dispatch(removeUserPlaylist(playlistId));
-    await dispatch(getUserPlaylists());
+    await dispatch(getUserPlaylists({}));
     await goToPlaylists();
   }
 

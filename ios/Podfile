@@ -27,7 +27,7 @@ target 'Mediashare' do
   pod 'React-RCTBlob', :path => "#{prefix}/Libraries/Blob"
   pod 'React-RCTImage', :path => "#{prefix}/Libraries/Image"
   pod 'React-RCTLinking', :path => "#{prefix}/Libraries/LinkingIOS"
-  pod 'React-RCTNetwork', :path => "#{prefix}/Libraries/Shared"
+  pod 'React-RCTNetwork', :path => "#{prefix}/Libraries/Network"
   pod 'React-RCTSettings', :path => "#{prefix}/Libraries/Settings"
   pod 'React-RCTText', :path => "#{prefix}/Libraries/Text"
   pod 'React-RCTVibration', :path => "#{prefix}/Libraries/Vibration"

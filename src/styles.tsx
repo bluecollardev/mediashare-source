@@ -137,7 +137,7 @@ const styles: any = StyleSheet.create({
     borderTopColor: theme.colors.defaultBorder,
     borderTopWidth: 1,
   },
-});
+} as any);
 
 const components = {
   multiSelect: {
@@ -161,7 +161,7 @@ const components = {
       },
       container: {
         backgroundColor: '#1a1a1a',
-        height: 'auto'
+
       },
       selectToggle: {
         marginVertical: 10,
