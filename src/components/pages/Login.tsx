@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { loginAction } from 'mediashare/store/modules/user';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Text, Card, TextInput, HelperText, Button } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -93,13 +94,13 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
               }}
             />
-
+        
             <Controller
               control={control}
               name="password"
@@ -109,6 +110,7 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
                   <TextInput
+                    autoComplete={false}
                     autoCapitalize="none"
                     label="password"
                     secureTextEntry
@@ -121,7 +123,7 @@ const LoginComponent = ({}: PageProps) => {
                 </>
               )}
             />
-
+        
             <Button
               style={{
                 borderRadius: 10,

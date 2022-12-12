@@ -11,11 +11,11 @@ interface LoadingOverlayProps {
 export const LoadingOverlay = ({ show = false, title = '' }: LoadingOverlayProps) => {
   return (
     <Portal>
-      {show && (
+      {show ? (
         <View>
           <Spinner visible={show} textContent={title} />
         </View>
-      )}
+      ) : null}
     </Portal>
   );
 };

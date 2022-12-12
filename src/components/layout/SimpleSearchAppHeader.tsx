@@ -30,7 +30,7 @@ const AppHeaderComponent = ({ options, back, navigation, searchable = false, glo
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-      {searchable && searchIsActive && (
+      {searchable && searchIsActive ? (
         <>
           <Searchbar
             style={{ width: '100%' }}
@@ -44,20 +44,20 @@ const AppHeaderComponent = ({ options, back, navigation, searchable = false, glo
           />
           <Appbar.Action icon="close" onPress={() => disableSearch()} />
         </>
-      )}
-      {searchable && !searchIsActive && (
+      ) : null}
+      {searchable && !searchIsActive ? (
         <>
-          {back && <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} />}
+          {back ? <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} /> : null}
           <Appbar.Content title={title} titleStyle={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20, paddingLeft: '15%' }} />
           <Appbar.Action icon="search" color="#ffffff" onPress={() => enableSearch()} />
         </>
-      )}
-      {!searchable && (
+      ) : null}
+      {!searchable ? (
         <>
-          {back && <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} />}
+          {back ? <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} /> : null}
           <Appbar.Content title={title} titleStyle={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20, paddingRight: back ? '15%' : 0 }} />
         </>
-      )}
+      ) : null}
     </Appbar.Header>
   );
 };

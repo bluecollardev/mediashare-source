@@ -12,6 +12,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
 import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -109,6 +110,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   ];
 
   return (
+    
     <PageContainer>
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <AppDialog
@@ -136,15 +138,15 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           onViewDetail={onEditItem}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 && (
+        {loaded && entities.length === 0 ? (
           <NoContent
             onPress={addMedia}
             messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
             icon="add-circle"
           />
-        )}
+        ) : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.delete && (
+      {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
             onPrimaryClicked={openDeleteDialog}
@@ -154,8 +156,8 @@ export const Media = ({ navigation, globalState }: PageProps) => {
             primaryButtonStyles={styles.deleteActionButton}
           />
         </PageActions>
-      )}
-      {!isSelectable && (
+      ) : null}
+      {!isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -169,8 +171,9 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           }}
           // onPress={() => setOpen(!open)}
         />
-      )}
+      ) : null}
     </PageContainer>
+    
   );
 
   /**

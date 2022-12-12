@@ -59,7 +59,7 @@ export const ContactListItem: React.FC<ContactListItemProps> = ({
             </View>
           ) : (
             <View style={defaultStyles.leftOuterWrapper}>
-              <View style={defaultStyles.letterLabelWrapper}>{showLetterLabel && <Headline style={defaultStyles.headline}>{title[0]}</Headline>}</View>
+              <View style={defaultStyles.letterLabelWrapper}>{showLetterLabel ? <Headline style={defaultStyles.headline}>{title[0]}</Headline> : null}</View>
               <View style={defaultStyles.avatarWrapper}>
                 <Avatar.Image source={avatar ? { uri: avatar } : undefined} size={40} />
               </View>
@@ -71,11 +71,11 @@ export const ContactListItem: React.FC<ContactListItemProps> = ({
             <IconButton icon={iconRight} iconColor={iconRightColor} onPress={() => onViewDetail(userId)} />
           ) : (
             <View>
-              {showFollow && (
+              {showFollow ? (
                 <Button mode={selectable ? 'contained' : 'outlined'} style={defaultStyles.followButton} disabled={selectable}>
                   Following
                 </Button>
-              )}
+              ) : null}
             </View>
           );
         }}

@@ -20,6 +20,7 @@ import {
 } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
 import { AuthorProfileDto, MediaCategoryType, PlaylistItem, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { theme } from 'mediashare/styles';
@@ -146,18 +147,18 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           >
             {/* TODO: Make this work and add it back in! */}
             {/* <Button
-                icon="live-tv"
-                color={theme.colors.default}
-                mode="outlined"
-                styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
-                compact
-                dark
-                onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
-              >
-                Play From Beginning
-              </Button>
-              <Divider /> */}
-            {!allowEdit && playlistMediaItems.length > 0 && (
+              icon="live-tv"
+              color={theme.colors.default}
+              mode="outlined"
+              styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
+              compact
+              dark
+              onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
+            >
+              Play From Beginning
+            </Button>
+            <Divider /> */}
+            {!allowEdit && playlistMediaItems.length > 0 ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
                 showSecondary={false}
@@ -168,8 +169,8 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 primaryLabel="Play from Beginning"
                 primaryIcon="live-tv"
               />
-            )}
-            {!build.forFreeUser && allowEdit && (
+            ) : null}
+            {!build.forFreeUser && allowEdit ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
                 showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
@@ -181,7 +182,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
                 onPrimaryClicked={() => addToPlaylist({ playlistId })}
               />
-            )}
+            ) : null}
             <MediaList
               key={clearSelectionKey}
               list={playlistMediaItems}
@@ -196,7 +197,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           </MediaCard>
         </ScrollView>
         <PageActions>
-          {isSelectable && (
+          {isSelectable ? (
             <ActionButtons
               onPrimaryClicked={confirmDeletePlaylistItems}
               onSecondaryClicked={cancelDeletePlaylistItems}
@@ -204,10 +205,10 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
               primaryIconColor={theme.colors.error}
               primaryButtonStyles={{ backgroundColor: theme.colors.error }}
             />
-          )}
+          ) : null}
         </PageActions>
       </PageContent>
-      {!build.forFreeUser && !isSelectable && (
+      {!build.forFreeUser && !isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -221,7 +222,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           }}
           onPress={() => undefined}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 

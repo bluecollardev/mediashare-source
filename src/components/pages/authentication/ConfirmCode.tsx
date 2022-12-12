@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +17,7 @@ interface FormData {
 
 const ConfirmComponent = ({}: PageProps) => {
   const nav = useNavigation();
-  const route = useRoute();
+  const route = useRoute() as any;
   const {
     control,
     handleSubmit,
@@ -89,7 +90,7 @@ const ConfirmComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
@@ -102,12 +103,12 @@ const ConfirmComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.code?.message}</HelperText>
                 </>
               )}
             />
-
+        
             <Button
               style={{
                 borderRadius: 10,
@@ -118,7 +119,7 @@ const ConfirmComponent = ({}: PageProps) => {
             >
               Confirm code
             </Button>
-
+        
             <Button
               style={{
                 borderRadius: 10,
@@ -130,7 +131,7 @@ const ConfirmComponent = ({}: PageProps) => {
             >
               Resend code
             </Button>
-
+        
             <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
               Back to sign in
             </Button>

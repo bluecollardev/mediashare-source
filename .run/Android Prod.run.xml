@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Android Prod" type="ReactNative" factoryName="React Native">
+    <working-dir value="$PROJECT_DIR$/apps/mediashare" />
+    <node-interpreter value="$USER_HOME$/.nvm/versions/node/v16.13.1/bin/node" />
+    <react-native value="$PROJECT_DIR$/node_modules/react-native-cli" />
+    <platform value="ANDROID" />
+    <run-arguments value="--variant=release" />
+    <envs />
+    <only-packager />
+    <browser value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
+    <method v="2">
+      <option name="ReactNativePackager" enabled="true" />
+    </method>
+  </configuration>
+</component>

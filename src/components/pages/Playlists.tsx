@@ -11,6 +11,7 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
   PageContainer,
@@ -126,20 +127,20 @@ export const Playlists = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 && (
+        {loaded && entities.length === 0 ? (
           <NoContent
             onPress={() => createPlaylist()}
             messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
             icon="add-circle"
           />
-        )}
+        ) : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.share && (
+      {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
-      )}
-      {isSelectable && actionMode === actionModes.delete && (
+      ) : null}
+      {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
             onPrimaryClicked={openDeleteDialog}
@@ -149,8 +150,8 @@ export const Playlists = ({ globalState }: PageProps) => {
             primaryButtonStyles={styles.deleteActionButton}
           />
         </PageActions>
-      )}
-      {!isSelectable && (
+      ) : null}
+      {!isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -162,7 +163,7 @@ export const Playlists = ({ globalState }: PageProps) => {
             setFabState(open);
           }}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 

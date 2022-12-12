@@ -89,7 +89,7 @@ const AppHeaderComponent = ({
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-      {searchable && searchIsActive && (
+      {searchable && searchIsActive ? (
         <Portal>
           <SafeAreaView style={themeStyles.pageContainer}>
             <View>
@@ -175,9 +175,9 @@ const AppHeaderComponent = ({
             </View>
           </SafeAreaView>
         </Portal>
-      )}
+      ) : null}
 
-      {back && <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} />}
+      {back ? <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} /> : null}
 
       <Appbar.Content
         title={title}
@@ -187,12 +187,12 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls && renderDisplayControls()}
-      {searchable && showSearchSettings && <Appbar.Action icon="settings" onPress={() => undefined} />}
-      {searchable && !showSearchSettings && (
+      {searchable && showSearchSettings ? <Appbar.Action icon="settings" onPress={() => undefined} /> : null}
+      {searchable && !showSearchSettings ? (
         <Appbar.Action icon="filter-list" color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => openSearchConsole()} />
-      )}
-      {showNotificationsMenu && <Appbar.Action icon="notifications" onPress={() => openSearchConsole()} />}
-      {showAccountMenu && <Appbar.Action icon="person" onPress={() => goToAccount()} />}
+      ) : null}
+      {showNotificationsMenu ? <Appbar.Action icon="notifications" onPress={() => openSearchConsole()} /> : null}
+      {showAccountMenu ? <Appbar.Action icon="person" onPress={() => goToAccount()} /> : null}
     </Appbar.Header>
   );
 
@@ -233,8 +233,8 @@ const AppHeaderComponent = ({
   function renderDisplayControls() {
     return (
       <>
-        {displayMode === 'article' && <Appbar.Action icon="view-list" color="#ffffff" onPress={() => viewAsList()} />}
-        {displayMode === 'list' && <Appbar.Action icon="article" color="#ffffff" onPress={() => viewAsArticles()} />}
+        {displayMode === 'article' ? <Appbar.Action icon="view-list" color="#ffffff" onPress={() => viewAsList()} /> : null}
+        {displayMode === 'list' ? <Appbar.Action icon="article" color="#ffffff" onPress={() => viewAsArticles()} /> : null}
       </>
     );
   }

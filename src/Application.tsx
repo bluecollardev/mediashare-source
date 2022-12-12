@@ -6,18 +6,19 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import { createMaterialBottomTabNavigator as createBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialBottomTabNavigator as createBottomTabNavigator } from 'mediashare/lib/material-bottom-tabs';
 import { Provider as PaperProvider, Text, Card } from 'react-native-paper';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Linking } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Amplify, { Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { store, useAppSelector } from './store';
-import { routeConfig } from './routes';
+import { routeConfig, routeNames } from './routes'
+import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user'
 import { useUser } from 'mediashare/hooks/useUser';
 import { theme } from './styles';
 import { useFonts } from 'expo-font';
-
+import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { createBottomTabListeners } from './screenListeners';
 import { GlobalStateProps, withGlobalStateProvider } from './core/globalState';
 
@@ -46,8 +47,8 @@ import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
+import Invitation from 'mediashare/components/pages/Invitation'
 import { Auth } from 'aws-amplify';
-import { loginAction } from './store/modules/user';
 
 // Map route names to icons
 export const tabNavigationIconsMap = {
@@ -115,14 +116,15 @@ const MediaNavigation = () => {
 
 const AccountStackNavigator = createStackNavigator();
 const AccountNavigation = () => {
-  const user = useUser();
+  // const user = useUser();
   return (
-    <AccountStackNavigator.Navigator initialRouteName={user?.firstName ? 'account' : 'accountEdit'}>
+    <AccountStackNavigator.Navigator initialRouteName={'account'}>
       <AccountStackNavigator.Screen {...routeConfig.account} component={Account} />
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
       <AccountStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <AccountStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <AccountStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
+      <AccountStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
 };
@@ -145,8 +147,11 @@ interface PrivateMainNavigationProps {
   globalState: GlobalStateProps;
 }
 const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
-  const { build } = globalState;
+  const { build, isAcceptingInvitationFrom, openInvitation = () => {} } = globalState;
   const navigationTabListeners = createBottomTabListeners(globalState);
+  if (isAcceptingInvitationFrom) {
+    openInvitation();
+  }
   return (
     <PrivateNavigator.Navigator
       initialRouteName="Playlists"
@@ -169,15 +174,15 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
       <>
         <PrivateNavigator.Screen name="Feed" component={FeedNavigation} listeners={navigationTabListeners} />
 
-        {(build.forFreeUser || build.forSubscriber || build.forAdmin) && (
+        {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
-        )}
+        ) : null}
 
-        {(build.forSubscriber || build.forAdmin) && (
+        {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Playlists" component={PlaylistsNavigation} listeners={navigationTabListeners} />
-        )}
+        ) : null}
 
-        {build.forAdmin && <PrivateNavigator.Screen name="Media" component={MediaNavigation} listeners={navigationTabListeners} />}
+        {build.forAdmin ? <PrivateNavigator.Screen name="Media" component={MediaNavigation} listeners={navigationTabListeners} /> : null}
       </>
     </PrivateNavigator.Navigator>
   );
@@ -209,6 +214,7 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
       </View>
     );
   }
+  
   return (
     <RootNavigator.Navigator>
       {isCurrentUser ? (
@@ -224,6 +230,8 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
     </RootNavigator.Navigator>
   );
 };
+
+const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 
 Amplify.configure({
   ...awsmobile,
@@ -243,6 +251,7 @@ function App() {
   });
 
   const loading = useAppSelector((state) => state?.app?.loading);
+  
   const { isLoggedIn } = useUser();
   const [isCurrentUser, setIsCurrentUser] = useState(undefined);
   const dispatch = useDispatch();
@@ -252,15 +261,28 @@ function App() {
     await dispatch(loginAction({ accessToken: authUser.signInUserSession.accessToken.jwtToken, idToken: authUser.signInUserSession.idToken.jwtToken }));
     setIsCurrentUser(authUser);
   };
-
+  
   useEffect(() => {
     let mount = true;
-    fetchData().catch((error) => {
+  
+    if (!isLoggedIn) {
+      Linking.addEventListener('url', ({ url }) => {
+        console.log(`incoming link from: ${url}`);
+        const connectionId = url.split('/').pop();
+        dispatch(setIsAcceptingInvitationAction(connectionId));
+      });
+    } else {
+      // Clean up listeners
+      Linking.removeAllListeners('url');
+    }
+    
+    fetchData().catch(() => {
       if (mount) {
         setIsCurrentUser(null);
       }
     });
     return () => {
+      Linking.removeAllListeners('url');
       setIsCurrentUser(null);
       mount = false;
     };
@@ -294,7 +316,7 @@ function App() {
           }}
         >
           <NavigationContainer>
-            <RootNavigation isCurrentUser={isCurrentUser} isLoggedIn={isLoggedIn} />
+            <RootNavigationWithGlobalState isCurrentUser={isCurrentUser} isLoggedIn={isLoggedIn} />
           </NavigationContainer>
         </PaperProvider>
       </Provider>

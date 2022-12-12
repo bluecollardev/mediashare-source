@@ -1,14 +1,15 @@
 import { useAppSelector } from 'mediashare/store';
 import React, { useEffect, useState } from 'react';
 
-import { ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { removeShareItem, readShareItem, removeShareItemAll, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
+import { removeShareItem, readShareItem, removeAllShareItems, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, PageProps, AccountCard, SharedList, ActionButtons, AppDialog } from 'mediashare/components/layout';
 // import { filterUnique } from 'mediashare/utils';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
@@ -56,23 +57,27 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
   return (
     <PageContainer>
       <AppDialog
+        key={showUnshareDialog as unknown as string}
         leftActionLabel="Cancel"
-        rightActionLabel="Revoke Access"
+        rightActionLabel="Confirm"
+        buttonColor={theme.colors.error}
         leftActionCb={() => closeUnshareDialog()}
         rightActionCb={() => confirmItemsToUnshare()}
         onDismiss={closeUnshareDialog}
         showDialog={showUnshareDialog}
-        title="Revoke Access"
+        title="Revoke Access to All Selected"
         subtitle="Are you sure you want to do this? This action is final and cannot be undone."
       />
       <AppDialog
+        key={showUnshareItemDialog as unknown as string}
         leftActionLabel="Cancel"
-        rightActionLabel="Revoke Access"
+        rightActionLabel="Confirm"
+        buttonColor={theme.colors.error}
         leftActionCb={() => closeUnshareItemDialog()}
         rightActionCb={() => confirmItemToUnshare()}
         onDismiss={closeUnshareItemDialog}
         showDialog={showUnshareItemDialog}
-        title="Revoke Access"
+        title="Revoke Access to All Selected"
         subtitle="Are you sure you want to do this? This action is final and cannot be undone."
       />
       <AccountCard
@@ -95,17 +100,17 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
         sharedItems={itemsSharedByContact}
         onChecked={updateSelection}
       />
-      {isSelectable && actionMode === actionModes.delete && (
+      {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
             onPrimaryClicked={openUnshareDialog}
             onSecondaryClicked={cancelItemsToUnshare}
-            primaryLabel="Revoke Access"
+            primaryLabel="Revoke Access to All Selected"
             primaryButtonStyles={styles.deleteActionButton}
           />
         </PageActions>
-      )}
-      {!isSelectable && (
+      ) : null}
+      {!isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -117,7 +122,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
             setFabState(open);
           }}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 
@@ -177,7 +182,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
   }
 
   async function unshareItems() {
-    await dispatch(removeShareItemAll(selectedItems));
+    await dispatch(removeAllShareItems(selectedItems));
     await dispatch(findItemsSharedByMe());
     await dispatch(findItemsSharedWithMe());
     setSelectedItems([]);

@@ -17,6 +17,7 @@ const theme = {
     textDarker: '#BDC1C6',
     text: 'rgba(255,255,255,1)',
     error: 'rgba(242,22,81,1)',
+    errorDark: 'rgba(242,22,81,0.5)',
     white: '#ffffff',
   },
   fonts: {

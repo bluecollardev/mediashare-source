@@ -23,12 +23,12 @@ export interface ShareItemControllerReadShareItemRequest {
   shareId: string;
 }
 
-export interface ShareItemControllerRemoveShareItemRequest {
-  shareId: string;
+export interface ShareItemControllerRemoveAllShareItemsRequest {
+  shareItemsDto: ShareItemsDto;
 }
 
-export interface ShareItemControllerRemoveShareItemAllRequest {
-  shareItemsDto: ShareItemsDto;
+export interface ShareItemControllerRemoveShareItemRequest {
+  shareId: string;
 }
 
 export interface ShareItemControllerRemoveShareItemAllByUserIdRequest {
@@ -221,6 +221,34 @@ export class ShareItemsApi extends BaseAPI {
 
   /**
    */
+  shareItemControllerRemoveAllShareItems({ shareItemsDto }: ShareItemControllerRemoveAllShareItemsRequest): Observable<void>;
+  shareItemControllerRemoveAllShareItems(
+    { shareItemsDto }: ShareItemControllerRemoveAllShareItemsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>>;
+  shareItemControllerRemoveAllShareItems(
+    { shareItemsDto }: ShareItemControllerRemoveAllShareItemsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(shareItemsDto, 'shareItemsDto', 'shareItemControllerRemoveAllShareItems');
+
+    const headers: HttpHeaders = {
+      'Content-Type': 'application/json',
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/share-items/unshare-all-items',
+        method: 'POST',
+        headers,
+        body: shareItemsDto,
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
   shareItemControllerRemoveShareItem({ shareId }: ShareItemControllerRemoveShareItemRequest): Observable<ShareItem>;
   shareItemControllerRemoveShareItem({ shareId }: ShareItemControllerRemoveShareItemRequest, opts?: OperationOpts): Observable<RawAjaxResponse<ShareItem>>;
   shareItemControllerRemoveShareItem(
@@ -240,34 +268,6 @@ export class ShareItemsApi extends BaseAPI {
         url: '/api/share-items/{shareId}'.replace('{shareId}', encodeURI(shareId)),
         method: 'DELETE',
         headers,
-      },
-      opts?.responseOpts
-    );
-  }
-
-  /**
-   */
-  shareItemControllerRemoveShareItemAll({ shareItemsDto }: ShareItemControllerRemoveShareItemAllRequest): Observable<void>;
-  shareItemControllerRemoveShareItemAll(
-    { shareItemsDto }: ShareItemControllerRemoveShareItemAllRequest,
-    opts?: OperationOpts
-  ): Observable<void | RawAjaxResponse<void>>;
-  shareItemControllerRemoveShareItemAll(
-    { shareItemsDto }: ShareItemControllerRemoveShareItemAllRequest,
-    opts?: OperationOpts
-  ): Observable<void | RawAjaxResponse<void>> {
-    throwIfNullOrUndefined(shareItemsDto, 'shareItemsDto', 'shareItemControllerRemoveShareItemAll');
-
-    const headers: HttpHeaders = {
-      'Content-Type': 'application/json',
-    };
-
-    return this.request<void>(
-      {
-        url: '/api/share-items/unshare-all-items',
-        method: 'POST',
-        headers,
-        body: shareItemsDto,
       },
       opts?.responseOpts
     );

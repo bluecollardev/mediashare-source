@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, StyleSheet, TouchableWithoutFeedback, Platform } from 'react-native';
-import { Avatar, Caption, Title, Subheading, Card, Menu, IconButton } from 'react-native-paper';
+import { Avatar, Caption, Title, Subheading, Card, Menu, IconButton, Text } from 'react-native-paper';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { theme } from 'mediashare/styles';
 import * as R from 'remeda';
 
 interface AccountCardProps {
-  image: string;
+  image?: string;
   likes?: number;
   shares?: number;
   shared?: number;
-  title: string;
-  username: string;
-  email: string;
-  phoneNumber: string;
+  title?: string;
+  username?: string;
+  email?: string;
+  phoneNumber?: string;
+  text?: string;
   showSocial?: boolean;
   showActions?: boolean;
   onProfileImageClicked?: () => void;
@@ -22,13 +23,15 @@ interface AccountCardProps {
 }
 
 export const AccountCard = ({
-  title,
-  username,
-  email,
-  image,
-  likes,
-  shares,
-  shared,
+  title = null,
+  username = null,
+  email = null,
+  phoneNumber = null,
+  text = null,
+  image = null,
+  likes = null,
+  shares = null,
+  shared = null,
   showSocial = false,
   showActions = false,
   isCurrentUser = false,
@@ -49,50 +52,55 @@ export const AccountCard = ({
   return (
     <>
       <Card mode="elevated" style={defaultStyles.card}>
-        <Card.Title
+        {/* <View
           style={defaultStyles.header}
-          left={() =>
-            image ? (
-              <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                <Avatar.Image size={108} source={{ uri: image }} />
-              </TouchableWithoutFeedback>
-            ) : (
-              <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                <Avatar.Icon size={108} icon="person" />
-              </TouchableWithoutFeedback>
-            )
-          }
           leftStyle={defaultStyles.left}
           title={<Title style={defaultStyles.titleText}>{title}</Title>}
           titleStyle={defaultStyles.title}
           subtitle={
-            <View>
-              {/* TODO: Fix username display on Android */}
-              {/*<Subheading style={{ ...defaultStyles.subtitleText, color: theme.colors.primary }}>@{username}</Subheading>*/}
-              <Subheading style={{ ...defaultStyles.subtitleText }}>{email}</Subheading>
-            </View>
+          
           }
           subtitleStyle={defaultStyles.subtitle}
-          right={() =>
-            showActions ? (
-              <Menu
-                visible={visible}
-                onDismiss={() => setVisible(false)}
-                anchor={
-                  <IconButton icon="more-vert" onPress={() => setVisible(!visible)}>
-                    Show menu
-                  </IconButton>
-                }
-              >
-                {isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" />}
-                {profile?.build?.forAdmin && !isCurrentUser && <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" />}
-              </Menu>
-            ) : null
-          }
           rightStyle={defaultStyles.right}
-        />
+        /> */}
         <Card.Content>
-          {withoutName() && (
+          <View style={defaultStyles.cardContent}>
+            <View style={defaultStyles.left}>
+              {image ? (
+                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
+                  <Avatar.Image size={108} source={{ uri: image }} />
+                </TouchableWithoutFeedback>
+              ) : (
+                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
+                  <Avatar.Icon size={108} icon="person" />
+                </TouchableWithoutFeedback>
+              )}
+            </View>
+            <View style={defaultStyles.main}>
+              {title ? (<Title style={defaultStyles.titleText}>{title}</Title>) : null}
+              {username ? (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>) : null}
+              {email ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>) : null}
+              {phoneNumber ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>) : null}
+              {text ? (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>) : null}
+            </View>
+            <View style={defaultStyles.right}>
+              {showActions ? (
+                <Menu
+                  visible={visible}
+                  onDismiss={() => setVisible(false)}
+                  anchor={
+                    <IconButton icon="more-vert" onPress={() => setVisible(!visible)}>
+                      Show menu
+                    </IconButton>
+                  }
+                >
+                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" /> : null}
+                  {profile?.build?.forAdmin && !isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" /> : null}
+                </Menu>
+              ) : null}
+            </View>
+          </View>
+          {withoutName() ? (
             <Card>
               <Card.Title
                 title="A name is required"
@@ -100,9 +108,9 @@ export const AccountCard = ({
                 // right={(props) => <IconButton {...props} icon="more-vert" onPress={() => {}} />}
               />
             </Card>
-          )}
+          ) : null}
         </Card.Content>
-        {showSocial && (
+        {showSocial ? (
           <View style={defaultStyles.social}>
             <View style={defaultStyles.labelledElement}>
               <Subheading>{likes}</Subheading>
@@ -117,7 +125,7 @@ export const AccountCard = ({
               <Caption>Shared</Caption>
             </View>
           </View>
-        )}
+        ) : null}
       </Card>
     </>
   );
@@ -127,18 +135,26 @@ const defaultStyles = StyleSheet.create({
   card: {
     paddingBottom: 15,
   },
-  header: {
-    paddingTop: 30,
-    paddingBottom: 10,
+  cardContent: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
   },
   title: {
-    marginLeft: 15,
     flexDirection: 'row',
     alignSelf: 'flex-start',
     justifyContent: 'flex-start',
   },
   subtitle: {
-    marginLeft: 15,
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
   },
   // TODO: Fix Typography line height on Android vs iOS
   titleText: {
@@ -149,7 +165,17 @@ const defaultStyles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'top',
   },
-  subtitleText: {
+  subtitleTextPrimary: {
+    fontSize: 13,
+    color: theme.colors.text,
+    fontFamily: theme.fonts.thin.fontFamily,
+    lineHeight: 16,
+    includeFontPadding: false,
+    textAlignVertical: 'top',
+    minHeight: 'auto',
+    maxWidth: 250
+  },
+  subtitleTextSecondary: {
     fontSize: 13,
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,

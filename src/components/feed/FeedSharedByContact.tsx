@@ -31,7 +31,7 @@ export const FeedSharedByContact = ({ list = [], displayNoContent = false }: Fee
   return (
     <View style={{ marginBottom: 15 }}>
       <SectionHeader title={`Recently Added`} />
-      {sortedList && sortedList.length > 0 && (
+      {sortedList && sortedList.length > 0 ? (
         <>
           <FlatList horizontal={true} data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
           <Button
@@ -47,10 +47,10 @@ export const FeedSharedByContact = ({ list = [], displayNoContent = false }: Fee
             All Shared Playlists
           </Button>
         </>
-      )}
-      {noContentIsVisible && (
+      ) : null}
+      {noContentIsVisible ? (
         <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" />
-      )}
+      ) : null}
     </View>
   );
 

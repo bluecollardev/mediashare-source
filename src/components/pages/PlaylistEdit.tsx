@@ -9,6 +9,7 @@ import { usePlaylists, useRouteWithParams, useViewMediaItemById } from 'mediasha
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { View, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -187,8 +188,8 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
         </ScrollView>
       </KeyboardAvoidingPageContent>
       <PageActions>
-        {!isSelectable && <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" />}
-        {isSelectable && (
+        {!isSelectable ? <ActionButtons loading={isSaved} onPrimaryClicked={savePlaylist} onSecondaryClicked={clearAndGoBack} primaryLabel="Save" /> : null}
+        {isSelectable ? (
           <ActionButtons
             onPrimaryClicked={confirmDeletePlaylistItems}
             onSecondaryClicked={cancelDeletePlaylistItems}
@@ -196,7 +197,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             primaryIconColor={theme.colors.error}
             primaryButtonStyles={{ backgroundColor: theme.colors.error }}
           />
-        )}
+        ) : null}
       </PageActions>
     </PageContainer>
   );

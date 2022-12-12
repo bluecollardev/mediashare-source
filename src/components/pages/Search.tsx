@@ -10,6 +10,7 @@ import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
@@ -103,14 +104,14 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {searchResults.length === 0 && <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />}
+        {searchResults.length === 0 ? <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" /> : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.share && (
+      {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
-      )}
-      {!isSelectable && searchResults.length > 0 && (
+      ) : null}
+      {!isSelectable && searchResults.length > 0 ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -122,7 +123,7 @@ export const Search = ({ globalState }: PageProps) => {
             setFabState(open);
           }}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 

@@ -12,15 +12,32 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, throwIfNullOrUndefined, OperationOpts, RawAjaxResponse } from '../runtime';
-import { AuthorizeDto, InviteDto, MediaItemResponseDto, ProfileDto, UpdateUserDto, UserDto } from '../models';
+import { BaseAPI, HttpHeaders, HttpQuery, throwIfNullOrUndefined, OperationOpts, RawAjaxResponse } from '../runtime';
+import { AuthorizeDto, InviteDto, MediaItemResponseDto, ProfileDto, UpdateUserDto, UserConnectionDto, UserDto } from '../models';
 
 export interface UserControllerAuthorizeRequest {
   authorizeDto: AuthorizeDto;
 }
 
+export interface UserControllerCreateUserConnectionRequest {
+  userConnectionDto: UserConnectionDto;
+}
+
 export interface UserControllerInviteRequest {
   inviteDto: InviteDto;
+}
+
+export interface UserControllerRemoveUserConnectionRequest {
+  userConnectionDto: UserConnectionDto;
+}
+
+export interface UserControllerRemoveUserConnectionsRequest {
+  userConnectionDto: Array<UserConnectionDto>;
+}
+
+export interface UserControllerSendEmailRequest {
+  userId: any;
+  email: any;
 }
 
 export interface UserControllerUpdateUserRequest {
@@ -48,6 +65,37 @@ export class UserApi extends BaseAPI {
         method: 'POST',
         headers,
         body: authorizeDto,
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
+  userControllerCreateUserConnection({ userConnectionDto }: UserControllerCreateUserConnectionRequest): Observable<void>;
+  userControllerCreateUserConnection(
+    { userConnectionDto }: UserControllerCreateUserConnectionRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>>;
+  userControllerCreateUserConnection(
+    { userConnectionDto }: UserControllerCreateUserConnectionRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(userConnectionDto, 'userConnectionDto', 'userControllerCreateUserConnection');
+
+    const headers: HttpHeaders = {
+      'Content-Type': 'application/json',
+      ...(this.configuration.username != null && this.configuration.password != null
+        ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }
+        : undefined),
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/user/connections/create',
+        method: 'POST',
+        headers,
+        body: userConnectionDto,
       },
       opts?.responseOpts
     );
@@ -147,6 +195,99 @@ export class UserApi extends BaseAPI {
       {
         url: '/api/user/logout',
         method: 'POST',
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
+  userControllerRemoveUserConnection({ userConnectionDto }: UserControllerRemoveUserConnectionRequest): Observable<void>;
+  userControllerRemoveUserConnection(
+    { userConnectionDto }: UserControllerRemoveUserConnectionRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>>;
+  userControllerRemoveUserConnection(
+    { userConnectionDto }: UserControllerRemoveUserConnectionRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(userConnectionDto, 'userConnectionDto', 'userControllerRemoveUserConnection');
+
+    const headers: HttpHeaders = {
+      'Content-Type': 'application/json',
+      ...(this.configuration.username != null && this.configuration.password != null
+        ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }
+        : undefined),
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/user/connection/remove',
+        method: 'POST',
+        headers,
+        body: userConnectionDto,
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
+  userControllerRemoveUserConnections({ userConnectionDto }: UserControllerRemoveUserConnectionsRequest): Observable<void>;
+  userControllerRemoveUserConnections(
+    { userConnectionDto }: UserControllerRemoveUserConnectionsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>>;
+  userControllerRemoveUserConnections(
+    { userConnectionDto }: UserControllerRemoveUserConnectionsRequest,
+    opts?: OperationOpts
+  ): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(userConnectionDto, 'userConnectionDto', 'userControllerRemoveUserConnections');
+
+    const headers: HttpHeaders = {
+      'Content-Type': 'application/json',
+      ...(this.configuration.username != null && this.configuration.password != null
+        ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }
+        : undefined),
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/user/connections/remove',
+        method: 'POST',
+        headers,
+        body: userConnectionDto,
+      },
+      opts?.responseOpts
+    );
+  }
+
+  /**
+   */
+  userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest): Observable<void>;
+  userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>;
+  userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+    throwIfNullOrUndefined(userId, 'userId', 'userControllerSendEmail');
+    throwIfNullOrUndefined(email, 'email', 'userControllerSendEmail');
+
+    const headers: HttpHeaders = {
+      ...(this.configuration.username != null && this.configuration.password != null
+        ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }
+        : undefined),
+    };
+
+    const query: HttpQuery = {
+      // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+      userId: userId,
+      email: email,
+    };
+
+    return this.request<void>(
+      {
+        url: '/api/user/send-email',
+        method: 'POST',
+        headers,
+        query,
       },
       opts?.responseOpts
     );

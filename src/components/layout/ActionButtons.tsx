@@ -53,7 +53,7 @@ export function ActionButtons({
   return (
     <View style={{ ...defaultStyles.container, ...containerStyles }}>
       <View style={[{ ...defaultStyles.actionButtons, ...actionButtonsStyles }]}>
-        {showSecondary && (
+        {showSecondary ? (
           <TouchableWithoutFeedback
             accessibilityRole="button"
             onPress={() => {
@@ -62,12 +62,12 @@ export function ActionButtons({
             style={{ ...defaultStyles.secondaryButtonTouchable, ...secondaryButtonTouchableStyles }}
           >
             <View style={{ ...defaultStyles.secondaryButton, ...secondaryButtonStyles }}>
-              {secondaryIcon && <IconButton iconColor={secondaryIconColor} icon={secondaryIcon} />}
-              {!!secondaryLabel && <Text style={{ ...defaultStyles.secondaryButtonLabel, ...secondaryButtonLabelStyles }}>{secondaryLabel}</Text>}
+              {secondaryIcon ? <IconButton iconColor={secondaryIconColor} icon={secondaryIcon} /> : null}
+              {!!secondaryLabel ? <Text style={{ ...defaultStyles.secondaryButtonLabel, ...secondaryButtonLabelStyles }}>{secondaryLabel}</Text> : null}
             </View>
           </TouchableWithoutFeedback>
-        )}
-        {showPrimary && (
+        ) : null}
+        {showPrimary ? (
           <TouchableWithoutFeedback
             accessibilityRole="button"
             onPress={() => {
@@ -78,9 +78,9 @@ export function ActionButtons({
             style={{ ...defaultStyles.primaryButtonTouchable, ...primaryButtonTouchableStyles }}
           >
             <View style={{ ...defaultStyles.primaryButton, ...primaryButtonStyles, ...(disablePrimary ? defaultStyles.primaryButtonDisabled : {}) }}>
-              {loading && <ActivityIndicator size="small" color={primaryIconColor} style={{ paddingRight: 15 }} />}
-              {primaryIcon && <IconButton iconColor={primaryIconColor} icon={primaryIcon} />}
-              {!!primaryLabel && (
+              {loading ? <ActivityIndicator size="small" color={primaryIconColor} style={{ paddingRight: 15 }} /> : null}
+              {primaryIcon ? <IconButton iconColor={primaryIconColor} icon={primaryIcon} /> : null}
+              {!!primaryLabel ? (
                 <Text
                   style={{
                     ...defaultStyles.primaryButtonLabel,
@@ -90,10 +90,10 @@ export function ActionButtons({
                 >
                   {primaryLabel}
                 </Text>
-              )}
+              ) : null}
             </View>
           </TouchableWithoutFeedback>
-        )}
+        ) : null}
       </View>
     </View>
   );
