@@ -36,7 +36,7 @@ const MediaListItem = ({
   titleStyle = {},
   description,
   onViewDetail,
-  onChecked = () => {},
+  onChecked = (b: boolean) => {},
   selectable = true,
   showActions = true,
   showThumbnail = false,
@@ -150,4 +150,4 @@ const defaultStyles: any = StyleSheet.create({
   iconButton: {
     marginRight: 0,
   },
-});
+} as any);
