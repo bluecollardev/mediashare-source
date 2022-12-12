@@ -33,7 +33,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
 
   const dispatch = useDispatch();
 
-  const viewPlaylist = useViewPlaylistById();
+  const viewPlaylist = useViewPlaylistById({ disableEdit: true, disableControls: true });
 
   const profile = useProfile();
 
@@ -105,7 +105,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
         <SharedList
           key={clearSelectionKey}
           selectable={isSelectable}
-          showActions="right"
+          showActions={!isSelectable}
           onDelete={openUnshareItemDialog}
           onView={viewItem}
           sharedItems={itemsSharedWithContact}

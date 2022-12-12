@@ -125,8 +125,6 @@ const NetworkNavigation = () => {
       <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
       <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
       <NetworkStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
-      <NetworkStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
-      <NetworkStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
     </NetworkStackNavigator.Navigator>
   );
 };

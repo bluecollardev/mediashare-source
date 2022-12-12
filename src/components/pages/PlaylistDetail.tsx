@@ -27,11 +27,16 @@ import { theme } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
 
+export interface PlaylistDetailProps extends PageProps {
+  disableEdit?: boolean;
+  disableControls?: boolean;
+}
+
 // @ts-ignore
-export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }: PageProps) => {
+export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }: PlaylistDetailProps) => {
   const dispatch = useDispatch();
 
-  const { playlistId = '' } = route?.params || {};
+  const { playlistId = '', disableEdit = false, disableControls = false } = route?.params || {};
 
   const edit = useRouteWithParams(routeNames.playlistEdit);
   const addToPlaylist = useRouteWithParams(routeNames.addItemsToPlaylist);
@@ -62,7 +67,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     // mediaItems = [],
   } = selected || {};
 
-  const allowEdit = createdBy === appUserId;
+  const allowEdit = createdBy === appUserId && !disableEdit;
 
   const { tags = [], build } = globalState;
   const tagKeys = (selected?.tags || []).map(({ key }) => key);
@@ -158,7 +163,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
               Play From Beginning
             </Button>
             <Divider /> */}
-            {!allowEdit && playlistMediaItems.length > 0 ? (
+            {!disableControls && !allowEdit && playlistMediaItems.length > 0 ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
                 showSecondary={false}
@@ -188,9 +193,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
               list={playlistMediaItems}
               showThumbnail={true}
               selectable={isSelectable}
-              showActions={!isSelectable}
-              onViewDetail={activatePlaylistDetail}
-              addItem={onAddItem}
+              showActions={!isSelectable && !disableControls}
+              onViewDetail={!disableControls ? activatePlaylistDetail : undefined}
+              addItem={!disableControls ? onAddItem : undefined}
               removeItem={onRemoveItem}
               actionIconRight={allowEdit ? 'edit' : undefined}
             />
@@ -208,7 +213,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           ) : null}
         </PageActions>
       </PageContent>
-      {!build.forFreeUser && !isSelectable ? (
+      {!build.forFreeUser && !isSelectable && !disableControls ? (
         <FAB.Group
           visible={true}
           open={fabState.open}

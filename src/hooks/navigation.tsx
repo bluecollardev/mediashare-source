@@ -89,13 +89,14 @@ export function usePlaylists() {
   };
 }
 
-export function useViewPlaylistById() {
+export function useViewPlaylistById(config: { disableEdit: boolean, disableControls: boolean } = { disableEdit: false, disableControls: false }) {
+  const { disableEdit = false, disableControls = false } = config;
   const nav = useNavigation();
   const dispatch = useDispatch();
   return async ({ playlistId }: { playlistId: string }) => {
     await dispatch(getPlaylistById(playlistId));
     // @ts-ignore
-    nav.navigate(routeNames.playlistDetail, { playlistId });
+    nav.navigate(routeNames.playlistDetail, { playlistId, disableEdit, disableControls });
   };
 }
 
