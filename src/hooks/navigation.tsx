@@ -11,8 +11,7 @@ import { getPlaylistById } from 'mediashare/store/modules/playlist';
 // TODO: Fix ts-ignores!
 
 type RouteConfigKeyType = EnumLiteralsOf<typeof routeNames>;
-// @ts-ignore
-type RouteParentKeyType = keyof Pick<typeof routeConfig, 'Browse' | 'Media' | 'Playlists' | 'Account'>;
+type RouteParentKeyType = keyof Pick<typeof routeConfig, 'Private' | 'Public' | 'Account'>;
 
 export function useGoToAccount() {
   const nav = useNavigation();

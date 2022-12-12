@@ -108,6 +108,7 @@ const AccountNavigation = () => {
   return (
     <AccountStackNavigator.Navigator initialRouteName={'accountEdit'}>
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
 };
