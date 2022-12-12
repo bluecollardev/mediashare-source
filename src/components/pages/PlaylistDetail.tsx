@@ -39,7 +39,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const { playlistId = '', disableEdit = false, disableControls = false } = route?.params || {};
 
   const edit = useRouteWithParams(routeNames.playlistEdit);
-  const addToPlaylist = useRouteWithParams(routeNames.addItemsToPlaylist);
+  const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
   const viewMediaItemById = useViewMediaItemById();
   const viewPlaylistItemById = useViewPlaylistItemById();
   const editPlaylistItemById = useEditPlaylistItemById();
@@ -81,6 +81,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [selectedItems, setSelectedItems] = useState([]);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAddToLibraryDialog, setShowAddToLibraryDialog] = useState(false);
 
   const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
 
@@ -105,7 +106,10 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       { icon: 'edit', onPress: () => editPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
     ];
   } else {
-    fabActions = [{ icon: 'share', onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }];
+    fabActions = [
+      { icon: 'share', onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'playlist-add', onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
+    ];
   }
 
   // Don't display anything unless we have a selected playlist
@@ -128,6 +132,18 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
           color={theme.colors.white}
           buttonColor={theme.colors.error}
+        />
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Confirm"
+          leftActionCb={() => setShowAddToLibraryDialog(false)}
+          rightActionCb={() => undefined}
+          onDismiss={() => setShowAddToLibraryDialog(false)}
+          showDialog={showAddToLibraryDialog}
+          title="Save Playlist to Library"
+          subtitle={`Add ${title} to your Library.`}
+          color={theme.colors.white}
+          buttonColor={theme.colors.primary}
         />
         <ScrollView>
           <MediaCard

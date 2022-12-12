@@ -45,7 +45,7 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
 
 const AddToPlaylistComponentWithSearch = withPlaylistSearch(AddToPlaylistComponent);
 
-export const AddToPlaylist = ({ route, globalState }: PageProps) => {
+export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   const { playlistId } = route.params;
 
   const dispatch = useDispatch();
@@ -144,4 +144,4 @@ const styles = StyleSheet.create({
 
 export default withLoadingSpinner((state) => {
   return !!state?.mediaItems?.loading || false;
-})(withGlobalStateConsumer(AddToPlaylist));
+})(withGlobalStateConsumer(AddSelectedToPlaylist));

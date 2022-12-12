@@ -78,8 +78,8 @@ const routeConfig = {
     name: 'addFromFeed',
     options: { title: 'Import From S3 Bucket', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
   },
-  addItemsToPlaylist: {
-    name: 'addItemsToPlaylist',
+  addSelectedToPlaylist: {
+    name: 'addSelectedToPlaylist',
     options: {
       title: 'Add Items To Playlist',
       header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccountMenu={true} />,

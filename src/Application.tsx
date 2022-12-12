@@ -13,12 +13,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Amplify, { Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { store, useAppSelector } from './store';
-import { routeConfig, routeNames } from './routes'
+import { routeConfig } from './routes'
 import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user'
 import { useUser } from 'mediashare/hooks/useUser';
 import { theme } from './styles';
 import { useFonts } from 'expo-font';
-import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { createBottomTabListeners } from './screenListeners';
 import { GlobalStateProps, withGlobalStateProvider } from './core/globalState';
 
@@ -37,7 +36,7 @@ import PlaylistEdit from './components/pages/PlaylistEdit';
 import PlaylistDetail from './components/pages/PlaylistDetail';
 import PlaylistItemDetail from './components/pages/PlaylistItemDetail';
 import PlaylistItemEdit from './components/pages/PlaylistItemEdit';
-import AddToPlaylist from './components/pages/AddToPlaylist';
+import AddSelectedToPlaylist from './components/pages/AddSelectedToPlaylist';
 import Media from './components/pages/Media';
 import MediaItemDetail from './components/pages/MediaItemDetail';
 import MediaItemEdit from './components/pages/MediaItemEdit';
@@ -93,7 +92,7 @@ const LibraryNavigation = () => {
       <LibraryStackNavigator.Screen {...routeConfig.playlistAdd} component={PlaylistAdd} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistEdit} component={PlaylistEdit} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
-      <LibraryStackNavigator.Screen {...routeConfig.addItemsToPlaylist} component={AddToPlaylist} />
+      <LibraryStackNavigator.Screen {...routeConfig.addSelectedToPlaylist} component={AddSelectedToPlaylist} />
       <LibraryStackNavigator.Screen {...routeConfig.media} component={Media} />
       <LibraryStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
       <LibraryStackNavigator.Screen {...routeConfig.mediaItemEdit} component={MediaItemEdit} />
