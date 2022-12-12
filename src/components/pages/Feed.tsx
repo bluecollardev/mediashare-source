@@ -10,16 +10,11 @@ import { filterUnique } from 'mediashare/utils';
 import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { NoContent, PageContainer, PageContent, PageProps } from 'mediashare/components/layout';
-import { FeedTags, FeedRecentlyPlayed, FeedSharedByContact } from 'mediashare/components/feed';
+import { TagBlocks, RecentlyPlayed, RecentlyAdded } from 'mediashare/components/feed';
 
 const FeedComponent = ({ list, tags }) => {
   return (
     <>
-      <FeedTags list={tags} />
-      <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-      <FeedSharedByContact list={list} />
-      <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-      <FeedRecentlyPlayed list={list} />
     </>
   );
 };

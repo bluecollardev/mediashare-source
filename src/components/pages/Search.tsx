@@ -1,3 +1,6 @@
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -60,6 +63,8 @@ export const SearchComponent = withPlaylistSearch(
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
 export const Search = ({ globalState }: PageProps) => {
+  const { tags = [] } = globalState;
+  
   const dispatch = useDispatch();
 
   const shareWith = useRouteName(routeNames.shareWith);
@@ -104,7 +109,17 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {searchResults.length === 0 ? <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" /> : null}
+        {searchResults.length === 0 ? (
+          <>
+            <TagBlocks list={tags} />
+            {/*<NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />*/}
+            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+            <RecentlyAdded list={searchResults} />
+            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+            <RecentlyPlayed list={searchResults} />
+          </>
+          
+        ) : null}
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.share ? (
         <PageActions>

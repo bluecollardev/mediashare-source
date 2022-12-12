@@ -94,7 +94,7 @@ export const AccountCard = ({
                     </IconButton>
                   }
                 >
-                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Account" /> : null}
+                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Network" /> : null}
                   {profile?.build?.forAdmin && !isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" /> : null}
                 </Menu>
               ) : null}

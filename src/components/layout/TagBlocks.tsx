@@ -1,17 +1,17 @@
 import React from 'react';
 import { Dimensions, View } from 'react-native';
 // import { Divider } from 'react-native-paper';
-import { MediaListItem, NoContent, SectionHeader } from 'mediashare/components/layout';
+import { MediaListItem, NoContent, SectionHeader } from 'mediashare/components/layout/index';
 import styles, { theme } from 'mediashare/styles';
 import { Button } from 'react-native-paper';
 
-export interface FeedTagsBlockProps {
+export interface TagBlocksProps {
   list: any[];
   onViewDetailClicked?: Function;
   displayNoContent?: boolean;
 }
 
-export const FeedTags = ({ list = [], onViewDetailClicked, displayNoContent = false }: FeedTagsBlockProps) => {
+export const TagBlocks = ({ list = [], onViewDetailClicked, displayNoContent = false }: TagBlocksProps) => {
   // TODO: Make this configurable, or use the most popular tags ONLY!
   const tagsToDisplay = ['ankle', 'elbow', 'foot-and-ankle', 'hand', 'hip', 'knee', 'lower-back', 'neck', 'shoulder', 'upper-back', 'wrist'];
   const sortedList = list.map((tag) => tag).filter((tag) => tagsToDisplay.includes(tag.key));

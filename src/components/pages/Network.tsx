@@ -25,7 +25,7 @@ import ModalSheet from '../layout/InviteModal';
 const actionModes = { delete: 'delete', default: 'default' };
 const awsUrl = Config.AWS_URL;
 
-export const Account = ({ globalState }: PageProps) => {
+export const Network = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
   
   const editProfile = useRouteWithParams(routeNames.accountEdit);
@@ -247,7 +247,7 @@ export const Account = ({ globalState }: PageProps) => {
   }
 };
 
-export default withLoadingSpinner(undefined)(withGlobalStateConsumer(Account));
+export default withLoadingSpinner(undefined)(withGlobalStateConsumer(Network));
 
 const styles = StyleSheet.create({
   sectionHeader: {

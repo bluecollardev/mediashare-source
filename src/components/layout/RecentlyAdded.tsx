@@ -3,11 +3,11 @@ import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 import { useViewPlaylistById, useViewFeedSharedWithMe } from 'mediashare/hooks/navigation';
 import { FlatList, View, Dimensions, TouchableHighlight } from 'react-native';
 import { Button } from 'react-native-paper';
-import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout';
+import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { theme } from 'mediashare/styles';
 
-export interface FeedSharedByContactProps {
+export interface RecentlyAddedProps {
   list: PlaylistResponseDto[];
   selectable?: boolean;
   clearSelection?: boolean;
@@ -17,7 +17,7 @@ export interface FeedSharedByContactProps {
   displayNoContent?: boolean;
 }
 
-export const FeedSharedByContact = ({ list = [], displayNoContent = false }: FeedSharedByContactProps) => {
+export const RecentlyAdded = ({ list = [], displayNoContent = false }: RecentlyAddedProps) => {
   const viewFeedSharedWithMeAction = useViewFeedSharedWithMe();
   const viewFeedSharedWithMe = () => viewFeedSharedWithMeAction();
   const viewPlaylistAction = useViewPlaylistById();

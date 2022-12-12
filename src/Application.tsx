@@ -42,7 +42,7 @@ import Media from './components/pages/Media';
 import MediaItemDetail from './components/pages/MediaItemDetail';
 import MediaItemEdit from './components/pages/MediaItemEdit';
 import ShareWith from './components/pages/ShareWith';
-import Account from './components/pages/Account';
+import Network from './components/pages/Network';
 import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
@@ -52,7 +52,7 @@ import { Auth } from 'aws-amplify';
 
 // Map route names to icons
 export const tabNavigationIconsMap = {
-  Feed: 'explore',
+  Shared: 'share',
   Search: 'search',
   Playlists: 'play-circle-outline',
   Media: 'video-library',
@@ -118,14 +118,24 @@ const AccountStackNavigator = createStackNavigator();
 const AccountNavigation = () => {
   // const user = useUser();
   return (
-    <AccountStackNavigator.Navigator initialRouteName={'account'}>
-      <AccountStackNavigator.Screen {...routeConfig.account} component={Account} />
+    <AccountStackNavigator.Navigator initialRouteName={'accountEdit'}>
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
-      <AccountStackNavigator.Screen {...routeConfig.contact} component={Contact} />
-      <AccountStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
-      <AccountStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
-      <AccountStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
+  );
+};
+
+const NetworkStackNavigator = createStackNavigator();
+const NetworkNavigation = () => {
+  // const user = useUser();
+  return (
+    <NetworkStackNavigator.Navigator initialRouteName={'account'}>
+      <NetworkStackNavigator.Screen {...routeConfig.account} component={Network} />
+      <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.contact} component={Contact} />
+      <NetworkStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
+      <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
+      <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
+    </NetworkStackNavigator.Navigator>
   );
 };
 
@@ -172,7 +182,7 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
       })}
     >
       <>
-        <PrivateNavigator.Screen name="Feed" component={FeedNavigation} listeners={navigationTabListeners} />
+        <PrivateNavigator.Screen name="Shared" component={NetworkNavigation} listeners={navigationTabListeners} />
 
         {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />

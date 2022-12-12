@@ -95,8 +95,8 @@ const routeConfig = {
   account: {
     name: 'account',
     options: {
-      title: 'My Account',
-      header: (props) => <AppHeader {...props} showNotificationsMenu={true} showAccountMenu={false} />,
+      title: 'Shared Items',
+      header: (props) => <AppHeader {...props} showAccountMenu={true} showNotificationsMenu={true} />,
     },
   },
   accountEdit: {

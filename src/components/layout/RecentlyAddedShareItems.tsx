@@ -1,11 +1,13 @@
 import React from 'react';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
-import { Dimensions, FlatList, View, TouchableHighlight } from 'react-native';
-import { useViewPlaylistById } from 'mediashare/hooks/navigation';
-import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout';
+import { useViewPlaylistById, useViewFeedSharedWithMe } from 'mediashare/hooks/navigation';
+import { FlatList, View, Dimensions, TouchableHighlight } from 'react-native';
+import { Button } from 'react-native-paper';
+import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { theme } from 'mediashare/styles';
 
-export interface FeedRecentlyPlayedProps {
+export interface RecentlyAddedShareItemsProps {
   list: PlaylistResponseDto[];
   selectable?: boolean;
   clearSelection?: boolean;
@@ -15,7 +17,9 @@ export interface FeedRecentlyPlayedProps {
   displayNoContent?: boolean;
 }
 
-export const FeedRecentlyPlayed = ({ list = [], displayNoContent = false }: FeedRecentlyPlayedProps) => {
+export const RecentlyAddedShareItems = ({ list = [], displayNoContent = false }: RecentlyAddedShareItemsProps) => {
+  const viewFeedSharedWithMeAction = useViewFeedSharedWithMe();
+  const viewFeedSharedWithMe = () => viewFeedSharedWithMeAction();
   const viewPlaylistAction = useViewPlaylistById();
   const viewPlaylist = (item) => viewPlaylistAction({ playlistId: item._id });
 
@@ -26,9 +30,23 @@ export const FeedRecentlyPlayed = ({ list = [], displayNoContent = false }: Feed
 
   return (
     <View style={{ marginBottom: 15 }}>
-      <SectionHeader title={`Resume Playing`} />
+      <SectionHeader title={`Recently Added`} />
       {sortedList && sortedList.length > 0 ? (
-        <FlatList horizontal={true} data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
+        <>
+          <FlatList horizontal={true} data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
+          <Button
+            icon="list"
+            color={theme.colors.darkDefault}
+            textColor={theme.colors.primary}
+            uppercase={false}
+            mode="outlined"
+            compact
+            dark
+            onPress={() => viewFeedSharedWithMe()}
+          >
+            All Shared Playlists
+          </Button>
+        </>
       ) : null}
       {noContentIsVisible ? (
         <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" />
@@ -63,7 +81,8 @@ export const FeedRecentlyPlayed = ({ list = [], displayNoContent = false }: Feed
             thumbnail={mediaPreview.imageSrc}
             thumbnailStyle={{
               aspectRatio: 1 / 1,
-              padding: 10
+              padding: 10,
+              paddingBottom: 0
             }}
             showActions={false}
             showAvatar={false}

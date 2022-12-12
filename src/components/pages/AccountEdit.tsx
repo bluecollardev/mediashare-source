@@ -70,7 +70,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
           </View>
       
           <View style={styles.formSection}>
-            <TextField label="Account Type" value={state?.role} disabled={true} />
+            <TextField label="Network Type" value={state?.role} disabled={true} />
             <TextField onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username} disabled={!isLoaded} />
           </View>
           <View style={styles.formSection}>
