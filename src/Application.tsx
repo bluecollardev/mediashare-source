@@ -42,7 +42,7 @@ import Media from './components/pages/Media';
 import MediaItemDetail from './components/pages/MediaItemDetail';
 import MediaItemEdit from './components/pages/MediaItemEdit';
 import ShareWith from './components/pages/ShareWith';
-import Network from './components/pages/Network';
+import Shared from './components/pages/Shared';
 import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
@@ -118,12 +118,15 @@ const NetworkNavigation = () => {
   // const user = useUser();
   return (
     <NetworkStackNavigator.Navigator initialRouteName={'account'}>
-      <NetworkStackNavigator.Screen {...routeConfig.account} component={Network} />
+      <NetworkStackNavigator.Screen {...routeConfig.account} component={Shared} />
       <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
       <NetworkStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
       <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
+      <NetworkStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
+      <NetworkStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
+      <NetworkStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
     </NetworkStackNavigator.Navigator>
   );
 };

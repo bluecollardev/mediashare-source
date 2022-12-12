@@ -25,7 +25,7 @@ import ModalSheet from '../layout/InviteModal';
 const actionModes = { delete: 'delete', default: 'default' };
 const awsUrl = Config.AWS_URL;
 
-export const Network = ({ globalState }: PageProps) => {
+export const Shared = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
   
   const editProfile = useRouteWithParams(routeNames.accountEdit);
@@ -69,13 +69,13 @@ export const Network = ({ globalState }: PageProps) => {
     fabActions = [
       { icon: 'logout', onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'person-remove', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-      { icon: 'edit', onPress: () => editProfile({ userId: user._id }), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+      { icon: 'person-add', onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   } else if (build.forAdmin) {
     fabActions = [
       { icon: 'logout', onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'person-remove', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-      { icon: 'edit', onPress: () => editProfile({ userId: user._id }), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+      { icon: 'person-add', onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   }
   return (
@@ -93,7 +93,7 @@ export const Network = ({ globalState }: PageProps) => {
         title="Delete Connection"
         subtitle="Are you sure you want to do this? This action is final and cannot be undone."
       />
-      <AccountCard
+      {/* <AccountCard
         title={fullName}
         username={username}
         email={email}
@@ -106,12 +106,12 @@ export const Network = ({ globalState }: PageProps) => {
         showActions={false}
         isCurrentUser={true}
         onProfileImageClicked={() => getDocument()}
-      />
+      /> */}
       <Divider />
       <Card elevation={0} style={styles.sectionHeader}>
         <Card.Title
           titleStyle={styles.sectionHeaderTitle}
-          title="My Connections"
+          title="Contacts"
           right={(props) => (
             <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
           )}
@@ -247,7 +247,7 @@ export const Network = ({ globalState }: PageProps) => {
   }
 };
 
-export default withLoadingSpinner(undefined)(withGlobalStateConsumer(Network));
+export default withLoadingSpinner(undefined)(withGlobalStateConsumer(Shared));
 
 const styles = StyleSheet.create({
   sectionHeader: {
@@ -255,10 +255,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   sectionHeaderTitle: {
-    textAlign: 'center',
+    textAlign: 'left',
     fontWeight: 'normal',
     fontSize: 16,
-    marginLeft: 60,
   },
   deleteActionButton: {
     backgroundColor: theme.colors.error,

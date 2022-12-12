@@ -94,7 +94,7 @@ export const AccountCard = ({
                     </IconButton>
                   }
                 >
-                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Network" /> : null}
+                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Shared" /> : null}
                   {profile?.build?.forAdmin && !isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" /> : null}
                 </Menu>
               ) : null}
@@ -134,6 +134,7 @@ export const AccountCard = ({
 const defaultStyles = StyleSheet.create({
   card: {
     paddingBottom: 15,
+    marginBottom: 15,
   },
   cardContent: {
     display: 'flex',

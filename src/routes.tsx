@@ -106,8 +106,8 @@ const routeConfig = {
   contact: {
     name: 'contact',
     options: {
-      title: 'Contact',
-      header: (props) => <AppHeader {...props} showAccountMenu={false} showNotificationsMenu={true} />,
+      title: 'Contact Info',
+      header: (props) => <AppHeader {...props} showAccountMenu={true} showNotificationsMenu={false} />,
     },
   },
   invitation: {

@@ -45,8 +45,16 @@ const AppHeaderComponent = ({
   const searchIsFiltering = globalState?.search?.filters?.text !== '' || globalState?.search?.filters?.tags?.length > 0;
 
   const [displayMode, setDisplayMode] = useState(globalState?.displayMode);
+  const [unreadNofifications, setUnreadNofifications] = useState(true);
 
   let searchIcon = hideSearchIcon ? (searchIsFiltering ? 'filter-list' : '') : !searchIsActive ? 'search' : searchIsActive ? 'filter-list' : 'filter-list';
+  let notificationsIcon = unreadNofifications ? 'notification-important' : 'notifications-off';
+  
+  const notificationsClickHandler = () => {
+    if (unreadNofifications) {
+      setUnreadNofifications(false);
+    }
+  };
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
@@ -60,8 +68,8 @@ const AppHeaderComponent = ({
       />
       {showDisplayControls ? renderDisplayControls() : null}
       {searchable ? <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} /> : null}
-      {showNotificationsMenu ? <Appbar.Action icon="notifications" onPress={() => undefined} /> : null}
-      {showAccountMenu ? <Appbar.Action icon="person" onPress={() => goToAccount()} /> : null}
+      {showNotificationsMenu ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
+      {showAccountMenu ? <Appbar.Action icon="account-circle" onPress={() => goToAccount()} /> : null}
     </Appbar.Header>
   );
 
