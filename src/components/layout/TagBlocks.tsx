@@ -35,7 +35,7 @@ export const TagBlocks = ({ list = [], onViewDetailClicked, displayNoContent = f
           <Button
             icon="label"
             color={theme.colors.darkDefault}
-            textColor={theme.colors.primary}
+            textColor={theme.colors.text}
             uppercase={false}
             mode="outlined"
             compact

@@ -161,6 +161,7 @@ const components = {
       },
       container: {
         backgroundColor: '#1a1a1a',
+        height: 'auto'
       },
       selectToggle: {
         marginVertical: 10,
@@ -188,11 +189,11 @@ const components = {
         color: theme.colors.text,
       },
       selectedItemText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       itemText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       selectedSubItemText: {
@@ -204,7 +205,7 @@ const components = {
         fontFamily: theme.fonts.thin.fontFamily,
       },
       confirmText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.regular.fontFamily,
       },
       button: {

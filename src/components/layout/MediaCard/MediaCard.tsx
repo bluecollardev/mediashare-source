@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Paragraph } from 'react-native-paper';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
-import SwitchSelector from 'react-native-switch-selector';
 import { TextField, MultiSelectIcon } from 'mediashare/components/form';
 import { DisplayPreviewOrVideo } from './DisplayPreviewOrVideo';
 import { MediaCardTitle } from './MediaCardTitle';
@@ -93,7 +92,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   views = 0,
   shares = 0,
 }: MediaCardProps) => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  // TODO: Finish default to private!
+  const [selectedCategories, setSelectedCategories] = useState(['private']);
   const onSelectedCategoriesChange = (categories) => {
     setSelectedCategories(categories);
     onCategoryChange(categories);
@@ -112,6 +112,15 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   const TopDrawer = topDrawer;
 
   const showMediaPreview = showThumbnail && (!!thumbnail || !!mediaSrc);
+  
+  // TODO: Use consts or something instead of strings!
+  const visibilityOptions = [
+    { key: 'private', value: `Don't Share - Private` },
+    { key: 'subcribers', value: `Share With Subscribers` },
+    { key: 'public', value: `Share With Public` },
+  ];
+  
+  console.log(availableTags);
 
   return isEdit ? (
     <View>
@@ -171,27 +180,33 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             parentChipsRemoveChildren={true}
             showCancelButton={true}
             modalWithTouchable={false}
-            modalWithSafeAreaView={false}
+            modalWithSafeAreaView={true}
           />
-        </Card>
-        <Card
-          elevation={elevation as any}
-          style={{ position: 'relative', marginBottom: 25, borderColor: theme.colors.defaultBorder, borderWidth: 1, padding: 0.5 }}
-        >
-          <SwitchSelector
-            fontSize={13}
-            textColor={theme.colors.text}
-            borderColor={theme.colors.darkDefault}
-            selectedColor={theme.colors.primary}
-            backgroundColor={theme.colors.surface}
-            buttonColor={theme.colors.surface}
-            style={{ margin: 0, padding: 0, width: '100%' }}
-            options={categoryOptions.map((option) => ({ value: option, label: `${option} Content` }))}
-            initial={categoryOptions.findIndex((option) => option.toLowerCase() === category.toLowerCase())}
-            onPress={(value) => onSelectedCategoriesChange(value as string)}
-            disabled={isReadOnly}
-            borderRadius={3}
+          <SectionedMultiSelect
+            colors={components.multiSelect.colors}
+            styles={components.multiSelect.styles}
+            items={visibilityOptions}
+            IconRenderer={MultiSelectIcon}
+            uniqueKey="key"
+            displayKey="value"
+            subKey="children"
+            searchPlaceholderText="Enter Text"
+            selectText="Share With"
+            confirmText="Done"
+            onSelectedItemsChange={onSelectedCategoriesChange}
+            selectedItems={selectedCategories}
+            single={true}
+            hideSearch={true}
+            expandDropDowns={false}
+            readOnlyHeadings={false}
+            showDropDowns={false}
+            showChips={false}
+            parentChipsRemoveChildren={false}
+            showCancelButton={true}
+            modalWithTouchable={false}
+            modalWithSafeAreaView={true}
           />
+          
         </Card>
         <View>{children}</View>
         {/* Description can be the longest field so we've moved it to last when we're in edit mode */}
