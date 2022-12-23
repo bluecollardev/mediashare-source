@@ -7,7 +7,7 @@ import { findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { filterUnique } from 'mediashare/utils';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { NoContent, PageContainer, PageContent, PageProps } from 'mediashare/components/layout';
 import { TagBlocks, RecentlyPlayed, RecentlyAdded } from 'mediashare/components/feed';
@@ -19,7 +19,7 @@ const FeedComponent = ({ list, tags }) => {
   );
 };
 
-const FeedComponentWithSearch = withPlaylistSearch(FeedComponent);
+const FeedComponentWithSearch = withSearchComponent(FeedComponent, 'feed');
 
 export const Feed = ({
   globalState = {

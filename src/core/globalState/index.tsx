@@ -24,6 +24,8 @@ export interface GlobalStateProps {
   isAcceptingInvitationFrom?: string;
   loadUserData?: () => void;
   search?: any;
+  searchHistory?: Map<string, any>;
+  setSearchHistory?: any;
   searchIsActive?: boolean;
   setSearchIsActive?: Function;
   setSearchFilters?: Function;
@@ -53,6 +55,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     const tags = useAppSelector((state) => state?.tags?.entities || []);
     
     const [searchIsActive, setSearchIsActive] = useState(false);
+    const [searchHistory, setSearchHistory] = useState(new Map());
     const [searchFilters, setSearchFilters] = useState(INITIAL_SEARCH_FILTERS);
     const [displayMode, setDisplayMode] = useState(INITIAL_DISPLAY_MODE);
 
@@ -65,7 +68,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
 
     useEffect(() => {
       const loadTags = async () => {
-        await dispatch(getTags());
+        await dispatch(getTags({}));
       };
 
       if (isLoggedIn) {
@@ -102,6 +105,8 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         search: {
           filters: { ...searchFilters },
         },
+        searchHistory,
+        setSearchHistory,
         tags,
         displayMode,
         setDisplayMode,

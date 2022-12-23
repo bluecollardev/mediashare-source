@@ -17,8 +17,8 @@ export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMed
 export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
   const { api } = extra as { api: ApiService };
   const { text, tags = [] } = args;
-  console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
-  console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
+  // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
+  // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   return await api.mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
 });
 

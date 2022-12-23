@@ -8,7 +8,7 @@ import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, PageContent, ActionButtons, MediaListType, MediaListItem, NoContent } from 'mediashare/components/layout';
@@ -43,7 +43,7 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
   }
 };
 
-const AddToPlaylistComponentWithSearch = withPlaylistSearch(AddToPlaylistComponent);
+const AddToPlaylistComponentWithSearch = withSearchComponent(AddToPlaylistComponent, 'addToPlaylist');
 
 export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   const { playlistId } = route.params;
@@ -86,10 +86,10 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.searchHistory?.get('addSelectedToPlaylist');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
 
     await dispatch(getPlaylistById(playlistId));

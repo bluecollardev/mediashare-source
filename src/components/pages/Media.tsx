@@ -6,7 +6,7 @@ import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
 import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
@@ -78,7 +78,7 @@ export const MediaComponent = ({
 
 const actionModes = { delete: 'delete', default: 'default' };
 
-const MediaComponentWithSearch = withPlaylistSearch(MediaComponent);
+const MediaComponentWithSearch = withSearchComponent(MediaComponent, 'media');
 
 export const Media = ({ navigation, globalState }: PageProps) => {
   const dispatch = useDispatch();
@@ -93,15 +93,20 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities, selected, loaded, loading } = useAppSelector((state) => state?.mediaItems);
-
+  
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
+    const mediaSearchHistory = globalState.searchHistory.get('media');
+    if (JSON.stringify(mediaSearchHistory) != JSON.stringify(globalState?.search?.filters || {})) {
+      globalState.setSearchFilters(mediaSearchHistory);
+      globalState.searchHistory.set('media', mediaSearchHistory);
+    }
     loadData().then();
   }, []);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
+  
   const [fabState, setState] = useState({ open: false });
   const fabActions = [
     { icon: 'delete-forever', label: `Delete`, onPress: activateDeleteMode, color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
@@ -110,7 +115,6 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   ];
 
   return (
-    
     <PageContainer>
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <AppDialog
@@ -173,7 +177,6 @@ export const Media = ({ navigation, globalState }: PageProps) => {
         />
       ) : null}
     </PageContainer>
-    
   );
 
   /**
@@ -181,11 +184,11 @@ export const Media = ({ navigation, globalState }: PageProps) => {
    * This will change once we have cloud search on tags implemented.
    */
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.searchHistory?.get('media');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
-    };
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
+    };;
 
     await dispatch(findMediaItems(args));
   }

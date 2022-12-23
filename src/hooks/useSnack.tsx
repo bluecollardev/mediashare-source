@@ -5,7 +5,7 @@ export const useSnack = () => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-  const onToggleSnackBar = (value) => {
+  const onToggleSnackBar = (value: boolean = undefined) => {
     setVisible(value ?  value : !visible);
   }
 

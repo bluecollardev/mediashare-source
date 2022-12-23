@@ -35,7 +35,6 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   const [description, setDescription] = useState();
   const [category, setCategory] = useState(PlaylistCategoryType.Free);
   const [isSaved, setIsSaved] = useState(false);
-  const [loaded, setIsLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState('');
 
   const { tags = [] } = globalState;
@@ -58,15 +57,6 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   const onUploadComplete = (uri: string) => {
     setImageSrc(uri);
   };
-
-  useEffect(() => {
-    if (!loaded) {
-      const { search } = globalState;
-      const args = { text: search?.filters?.text ? search.filters.text : '' };
-      dispatch(findMediaItems(args));
-      setIsLoaded(true);
-    }
-  }, [loaded, dispatch, globalState]);
 
   return (
     <PageContainer>

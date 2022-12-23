@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
 import { GlobalStateProps } from 'mediashare/core/globalState';
-import { Card, Divider, Searchbar } from 'react-native-paper';
+import { Divider, Searchbar } from 'react-native-paper';
+import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { components, theme } from 'mediashare/styles';
 
 export interface PlaylistSearchProps {
@@ -14,8 +15,9 @@ export interface PlaylistSearchProps {
   forcedSearchMode?: boolean;
 }
 
-export const withPlaylistSearch = (WrappedComponent: any) => {
-  return function PlaylistSearch({
+export const withSearchComponent = (WrappedComponent: any, historyKey) => {
+  const componentKey = `${historyKey}_${createRandomRenderKey()}`;
+  return function SearchComponent({
     globalState = {
       openSearchConsole: () => undefined,
       closeSearchConsole: () => undefined,
@@ -44,13 +46,19 @@ export const withPlaylistSearch = (WrappedComponent: any) => {
 
     const searchFilters = globalState?.search?.filters || { text: '', tags: [] };
     const [prevSearchFilters, setPrevSearchFilters] = useState({ filters: { text: '', tags: [] } });
+  
+    const currentSearchFilters = globalState?.search;
+    const searchFiltersUpdated = JSON.stringify(currentSearchFilters) !== JSON.stringify(prevSearchFilters)
+    
     useEffect(() => {
-      const currentSearchFilters = globalState?.search;
-      if (!loaded || JSON.stringify(currentSearchFilters) !== JSON.stringify(prevSearchFilters)) {
+      if (searchFiltersUpdated) {
         setPrevSearchFilters(currentSearchFilters);
+        console.log(`[${componentKey}] Search filters have changed`);
+        loadData().then();
+      } else if (!loaded) {
         loadData().then();
       }
-    }, [loaded, globalState, searchFilters]);
+    }, [loaded, searchFiltersUpdated]);
 
     return (
       <>
@@ -120,8 +128,10 @@ export const withPlaylistSearch = (WrappedComponent: any) => {
     function submitSearch() {
       // Update global search filters
       setIsLoaded(true);
-      // async submitSearch
-      setSearchFilters({ text: searchText, tags: [...searchTags] });
+      const searchValue = { text: searchText, tags: [...searchTags] };
+      setSearchFilters(searchValue);
+      globalState?.searchHistory.set(historyKey, searchValue);
+      console.log(globalState.searchHistory);
       setIsLoaded(false);
       // closeSearchConsole(); // Close the search
     }

@@ -9,7 +9,7 @@ import { searchPlaylists, selectPlaylist } from 'mediashare/store/modules/search
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
@@ -28,7 +28,7 @@ export interface SearchProps {
   globalState?: GlobalStateProps;
 }
 
-export const SearchComponent = withPlaylistSearch(
+export const SearchComponent = withSearchComponent(
   ({ list = [], onViewDetailClicked, selectable = false, showActions = true, onChecked = () => undefined }: SearchProps) => {
     const sortedList = list.map((item) => item);
     sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
@@ -58,7 +58,7 @@ export const SearchComponent = withPlaylistSearch(
       );
     }
   }
-);
+, 'search');
 
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
@@ -143,10 +143,10 @@ export const Search = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.searchHistory?.get('search');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
     await dispatch(searchPlaylists(args));
   }

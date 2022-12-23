@@ -72,7 +72,6 @@ export const Shared = ({ globalState }: PageProps) => {
   }
   return (
     <PageContainer>
-      {element}
       <InviteModal
         userId={user._id}
         showDialog={openInvite}
@@ -89,7 +88,7 @@ export const Shared = ({ globalState }: PageProps) => {
         onDismiss={() => setInvite(false)}
       />
       <AppDialog
-        key={showDeleteDialog as unknown as string}
+        key={`AppDialog-display-${showDeleteDialog as unknown as string}`}
         leftActionLabel="Cancel"
         rightActionLabel="Delete Connection"
         buttonColor={theme.colors.error}
@@ -134,6 +133,7 @@ export const Shared = ({ globalState }: PageProps) => {
           />
         </PageActions>
       ) : null}
+      {element}
       {!isSelectable ? (
         <FAB.Group
           visible={true}

@@ -63,10 +63,10 @@ export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
   }
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.searchHistory?.get('addFromFeed');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
 
     if (args.text || args.tags.length > 0) {
