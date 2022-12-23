@@ -31,6 +31,8 @@ export interface GlobalStateProps {
   searchIsFiltering?: (searchKey: string) => boolean;
   searchIsActive?: (searchKey: string) => any;
   setSearchIsActive?: (searchKey: string, value: any) => void;
+  forcedSearchMode?: (searchKey: string) => any;
+  setForcedSearchMode?: (searchKey: string, value: any) => void;
   tags?: Tag[];
   displayMode?: 'list' | 'article';
   setDisplayMode: (value) => void;
@@ -55,6 +57,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     
     const [searchFilters, setSearchFilters] = useState(new Map());
     const [searchFiltersActive, setSearchFiltersActive] = useState(new Map());
+    const [forcedSearchActive, setForcedSearchActive] = useState(new Map());
     const [displayMode, setDisplayMode] = useState(INITIAL_DISPLAY_MODE);
 
     const user = useUser();
@@ -95,13 +98,14 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         openInvitation,
         loadUserData,
         searchIsFiltering,
+        forcedSearchMode,
+        setForcedSearchMode,
         searchIsActive,
         setSearchIsActive,
         updateSearchFilters,
         clearSearchFilters,
         getSearchFilters,
         searchFilters,
-        searchFiltersActive,
         tags,
         displayMode,
         setDisplayMode,
@@ -146,6 +150,15 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function setSearchIsActive(searchKey: string, value: boolean) {
       searchFiltersActive.set(searchKey, value);
       setSearchFiltersActive(new Map(searchFiltersActive));
+    }
+  
+    function forcedSearchMode(searchKey: string) {
+      return (forcedSearchActive.get(searchKey) === true);
+    }
+  
+    function setForcedSearchMode(searchKey: string, value: boolean) {
+      forcedSearchActive.set(searchKey, value);
+      setForcedSearchActive(new Map(forcedSearchActive));
     }
   };
 };

@@ -20,6 +20,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
   return function SearchComponent({
     globalState = {
       updateSearchFilters: (searchKey: string, value: any) => undefined,
+      setForcedSearchMode: (searchKey: string, value: any) => undefined,
       getSearchFilters: (searchKey: string) => undefined,
     },
     loaded,
@@ -28,7 +29,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     forcedSearchMode,
     ...rest
   }: any) {
-    const { searchIsActive, updateSearchFilters, getSearchFilters } = globalState;
+    const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode } = globalState;
     const searchFilters = getSearchFilters(searchKey);
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
@@ -41,6 +42,12 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       if (searchTarget === 'media') return availableTags.filter((tag) => tag.isMediaTag);
       return availableTags;
     }, []);
+    
+    useEffect(() => {
+      if (forcedSearchMode) {
+        setForcedSearchMode(searchKey, true);
+      }
+    }, [forcedSearchMode]);
     
     useEffect(() => {
       if (displaySearch === false) {

@@ -25,7 +25,7 @@ const routeConfig = {
     name: 'search',
     options: {
       title: 'Search',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" hideSearchIcon={true} showAccount={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
     },
   },
   playlists: {

@@ -15,7 +15,6 @@ export interface AppHeaderProps {
   navigation?: NavigationScreenProp<any, any>;
   searchable?: boolean;
   searchTarget?: 'playlists' | 'media' | undefined;
-  hideSearchIcon?: boolean;
   showLogout?: boolean;
   showAccount?: boolean;
   showNotifications?: boolean;
@@ -31,7 +30,6 @@ const AppHeaderComponent = ({
   showLogout = false,
   showNotifications = false,
   showDisplayControls = false,
-  hideSearchIcon = false,
   searchable = false,
   globalState = {
     displayMode: 'list',
@@ -44,8 +42,9 @@ const AppHeaderComponent = ({
   const route = useRoute();
   const goToAccount = useGoToAccount();
   
-  const { searchIsActive, setSearchIsActive, clearSearchFilters } = globalState;
+  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters } = globalState;
   const displaySearch = searchIsActive(route?.name);
+  const forceSearchDisplay = forcedSearchMode(route?.name);
   
   const avatar = globalState?.user?.imageSrc;
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
@@ -53,8 +52,8 @@ const AppHeaderComponent = ({
   const [displayMode, setDisplayMode] = useState(globalState?.displayMode);
   const [unreadNofifications, setUnreadNofifications] = useState(true);
 
-  let searchIcon = hideSearchIcon && displaySearch
-    ? 'filter-list' : hideSearchIcon && !displaySearch
+  let searchIcon = forceSearchDisplay && displaySearch
+    ? 'filter-list' : forceSearchDisplay && !displaySearch
       ? '' : displaySearch
         ? 'filter-list' : 'search';
   
