@@ -94,8 +94,8 @@ export const AccountCard = ({
                     </IconButton>
                   }
                 >
-                  {isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Delete Shared" /> : null}
-                  {profile?.build?.forAdmin && !isCurrentUser ? <Menu.Item trailingIcon="delete-forever" onPress={() => {}} title="Deactivate" /> : null}
+                  {isCurrentUser ? <Menu.Item onPress={() => {}} title="Deactive Account" /> : null}
+                  {isCurrentUser ? <Menu.Item onPress={() => {}} title="Delete Account" /> : null}
                 </Menu>
               ) : null}
             </View>
@@ -187,7 +187,7 @@ const defaultStyles = StyleSheet.create({
   },
   left: {
     flex: 0,
-    width: 108,
+    width: 115,
     marginLeft: 10,
     display: 'flex',
     justifyContent: 'center',
@@ -195,7 +195,6 @@ const defaultStyles = StyleSheet.create({
   },
   right: {
     flex: 0,
-    width: '15%',
     height: 92,
     display: 'flex',
     flexDirection: 'row',

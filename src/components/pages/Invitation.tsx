@@ -50,7 +50,9 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
       <ActionButtons
         containerStyles={{ marginTop: 15 }}
         onSecondaryClicked={() => goBack()}
-        onPrimaryClicked={() => accept()}
+        onPrimaryClicked={async () => {
+          await accept()
+        }}
         primaryLabel="Accept"
         primaryIcon="check"
         secondaryLabel="Decline"
@@ -61,7 +63,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   
   async function accept() {
     await dispatch(acceptInvitation({ userId: accountId, connectionId: userId }));
-    await dispatch(loadUserConnections());
+    await dispatch(loadUserConnections({}));
     goBack();
   }
   

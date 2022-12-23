@@ -6,7 +6,7 @@ import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { ThemeProvider, useNavigation } from '@react-navigation/native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 import PhoneInput from 'react-native-phone-number-input';
 import { theme } from 'mediashare/styles';
@@ -35,7 +35,7 @@ const SignUpComponent = ({}: PageProps) => {
     },
   });
 
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {

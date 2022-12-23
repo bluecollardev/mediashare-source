@@ -1,8 +1,10 @@
+import { logout } from 'mediashare/store/modules/user'
 import React, { useState } from 'react';
 import { Appbar } from 'react-native-paper';
 import { withGlobalStateConsumer, GlobalStateProps } from 'mediashare/core/globalState';
 import { useGoToAccount } from 'mediashare/hooks/navigation';
 import { theme } from 'mediashare/styles';
+import { useDispatch } from 'react-redux'
 
 export interface AppHeaderProps {
   options?: any;
@@ -11,8 +13,9 @@ export interface AppHeaderProps {
   searchable?: boolean;
   searchTarget?: 'playlists' | 'media' | undefined;
   hideSearchIcon?: boolean;
-  showAccountMenu?: boolean;
-  showNotificationsMenu?: boolean;
+  showLogout?: boolean;
+  showAccount?: boolean;
+  showNotifications?: boolean;
   showDisplayControls?: boolean;
   globalState?: GlobalStateProps;
 }
@@ -21,8 +24,9 @@ const AppHeaderComponent = ({
   options,
   back,
   navigation,
-  showAccountMenu = false,
-  showNotificationsMenu = false,
+  showAccount = false,
+  showLogout = false,
+  showNotifications = false,
   showDisplayControls = false,
   hideSearchIcon = false,
   searchable = false,
@@ -36,6 +40,8 @@ const AppHeaderComponent = ({
     tags: [],
   },
 }: AppHeaderProps) => {
+  const dispatch = useDispatch();
+  
   const { openSearchConsole, closeSearchConsole, searchIsActive } = globalState;
 
   const goToAccount = useGoToAccount();
@@ -68,10 +74,15 @@ const AppHeaderComponent = ({
       />
       {showDisplayControls ? renderDisplayControls() : null}
       {searchable ? <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} /> : null}
-      {showNotificationsMenu ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
-      {showAccountMenu ? <Appbar.Action icon="account-circle" onPress={() => goToAccount()} /> : null}
+      {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
+      {showAccount ? <Appbar.Action icon="account-circle" onPress={() => goToAccount()} /> : null}
+      {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}
     </Appbar.Header>
   );
+  
+  async function accountLogout() {
+    await dispatch(logout({}));
+  }
 
   function viewAsList() {
     setDisplayMode('list');

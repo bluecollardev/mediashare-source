@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Snackbar } from 'react-native-paper';
 
-export const userSnack = () => {
+export const useSnack = () => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
 

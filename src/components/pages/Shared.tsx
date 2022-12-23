@@ -1,29 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch } from 'react-redux';
-import * as R from 'remeda';
-import Config from 'mediashare/config';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { thumbnailRoot } from 'mediashare/core/aws/key-factory';
-import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
 import { logout } from 'mediashare/store/modules/user';
 import { loadUserConnections, removeUserConnections } from 'mediashare/store/modules/userConnections'
 import { loadProfile } from 'mediashare/store/modules/profile';
+import { sendEmail } from 'mediashare/store/modules/userConnections';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useWindowDimensions, ScrollView, StyleSheet } from 'react-native';
 import { FAB, Divider, Card, IconButton } from 'react-native-paper';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigation';
 import { useUser } from 'mediashare/hooks/useUser';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
-import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AccountCard, AppDialog } from 'mediashare/components/layout';
+import { useSnack } from 'mediashare/hooks/useSnack'
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AppDialog } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
-import ModalSheet from '../layout/InviteModal';
+import InviteModal from '../layout/InviteModal';
 
 const actionModes = { delete: 'delete', default: 'default' };
-const awsUrl = Config.AWS_URL;
 
 export const Shared = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
@@ -31,14 +27,14 @@ export const Shared = ({ globalState }: PageProps) => {
   const editProfile = useRouteWithParams(routeNames.accountEdit);
   const viewProfileById = useViewProfileById();
   const layout = useWindowDimensions();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
+  
   const [isLoaded, setIsLoaded] = useState(false);
   const [openInvite, setInvite] = React.useState(false);
 
   const user = useUser();
   const userId = user?._id || null;
-  const { username, firstName, lastName, email, phoneNumber, likesCount, sharesCount, sharedCount, build } = user;
-  const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
-  const [state, setState] = useState(R.pick(user, ['firstName', 'email', 'lastName', 'phoneNumber', 'imageSrc']));
+  const { build } = user;
 
   const contacts = useAppSelector((state) => state?.userConnections?.entities).filter((e) => e._id != userId);
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -62,25 +58,37 @@ export const Shared = ({ globalState }: PageProps) => {
   let fabActions = [];
   if (build.forFreeUser) {
     fabActions = [
-      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'edit', label: `Edit`, onPress: () => editProfile({ userId: user._id }), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
     ];
   } else if (build.forSubscriber) {
     fabActions = [
-      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'person-remove', label: `Delete Contact`, onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
       { icon: 'person-add', label: `Invite Contact`, onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   } else if (build.forAdmin) {
     fabActions = [
-      { icon: 'logout', label: `Logout`, onPress: () => accountLogout(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'person-remove', label: `Delete Contact`, onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
       { icon: 'person-add', label: `Invite Contact`, onPress: () => setInvite(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
     ];
   }
   return (
     <PageContainer>
-      <ModalSheet userId={user._id} showDialog={openInvite} onDismiss={() => setInvite(false)} />
+      {element}
+      <InviteModal
+        userId={user._id}
+        showDialog={openInvite}
+        onSubmit={async (data) => {
+          try {
+            await dispatch(sendEmail({ userId, email: data?.email }));
+            setMessage(`Invitation sent to ${data?.email}`);
+            onToggleSnackBar();
+          } catch (error) {
+            setMessage(error.message);
+            onToggleSnackBar();
+          }
+        }}
+        onDismiss={() => setInvite(false)}
+      />
       <AppDialog
         key={showDeleteDialog as unknown as string}
         leftActionLabel="Cancel"
@@ -93,20 +101,6 @@ export const Shared = ({ globalState }: PageProps) => {
         title="Delete Connection"
         subtitle="Are you sure you want to do this? This action is final and cannot be undone."
       />
-      {/* <AccountCard
-        title={fullName}
-        username={username}
-        email={email}
-        phoneNumber={phoneNumber}
-        image={user.imageSrc}
-        likes={likesCount}
-        shared={sharedCount}
-        shares={sharesCount}
-        showSocial={false}
-        showActions={false}
-        isCurrentUser={true}
-        onProfileImageClicked={() => getDocument()}
-      /> */}
       <Divider />
       <Card elevation={0} style={styles.sectionHeader}>
         <Card.Title
@@ -159,44 +153,10 @@ export const Shared = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    await dispatch(loadUserConnections());
+    await dispatch(loadUserConnections({}));
     // @ts-ignore
-    const profile = (await dispatch(loadProfile(userId))) as any;
-    setState(profile.payload);
+    await dispatch(loadProfile(userId));
     setIsLoaded(true);
-  }
-
-  async function getDocument() {
-    launchImageLibrary({ mediaType: 'photo', quality: 0.5, maxWidth: 400, maxHeight: 400 }, function (res) {
-      if (!res.assets) {
-        return;
-      }
-      const image = res.assets[0];
-      const thumbnailKey = thumbnailRoot + image.fileName;
-      fetchAndPutToS3({ key: thumbnailKey, fileUri: image.uri, options: { contentType: image.type } }).then((res: { key: string }) => {
-        // eslint-disable-next-line no-shadow
-        const image = awsUrl + res.key;
-        setState({ ...state, imageSrc: image });
-      });
-    });
-  }
-
-  /* function save() {
-    const updateUserDto = state;
-    // @ts-ignore
-    from(dispatch(updateAccount({ updateUserDto, userId })))
-      .pipe(
-        // @ts-ignore
-        switchMap(() => dispatch(loadProfile(userId))),
-        // @ts-ignore
-        switchMap(() => dispatch(loadUser())),
-        take(1)
-      )
-      .subscribe(() => viewAccount({ userId }));
-  } */
-
-  async function accountLogout() {
-    await dispatch(logout());
   }
 
   function activateDeleteMode() {
@@ -231,7 +191,7 @@ export const Shared = ({ globalState }: PageProps) => {
     console.log(selectedConnections);
     await dispatch(removeUserConnections({ userId, connectionIds: selectedConnections }));
     setSelectedConnections([]);
-    await dispatch(loadUserConnections());
+    await dispatch(loadUserConnections({}));
   }
 
   function updateSelection(bool: boolean, connectionId: string) {

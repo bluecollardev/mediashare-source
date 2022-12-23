@@ -10,7 +10,7 @@ import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 
 interface FormData {
@@ -21,7 +21,7 @@ interface FormData {
 const LoginComponent = ({}: PageProps) => {
   const dispatch = useDispatch();
   const nav = useNavigation();
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const {
     control,
@@ -40,7 +40,7 @@ const LoginComponent = ({}: PageProps) => {
       const response = await Auth.signIn(data.username, data.password);
       const accessToken = response.signInUserSession.accessToken.jwtToken;
       const idToken = response.signInUserSession.idToken.jwtToken;
-      dispatch(loginAction({ accessToken, idToken }));
+      await dispatch(loginAction({ accessToken, idToken }));
     } catch (error) {
       setMessage(error.message);
       onToggleSnackBar();

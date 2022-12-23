@@ -15,8 +15,8 @@ export interface AppHeaderProps {
   searchable?: boolean;
   searchTarget?: 'playlists' | 'media' | undefined;
   showSearchSettings?: boolean;
-  showAccountMenu?: boolean;
-  showNotificationsMenu?: boolean;
+  showAccount?: boolean;
+  showNotifications?: boolean;
   showDisplayControls?: boolean;
   globalState?: GlobalStateProps;
 }
@@ -53,8 +53,8 @@ const AppHeaderComponent = ({
   options,
   back,
   navigation,
-  showAccountMenu = true,
-  showNotificationsMenu = false,
+  showAccount = true,
+  showNotifications = false,
   showDisplayControls = false,
   showSearchSettings = false,
   searchable = false,
@@ -191,8 +191,8 @@ const AppHeaderComponent = ({
       {searchable && !showSearchSettings ? (
         <Appbar.Action icon="filter-list" color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => openSearchConsole()} />
       ) : null}
-      {showNotificationsMenu ? <Appbar.Action icon="notifications" onPress={() => openSearchConsole()} /> : null}
-      {showAccountMenu ? <Appbar.Action icon="person" onPress={() => goToAccount()} /> : null}
+      {showNotifications ? <Appbar.Action icon="notifications" onPress={() => openSearchConsole()} /> : null}
+      {showAccount ? <Appbar.Action icon="person" onPress={() => goToAccount()} /> : null}
     </Appbar.Header>
   );
 

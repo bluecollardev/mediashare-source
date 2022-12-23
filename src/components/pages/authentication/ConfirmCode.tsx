@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { useRoute } from '@react-navigation/native';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 
 interface FormData {
@@ -31,7 +31,7 @@ const ConfirmComponent = ({}: PageProps) => {
     },
   });
 
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const username = watch('username');
 
