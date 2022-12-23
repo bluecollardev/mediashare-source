@@ -140,7 +140,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     }
   
     function searchIsActive(searchKey: string) {
-      return searchFiltersActive.get(searchKey) === true;
+      return (searchFiltersActive.get(searchKey) === true);
     }
   
     function setSearchIsActive(searchKey: string, value: boolean) {
