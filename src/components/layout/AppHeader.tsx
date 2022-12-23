@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { loadProfile } from 'mediashare/store/modules/profile'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
@@ -45,9 +46,7 @@ const AppHeaderComponent = ({
 }: AppHeaderProps) => {
   const dispatch = useDispatch();
   
-  const profile = useProfile();
-  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
-  const avatar = state?.imageSrc;
+  const avatar = globalState?.user?.imageSrc;
   
   const { openSearchConsole, closeSearchConsole, searchIsActive } = globalState;
 
