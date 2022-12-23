@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { logout } from 'mediashare/store/modules/user';
 import { loadUserConnections, removeUserConnections } from 'mediashare/store/modules/userConnections'
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { sendEmail } from 'mediashare/store/modules/userConnections';

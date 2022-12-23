@@ -5,13 +5,15 @@ export const useSnack = () => {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState('');
 
-  const onToggleSnackBar = () => setVisible(!visible);
+  const onToggleSnackBar = (value) => {
+    setVisible(value ?  value : !visible);
+  }
 
   const onDismissSnackBar = () => setVisible(false);
   const element = (
-    <Snackbar
+    <Snackbar key={visible}
       duration={2000}
-      elevation={1}
+      elevation={100}
       style={{
         borderRadius: 10,
       }}

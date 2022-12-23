@@ -89,9 +89,9 @@ export const Search = ({ globalState }: PageProps) => {
       ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
 
-  console.log('search results filtering');
-  console.log(globalState?.searchIsFiltering());
-  console.log(searchResults);
+  // console.log('search results filtering');
+  // console.log(globalState?.searchIsFiltering());
+  // console.log(searchResults);
 
   return (
     <PageContainer>

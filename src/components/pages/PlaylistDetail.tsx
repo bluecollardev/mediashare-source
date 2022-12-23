@@ -1,5 +1,5 @@
-import { a } from 'aws-amplify'
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
+import { useSnack } from 'mediashare/hooks/useSnack'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native';
@@ -59,6 +59,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const goToShareWith = useRouteName(routeNames.shareWith);
   const goToPlaylists = usePlaylists();
   const playFromBeginning = useViewPlaylistItemById();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const { loaded, selected } = useAppSelector((state) => state?.playlist);
   const [isLoaded, setIsLoaded] = useState(loaded);
@@ -247,6 +248,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           ) : null}
         </PageActions>
       </PageContent>
+      {element}
       {!build.forFreeUser && !isSelectable && !disableControls ? (
         <FAB.Group
           visible={true}
@@ -283,20 +285,24 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   }
   
   async function clonePlaylist() {
-    const dto: CreatePlaylistDto = {
-      ...selected as CreatePlaylistDto,
-      _id: undefined,
-      cloneOf: selected._id,
-      mediaIds: selected.mediaItems.map(item => item._id),
-    } as CreatePlaylistDto;
-    
-    // @ts-ignore TODO: Fix types on dispatch?
-    const { payload } = await dispatch(addUserPlaylist(dto));
-    const playlistId = payload._id;
-    await dispatch(getUserPlaylists({}));
-    await dispatch(getPlaylistById(playlistId));
-    setIsSaved(false);
-    edit(playlistId);
+    try {
+      const dto: CreatePlaylistDto = {
+        ...selected as CreatePlaylistDto,
+        _id: undefined,
+        cloneOf: selected._id,
+        mediaIds: selected.mediaItems.map(item => item._id),
+      } as CreatePlaylistDto;
+  
+      // @ts-ignore TODO: Fix types on dispatch?
+      await dispatch(addUserPlaylist(dto));
+      setMessage(`Playlist added to library`);
+      onToggleSnackBar(true);
+      await dispatch(getUserPlaylists({}));
+      setIsSaved(false);
+    } catch (error) {
+      setMessage(error.message);
+      onToggleSnackBar(false);
+    }
   }
 
   async function editPlaylist() {
