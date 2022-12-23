@@ -33,8 +33,8 @@ export const withSearchComponent = (WrappedComponent: any, historyKey) => {
     const { searchIsActive, setSearchFilters } = globalState;
     // const searchIsFiltering = globalState?.search?.filters?.text !== '' || globalState?.search?.filters?.tags?.length > 0;
     // const [searchIsActive, setSearchIsActive] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const [searchTags, setSearchTags] = useState([]);
+    const [searchText, setSearchText] = useState(globalState?.searchHistory?.get(historyKey)?.text || '');
+    const [searchTags, setSearchTags] = useState(globalState?.searchHistory?.get(historyKey)?.tags || []);
     const [isLoaded, setIsLoaded] = useState(false);
 
     const mappedTags = useMemo(() => {
