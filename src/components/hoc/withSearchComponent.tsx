@@ -44,7 +44,10 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     
     useEffect(() => {
       if (displaySearch === false) {
-        loadData().then();
+        loadData().then(() => {
+          setSearchText('');
+          setSearchTags([]);
+        });
       }
     }, [displaySearch])
     
