@@ -1,11 +1,10 @@
-import { loadProfile } from 'mediashare/store/modules/profile'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux';
+import { NavigationScreenProp } from 'react-navigation';
+import { useRoute } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
-import * as R from 'remeda';
 import { withGlobalStateConsumer, GlobalStateProps } from 'mediashare/core/globalState';
-import { useProfile } from 'mediashare/hooks/useProfile';
 import { useGoToAccount } from 'mediashare/hooks/navigation';
 import { logout } from 'mediashare/store/modules/user'
 import { theme } from 'mediashare/styles';
@@ -13,7 +12,7 @@ import { theme } from 'mediashare/styles';
 export interface AppHeaderProps {
   options?: any;
   back?: any;
-  navigation?: any;
+  navigation?: NavigationScreenProp<any, any>;
   searchable?: boolean;
   searchTarget?: 'playlists' | 'media' | undefined;
   hideSearchIcon?: boolean;
@@ -34,10 +33,7 @@ const AppHeaderComponent = ({
   showDisplayControls = false,
   hideSearchIcon = false,
   searchable = false,
-  searchTarget = undefined,
   globalState = {
-    openSearchConsole: () => undefined,
-    closeSearchConsole: () => undefined,
     displayMode: 'list',
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setDisplayMode: (value) => undefined,
@@ -45,21 +41,23 @@ const AppHeaderComponent = ({
   },
 }: AppHeaderProps) => {
   const dispatch = useDispatch();
+  const route = useRoute();
+  const goToAccount = useGoToAccount();
+  
+  const { searchIsActive, setSearchIsActive, clearSearchFilters } = globalState;
+  const displaySearch = searchIsActive(route?.name);
   
   const avatar = globalState?.user?.imageSrc;
-  
-  const { openSearchConsole, closeSearchConsole, searchIsActive } = globalState;
-
-  const goToAccount = useGoToAccount();
-
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
-
-  const searchIsFiltering = globalState?.search?.filters?.text !== '' || globalState?.search?.filters?.tags?.length > 0;
 
   const [displayMode, setDisplayMode] = useState(globalState?.displayMode);
   const [unreadNofifications, setUnreadNofifications] = useState(true);
 
-  let searchIcon = hideSearchIcon ? (searchIsFiltering ? 'filter-list' : '') : !searchIsActive ? 'search' : searchIsActive ? 'filter-list' : 'filter-list';
+  let searchIcon = hideSearchIcon && displaySearch
+    ? 'filter-list' : hideSearchIcon && !displaySearch
+      ? '' : displaySearch
+        ? 'filter-list' : 'search';
+  
   let notificationsIcon = unreadNofifications ? 'notification-important' : 'notifications-off';
   
   const notificationsClickHandler = () => {
@@ -79,7 +77,7 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls ? renderDisplayControls() : null}
-      {searchable ? <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} /> : null}
+      {searchable ? <Appbar.Action icon={searchIcon} color={displaySearch ? theme.colors.success : '#ffffff'} onPress={() => toggleSearch()} /> : null}
       {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
@@ -103,9 +101,13 @@ const AppHeaderComponent = ({
     setDisplayMode('article');
     globalState?.setDisplayMode('article');
   }
-
-  function toggleSearchConsole() {
-    searchIsActive ? closeSearchConsole() : openSearchConsole();
+  
+  function toggleSearch() {
+    if (displaySearch) {
+      clearSearchFilters(route.name);
+    } else {
+      setSearchIsActive(route?.name, true);
+    }
   }
 
   function renderDisplayControls() {

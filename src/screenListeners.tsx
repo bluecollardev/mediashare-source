@@ -6,8 +6,6 @@ import { GlobalStateProps, INITIAL_SEARCH_FILTERS } from './core/globalState';
 // Can we use Redux state somehow? Or some kind of localDB / persistent storage?
 // That would be useful for storing the whole application state too...
 // We'll implement this in an improved manner later
-const getRouteName = (tab) => tab.key.split('-')[0].toLowerCase();
-
 export const createBottomTabListeners =
   (globalState: GlobalStateProps) => {
     return ({ navigation }) => {

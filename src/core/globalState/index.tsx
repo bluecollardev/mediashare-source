@@ -24,14 +24,13 @@ export interface GlobalStateProps {
   isAcceptingInvitationFrom?: string;
   loadUserData?: () => void;
   search?: any;
-  searchHistory?: Map<string, any>;
-  setSearchHistory?: any;
-  searchIsActive?: boolean;
-  setSearchIsActive?: Function;
-  setSearchFilters?: Function;
-  searchIsFiltering?: () => boolean;
-  openSearchConsole?: Function;
-  closeSearchConsole?: Function;
+  searchFilters?: Map<string, any>;
+  updateSearchFilters?: (searchKey: string, value: any) => void;
+  getSearchFilters?: (searchKey: string) => any;
+  clearSearchFilters?: (searchKey: string) => any;
+  searchIsFiltering?: (searchKey: string) => boolean;
+  searchIsActive?: (searchKey: string) => any;
+  setSearchIsActive?: (searchKey: string, value: any) => void;
   tags?: Tag[];
   displayMode?: 'list' | 'article';
   setDisplayMode: (value) => void;
@@ -54,9 +53,8 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     const loading = useAppSelector((state) => state?.app?.loading);
     const tags = useAppSelector((state) => state?.tags?.entities || []);
     
-    const [searchIsActive, setSearchIsActive] = useState(false);
-    const [searchHistory, setSearchHistory] = useState(new Map());
-    const [searchFilters, setSearchFilters] = useState(INITIAL_SEARCH_FILTERS);
+    const [searchFilters, setSearchFilters] = useState(new Map());
+    const [searchFiltersActive, setSearchFiltersActive] = useState(new Map());
     const [displayMode, setDisplayMode] = useState(INITIAL_DISPLAY_MODE);
 
     const user = useUser();
@@ -96,17 +94,14 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         isAcceptingInvitationFrom,
         openInvitation,
         loadUserData,
-        openSearchConsole,
-        closeSearchConsole,
+        searchIsFiltering,
         searchIsActive,
         setSearchIsActive,
-        searchIsFiltering,
-        setSearchFilters,
-        search: {
-          filters: { ...searchFilters },
-        },
-        searchHistory,
-        setSearchHistory,
+        updateSearchFilters,
+        clearSearchFilters,
+        getSearchFilters,
+        searchFilters,
+        searchFiltersActive,
         tags,
         displayMode,
         setDisplayMode,
@@ -124,17 +119,33 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
       await dispatch(loadUser({}));
     }
 
-    function openSearchConsole() {
-      setSearchIsActive(true);
+    function searchIsFiltering(searchKey: string): boolean {
+      const filters = getSearchFilters(searchKey);
+      return !!filters?.text || filters?.tags?.length > 0;
     }
-
-    function closeSearchConsole() {
-      setSearchIsActive(false);
-      setSearchFilters({ text: '', tags: [] });
+    
+    function updateSearchFilters(searchKey: string, value: any) {
+      searchFilters.set(searchKey, value);
+      setSearchFilters(new Map(searchFilters));
     }
-
-    function searchIsFiltering() {
-      return searchFilters?.text !== '' || searchFilters?.tags?.length > 0;
+  
+    function clearSearchFilters(searchKey: string) {
+      searchFilters.set(searchKey, INITIAL_SEARCH_FILTERS);
+      setSearchIsActive(searchKey, false);
+      setSearchFilters(new Map(searchFilters));
+    }
+    
+    function getSearchFilters(searchKey: string) {
+      return searchFilters?.get(searchKey);
+    }
+  
+    function searchIsActive(searchKey: string) {
+      return searchFiltersActive.get(searchKey) === true;
+    }
+  
+    function setSearchIsActive(searchKey: string, value: boolean) {
+      searchFiltersActive.set(searchKey, value);
+      setSearchFiltersActive(new Map(searchFiltersActive));
     }
   };
 };

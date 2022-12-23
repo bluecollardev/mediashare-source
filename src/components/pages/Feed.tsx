@@ -36,7 +36,7 @@ export const Feed = ({
   const list = filterUnique(entities, '_id').filter((e) => (ShowMyShare ? e : e.sharedWith != e.sharedBy)) || [];
 
   async function loadData() {
-    await dispatch(findItemsSharedWithMe());
+    await dispatch(findItemsSharedWithMe({}));
   }
 
   useEffect(() => {

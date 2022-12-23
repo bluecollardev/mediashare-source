@@ -86,7 +86,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const search = globalState?.searchHistory?.get('addSelectedToPlaylist');
+    const search = globalState?.getSearchFilters('addSelectedToPlaylist');
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],

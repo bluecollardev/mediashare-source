@@ -76,7 +76,7 @@ export const Search = ({ globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
-  const searchResults = globalState?.searchIsFiltering() ? entities : [];
+  const searchResults = globalState?.searchIsFiltering('search') ? entities : [];
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -143,7 +143,7 @@ export const Search = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const search = globalState?.searchHistory?.get('search');
+    const search = globalState?.getSearchFilters('search');
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],

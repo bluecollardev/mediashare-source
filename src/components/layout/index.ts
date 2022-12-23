@@ -22,6 +22,5 @@ export * from './PlainActionButtons';
 export * from './SharedList';
 export * from './ShareItemCard';
 export * from './SectionHeader';
-export * from './SimpleSearchAppHeader';
 export * from './TopActionButtons';
 export * from './UploadPlaceholder';

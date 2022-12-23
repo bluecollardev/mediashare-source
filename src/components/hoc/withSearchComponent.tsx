@@ -15,14 +15,12 @@ export interface PlaylistSearchProps {
   forcedSearchMode?: boolean;
 }
 
-export const withSearchComponent = (WrappedComponent: any, historyKey) => {
-  const componentKey = `${historyKey}_${createRandomRenderKey()}`;
+export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
+  const componentKey = `${searchKey}_${createRandomRenderKey()}`;
   return function SearchComponent({
     globalState = {
-      openSearchConsole: () => undefined,
-      closeSearchConsole: () => undefined,
-      setSearchFilters: () => undefined,
-      searchIsActive: false,
+      updateSearchFilters: (searchKey: string, value: any) => undefined,
+      getSearchFilters: (searchKey: string) => undefined,
     },
     loaded,
     loadData = () => undefined,
@@ -30,12 +28,12 @@ export const withSearchComponent = (WrappedComponent: any, historyKey) => {
     forcedSearchMode,
     ...rest
   }: any) {
-    const { searchIsActive, setSearchFilters } = globalState;
-    // const searchIsFiltering = globalState?.search?.filters?.text !== '' || globalState?.search?.filters?.tags?.length > 0;
-    // const [searchIsActive, setSearchIsActive] = useState(false);
-    const [searchText, setSearchText] = useState(globalState?.searchHistory?.get(historyKey)?.text || '');
-    const [searchTags, setSearchTags] = useState(globalState?.searchHistory?.get(historyKey)?.tags || []);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const { searchFiltersActive, searchIsActive, updateSearchFilters, getSearchFilters } = globalState;
+    const searchFilters = getSearchFilters(searchKey);
+    const [searchText, setSearchText] = useState(searchFilters?.text || '');
+    const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
+    const [isLoaded, setIsLoaded] = useState(true);
+    const displaySearch = searchIsActive(searchKey);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
@@ -43,26 +41,16 @@ export const withSearchComponent = (WrappedComponent: any, historyKey) => {
       if (searchTarget === 'media') return availableTags.filter((tag) => tag.isMediaTag);
       return availableTags;
     }, []);
-
-    const searchFilters = globalState?.search?.filters || { text: '', tags: [] };
-    const [prevSearchFilters, setPrevSearchFilters] = useState({ filters: { text: '', tags: [] } });
-  
-    const currentSearchFilters = globalState?.search;
-    const searchFiltersUpdated = JSON.stringify(currentSearchFilters) !== JSON.stringify(prevSearchFilters)
     
     useEffect(() => {
-      if (searchFiltersUpdated) {
-        setPrevSearchFilters(currentSearchFilters);
-        console.log(`[${componentKey}] Search filters have changed`);
-        loadData().then();
-      } else if (!loaded) {
-        loadData().then();
+      if (!loaded || !isLoaded) {
+        loadData().then(() => setIsLoaded(true));
       }
-    }, [loaded, searchFiltersUpdated]);
+    }, [loaded, isLoaded]);
 
     return (
       <>
-        {(forcedSearchMode ? forcedSearchMode : searchIsActive) ? (
+        {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
           <>
             <Searchbar
               style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
@@ -101,7 +89,7 @@ export const withSearchComponent = (WrappedComponent: any, historyKey) => {
               modalWithSafeAreaView={false}
             />
             <ActionButtons
-              loading={isLoaded}
+              loading={!isLoaded}
               primaryLabel="Submit"
               primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
               showSecondary={false}
@@ -127,13 +115,9 @@ export const withSearchComponent = (WrappedComponent: any, historyKey) => {
 
     function submitSearch() {
       // Update global search filters
-      setIsLoaded(true);
       const searchValue = { text: searchText, tags: [...searchTags] };
-      setSearchFilters(searchValue);
-      globalState?.searchHistory.set(historyKey, searchValue);
-      console.log(globalState.searchHistory);
+      updateSearchFilters(searchKey, searchValue);
       setIsLoaded(false);
-      // closeSearchConsole(); // Close the search
     }
   };
 };

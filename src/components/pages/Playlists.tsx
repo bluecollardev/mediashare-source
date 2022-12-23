@@ -177,7 +177,7 @@ export const Playlists = ({ globalState }: PageProps) => {
   }
 
   async function loadData() {
-    const search = globalState?.searchHistory?.get('playlists');
+    const search = globalState?.getSearchFilters('playlists');
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],

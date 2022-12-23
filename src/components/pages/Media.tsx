@@ -97,11 +97,6 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
-    const mediaSearchHistory = globalState.searchHistory.get('media');
-    if (JSON.stringify(mediaSearchHistory) != JSON.stringify(globalState?.search?.filters || {})) {
-      globalState.setSearchFilters(mediaSearchHistory);
-      globalState.searchHistory.set('media', mediaSearchHistory);
-    }
     loadData().then();
   }, []);
 
@@ -184,11 +179,11 @@ export const Media = ({ navigation, globalState }: PageProps) => {
    * This will change once we have cloud search on tags implemented.
    */
   async function loadData() {
-    const search = globalState?.searchHistory?.get('media');
+    const search = globalState?.getSearchFilters('media');
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
-    };;
+    };
 
     await dispatch(findMediaItems(args));
   }
@@ -200,7 +195,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   }
 
   async function onEditItem(item: MediaItem) {
-    editMedia({ mediaId: item._id, uri: item.uri });
+    await editMedia ({ mediaId: item._id, uri: item.uri });
   }
 
   function activateDeleteMode() {
