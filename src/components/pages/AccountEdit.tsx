@@ -33,7 +33,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const profile = useProfile();
-  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc']));
+  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
   const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
   const fullName = state?.firstName || state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
 
@@ -59,9 +59,9 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               email={state?.email}
               phoneNumber={state?.phoneNumber}
               image={state?.imageSrc}
-              likes={state?.likesCount}
-              shared={state?.sharedCount}
-              shares={state?.sharesCount}
+              // likes={state?.likesCount}
+              // shared={state?.sharedCount}
+              // shares={state?.sharesCount}
               showSocial={true}
               showActions={true}
               isCurrentUser={true}
@@ -115,7 +115,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   }
 
   function cancel() {
-    setState(profile);
+    setState(profile as any);
     viewAccount({ userId });
   }
 
@@ -129,7 +129,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
         // @ts-ignore
         switchMap(() => dispatch(loadProfile(userId))),
         // @ts-ignore
-        switchMap(() => dispatch(loadUser())),
+        switchMap(() => dispatch(loadUser({}))),
         take(1)
       )
       .subscribe(() => viewAccount({ userId }));

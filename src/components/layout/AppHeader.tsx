@@ -1,10 +1,13 @@
-import { logout } from 'mediashare/store/modules/user'
 import React, { useState } from 'react';
-import { Appbar } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { TouchableWithoutFeedback } from 'react-native';
+import { Appbar, Avatar } from 'react-native-paper';
+import * as R from 'remeda';
 import { withGlobalStateConsumer, GlobalStateProps } from 'mediashare/core/globalState';
+import { useProfile } from 'mediashare/hooks/useProfile';
 import { useGoToAccount } from 'mediashare/hooks/navigation';
+import { logout } from 'mediashare/store/modules/user'
 import { theme } from 'mediashare/styles';
-import { useDispatch } from 'react-redux'
 
 export interface AppHeaderProps {
   options?: any;
@@ -42,6 +45,10 @@ const AppHeaderComponent = ({
 }: AppHeaderProps) => {
   const dispatch = useDispatch();
   
+  const profile = useProfile();
+  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
+  const avatar = state?.imageSrc;
+  
   const { openSearchConsole, closeSearchConsole, searchIsActive } = globalState;
 
   const goToAccount = useGoToAccount();
@@ -75,7 +82,11 @@ const AppHeaderComponent = ({
       {showDisplayControls ? renderDisplayControls() : null}
       {searchable ? <Appbar.Action icon={searchIcon} color={searchIsFiltering ? theme.colors.success : '#ffffff'} onPress={() => toggleSearchConsole()} /> : null}
       {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
-      {showAccount ? <Appbar.Action icon="account-circle" onPress={() => goToAccount()} /> : null}
+      {showAccount ? (
+        <TouchableWithoutFeedback onPress={() => goToAccount()}>
+          <Avatar.Image style={{ marginHorizontal: 15 }} source={avatar ? { uri: avatar } : undefined} size={24}  />
+        </TouchableWithoutFeedback>
+      ) : null}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}
     </Appbar.Header>
   );
