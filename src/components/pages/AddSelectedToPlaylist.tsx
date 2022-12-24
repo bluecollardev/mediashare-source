@@ -43,7 +43,7 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
   }
 };
 
-const AddToPlaylistComponentWithSearch = withSearchComponent(AddToPlaylistComponent, 'addToPlaylist');
+const AddToPlaylistComponentWithSearch = withSearchComponent(AddToPlaylistComponent, 'addSelectedToPlaylist');
 
 export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   const { playlistId } = route.params;
