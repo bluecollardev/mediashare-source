@@ -25,6 +25,8 @@ export interface GlobalStateProps {
   loadUserData?: () => void;
   search?: any;
   searchFilters?: Map<string, any>;
+  searchFiltersActive?: Map<string, any>;
+  forcedSearchActive?: Map<string, any>;
   updateSearchFilters?: (searchKey: string, value: any) => void;
   getSearchFilters?: (searchKey: string) => any;
   clearSearchFilters?: (searchKey: string) => any;
@@ -106,6 +108,8 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         clearSearchFilters,
         getSearchFilters,
         searchFilters,
+        searchFiltersActive,
+        forcedSearchActive,
         tags,
         displayMode,
         setDisplayMode,
@@ -150,6 +154,10 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function setSearchIsActive(searchKey: string, value: boolean) {
       searchFiltersActive.set(searchKey, value);
       setSearchFiltersActive(new Map(searchFiltersActive));
+      if (!value) {
+        searchFilters.delete(searchKey)
+        setSearchFilters(searchFilters);
+      }
     }
   
     function forcedSearchMode(searchKey: string) {

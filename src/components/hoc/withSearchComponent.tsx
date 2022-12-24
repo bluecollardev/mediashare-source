@@ -4,7 +4,6 @@ import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
 import { GlobalStateProps } from 'mediashare/core/globalState';
 import { Divider, Searchbar } from 'react-native-paper';
-import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { components, theme } from 'mediashare/styles';
 
 export interface PlaylistSearchProps {
@@ -16,7 +15,6 @@ export interface PlaylistSearchProps {
 }
 
 export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
-  const componentKey = `${searchKey}_${createRandomRenderKey()}`;
   return function SearchComponent({
     globalState = {
       updateSearchFilters: (searchKey: string, value: any) => undefined,
@@ -74,13 +72,12 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               placeholder="Keywords"
               value={searchText}
               onChangeText={(text) => updateSearchText(text)}
-              // onIconPress={() => closeSearchConsole()}
               icon=""
               // icon="arrow-back-ios"
+              // onIconPress={() => closeSearchConsole()}
               clearIcon="clear"
               autoCapitalize="none"
             />
-            {/* <Appbar.Action icon="close" onPress={() => closeSearchConsole()} /> */}
             <SectionedMultiSelect
               colors={components.multiSelect.colors}
               styles={components.multiSelect.styles}

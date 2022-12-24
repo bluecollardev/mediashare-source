@@ -42,9 +42,12 @@ const AppHeaderComponent = ({
   const route = useRoute();
   const goToAccount = useGoToAccount();
   
-  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters } = globalState;
+  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters } = globalState;
   const displaySearch = searchIsActive(route?.name);
   const forceSearchDisplay = forcedSearchMode(route?.name);
+  console.log(forcedSearchActive);
+  console.log(searchFiltersActive);
+  console.log(searchFilters);
   
   const avatar = globalState?.user?.imageSrc;
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
@@ -52,10 +55,19 @@ const AppHeaderComponent = ({
   const [displayMode, setDisplayMode] = useState(globalState?.displayMode);
   const [unreadNofifications, setUnreadNofifications] = useState(true);
 
-  let searchIcon = forceSearchDisplay && displaySearch
-    ? 'filter-list' : forceSearchDisplay && !displaySearch
-      ? '' : displaySearch
-        ? 'filter-list' : 'search';
+  let searchIcon;
+  if (forceSearchDisplay) {
+    // TODO: searchFiltersActive has no entries, it probably should...
+    //  but as we're forcing search mode, it might be more work than it's worth
+    //  to change the behavior of the search filters...
+    //  Use searchFilters as a [temporary(?)] workaround...
+    const routeFilters = searchFilters.get(route.name);
+    searchIcon = routeFilters ? 'filter-list' : '';
+  }
+  
+  if (!forceSearchDisplay) {
+    searchIcon = displaySearch ? 'filter-list' : 'search';
+  }
   
   let notificationsIcon = unreadNofifications ? 'notification-important' : 'notifications-off';
   
@@ -76,7 +88,7 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls ? renderDisplayControls() : null}
-      {searchable ? <Appbar.Action icon={searchIcon} color={displaySearch ? theme.colors.success : '#ffffff'} onPress={() => toggleSearch()} /> : null}
+      {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.success : '#ffffff'} onPress={() => toggleSearch()} /> : null}
       {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
