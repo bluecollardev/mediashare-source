@@ -10,7 +10,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, PageContent, ActionButtons, MediaListType, MediaListItem, NoContent } from 'mediashare/components/layout';
 
 import { theme } from 'mediashare/styles';

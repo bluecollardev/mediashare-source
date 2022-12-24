@@ -129,7 +129,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
         // @ts-ignore
         switchMap(() => dispatch(loadProfile(userId))),
         // @ts-ignore
-        switchMap(() => dispatch(loadUser({}))),
+        switchMap(() => dispatch(loadUser())),
         take(1)
       )
       .subscribe(() => viewAccount({ userId }));

@@ -34,6 +34,7 @@ const AppHeaderComponent = ({
   globalState = {
     displayMode: 'list',
     tags: [],
+    setDisplayMode: (value) => undefined,
   },
 }: AppHeaderProps) => {
   const dispatch = useDispatch();
@@ -43,9 +44,6 @@ const AppHeaderComponent = ({
   const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters } = globalState;
   const displaySearch = searchIsActive(route?.name);
   const forceSearchDisplay = forcedSearchMode(route?.name);
-  console.log(forcedSearchActive);
-  console.log(searchFiltersActive);
-  console.log(searchFilters);
   
   const avatar = globalState?.user?.imageSrc;
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
@@ -75,8 +73,10 @@ const AppHeaderComponent = ({
     }
   };
 
+  
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
+      {/* @ts-ignore */}
       {back ? <Appbar.BackAction color="#ffffff" onPress={handleBackAction} /> : null}
       <Appbar.Content
         title={title}
@@ -98,7 +98,7 @@ const AppHeaderComponent = ({
   );
   
   async function accountLogout() {
-    await dispatch(logout({}));
+    await dispatch(logout());
   }
 
   function viewAsList() {

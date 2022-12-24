@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ScrollView, Text } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -6,13 +6,12 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { getPlaylistById, addUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { titleValidator, descriptionValidator, categoryValidator } from 'mediashare/core/utils/validators';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -129,7 +128,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
     // @ts-ignore TODO: Fix types on dispatch?
     const { payload } = await dispatch(addUserPlaylist(dto));
     const playlistId = payload._id;
-    await dispatch(getUserPlaylists({}));
+    await dispatch(getUserPlaylists());
     await dispatch(getPlaylistById(playlistId));
     setIsSaved(false);
     editPlaylist(playlistId);
@@ -145,7 +144,6 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
     setSelectedTagKeys([]);
     // @ts-ignore
     setDescription('');
-    setIsLoaded(false);
   }
 
   function clearAndGoBack() {

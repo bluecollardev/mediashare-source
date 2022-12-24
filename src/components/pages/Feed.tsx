@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { useAppSelector } from 'mediashare/store';
@@ -8,9 +7,8 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { filterUnique } from 'mediashare/utils';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { NoContent, PageContainer, PageContent, PageProps } from 'mediashare/components/layout';
-import { TagBlocks, RecentlyPlayed, RecentlyAdded } from 'mediashare/components/feed';
 
 const FeedComponent = ({ list, tags }) => {
   return (
@@ -36,7 +34,7 @@ export const Feed = ({
   const list = filterUnique(entities, '_id').filter((e) => (ShowMyShare ? e : e.sharedWith != e.sharedBy)) || [];
 
   async function loadData() {
-    await dispatch(findItemsSharedWithMe({}));
+    await dispatch(findItemsSharedWithMe());
   }
 
   useEffect(() => {

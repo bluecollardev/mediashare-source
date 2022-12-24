@@ -71,7 +71,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
 
     useEffect(() => {
       const loadTags = async () => {
-        await dispatch(getTags({}));
+        await dispatch(getTags());
       };
 
       if (isLoggedIn) {
@@ -124,7 +124,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     }
 
     async function loadUserData() {
-      await dispatch(loadUser({}));
+      await dispatch(loadUser());
     }
 
     function searchIsFiltering(searchKey: string): boolean {

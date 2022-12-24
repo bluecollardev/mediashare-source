@@ -75,6 +75,7 @@ export const Shared = ({ globalState }: PageProps) => {
       <InviteModal
         userId={user._id}
         showDialog={openInvite}
+        // @ts-ignore
         onSubmit={async (data) => {
           try {
             await dispatch(sendEmail({ userId, email: data?.email }));
@@ -152,7 +153,7 @@ export const Shared = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    await dispatch(loadUserConnections({}));
+    await dispatch(loadUserConnections());
     // @ts-ignore
     await dispatch(loadProfile(userId));
     setIsLoaded(true);
@@ -190,7 +191,7 @@ export const Shared = ({ globalState }: PageProps) => {
     console.log(selectedConnections);
     await dispatch(removeUserConnections({ userId, connectionIds: selectedConnections }));
     setSelectedConnections([]);
-    await dispatch(loadUserConnections({}));
+    await dispatch(loadUserConnections());
   }
 
   function updateSelection(bool: boolean, connectionId: string) {

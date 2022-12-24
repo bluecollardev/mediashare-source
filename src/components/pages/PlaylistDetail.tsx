@@ -95,6 +95,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [selectedItems, setSelectedItems] = useState([]);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeleteItemsDialog, setShowDeleteItemsDialog] = useState(false);
   const [showAddToLibraryDialog, setShowAddToLibraryDialog] = useState(false);
 
   const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
@@ -147,6 +148,21 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
         />
         <AppDialog
           leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => setShowDeleteItemsDialog(false)}
+          rightActionCb={async () => {
+            setShowDeleteItemsDialog(false);
+            await confirmDeletePlaylistItems();
+          }}
+          onDismiss={() => setShowDeleteItemsDialog(false)}
+          showDialog={showDeleteItemsDialog}
+          title="Delete Playlist Items"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <AppDialog
+          leftActionLabel="Cancel"
           rightActionLabel="Confirm"
           leftActionCb={() => {
             setShowAddToLibraryDialog(false);
@@ -189,7 +205,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 showSecondary={false}
                 showPrimary={true}
                 onPrimaryClicked={async () => {
-                  playFromBeginning({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
+                  await playFromBeginning ({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
                 }}
                 primaryLabel="Play from Beginning"
                 primaryIcon="live-tv"
@@ -225,7 +241,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       <PageActions>
         {isSelectable ? (
           <ActionButtons
-            onPrimaryClicked={confirmDeletePlaylistItems}
+            onPrimaryClicked={() => setShowDeleteItemsDialog(true)}
             onSecondaryClicked={cancelDeletePlaylistItems}
             primaryLabel="Remove"
             primaryIconColor={theme.colors.error}
@@ -276,7 +292,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       await dispatch(addUserPlaylist(dto));
       setMessage(`Playlist added to library`);
       onToggleSnackBar(true);
-      await dispatch(getUserPlaylists({}));
+      await dispatch(getUserPlaylists());
       setIsSaved(false);
     } catch (error) {
       setMessage(error.message);
@@ -290,7 +306,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
 
   async function deletePlaylist() {
     await dispatch(removeUserPlaylist(playlistId));
-    await dispatch(getUserPlaylists({}));
+    await dispatch(getUserPlaylists());
     await goToPlaylists();
   }
 

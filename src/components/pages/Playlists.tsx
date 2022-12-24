@@ -186,7 +186,7 @@ export const Playlists = ({ globalState }: PageProps) => {
     if (args.text || args.tags.length > 0) {
       await dispatch(findUserPlaylists(args));
     } else {
-      await dispatch(getUserPlaylists({}));
+      await dispatch(getUserPlaylists());
     }
   }
 

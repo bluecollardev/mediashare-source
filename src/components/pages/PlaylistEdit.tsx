@@ -309,7 +309,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
 
   async function deletePlaylist() {
     await dispatch(removeUserPlaylist(playlistId));
-    await dispatch(getUserPlaylists({}));
+    await dispatch(getUserPlaylists());
     await goToPlaylists();
   }
 

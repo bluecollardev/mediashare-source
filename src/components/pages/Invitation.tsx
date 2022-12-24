@@ -1,16 +1,15 @@
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary'
-import { withGlobalStateConsumer } from 'mediashare/core/globalState'
-import { theme } from 'mediashare/styles'
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadProfile } from 'mediashare/store/modules/profile';
-import { acceptInvitation, loadUserConnections } from 'mediashare/store/modules/userConnections'
+import { acceptInvitation, loadUserConnections } from 'mediashare/store/modules/userConnections';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { useGoBack } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { PageContainer, PageProps, AccountCard, ActionButtons } from 'mediashare/components/layout'
+import { withGlobalStateConsumer } from 'mediashare/core/globalState'
+import { PageContainer, PageProps, AccountCard, ActionButtons } from 'mediashare/components/layout';
+//import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 // import { StyleSheet } from 'react-native';
-// import { theme } from 'mediashare/styles';
+import { theme } from 'mediashare/styles';
 
 interface InvitationProps extends PageProps {}
 
@@ -63,7 +62,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   
   async function accept() {
     await dispatch(acceptInvitation({ userId: accountId, connectionId: userId }));
-    await dispatch(loadUserConnections({}));
+    await dispatch(loadUserConnections());
     goBack();
   }
   

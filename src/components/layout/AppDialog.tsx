@@ -32,7 +32,7 @@ export function AppDialog({
       <Dialog visible={showDialog} onDismiss={onDismiss}>
         <Card.Title
           title={title}
-          left={(props) => <Avatar.Icon color={theme.colors.primary} style={{ backgroundColor: theme.colors.surface }} {...props} icon="info" />}
+          left={(props) => <Avatar.Icon color={buttonColor} style={{ backgroundColor: theme.colors.surface }} {...props} icon="info" />}
         />
         <Card.Content style={{ marginBottom: 15 }}>
           <Text>{subtitle}</Text>
