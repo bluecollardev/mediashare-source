@@ -33,7 +33,7 @@ const actionModes = { delete: 'delete', default: 'default' };
 const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PageProps) => {
   const dispatch = useDispatch();
 
-  const addToPlaylist = useRouteWithParams(routeNames.addItemsToPlaylist);
+  const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
   const viewMediaItem = useViewMediaItemById();
   const goToPlaylists = usePlaylists();
 

@@ -103,7 +103,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             />
             <ActionButtons
               loading={!isLoaded}
-              primaryLabel="Submit"
+              primaryLabel="Apply"
               primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
               showSecondary={false}
               containerStyles={{ marginHorizontal: 0, marginTop: 15 }}

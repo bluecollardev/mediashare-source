@@ -4,7 +4,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { useRoute } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
-import { withGlobalStateConsumer, GlobalStateProps } from 'mediashare/core/globalState';
+import { withGlobalStateConsumer, GlobalStateProps, INITIAL_SEARCH_FILTERS } from 'mediashare/core/globalState'
 import { useGoToAccount } from 'mediashare/hooks/navigation';
 import { logout } from 'mediashare/store/modules/user'
 import { theme } from 'mediashare/styles';
@@ -33,8 +33,6 @@ const AppHeaderComponent = ({
   searchable = false,
   globalState = {
     displayMode: 'list',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setDisplayMode: (value) => undefined,
     tags: [],
   },
 }: AppHeaderProps) => {
@@ -79,7 +77,7 @@ const AppHeaderComponent = ({
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
-      {back ? <Appbar.BackAction color="#ffffff" onPress={navigation.goBack} /> : null}
+      {back ? <Appbar.BackAction color="#ffffff" onPress={handleBackAction} /> : null}
       <Appbar.Content
         title={title}
         titleStyle={{
@@ -128,6 +126,14 @@ const AppHeaderComponent = ({
         {displayMode === 'list' ? <Appbar.Action icon="article" color="#ffffff" onPress={() => viewAsArticles()} /> : null}
       </>
     );
+  }
+  
+  function handleBackAction(e) {
+    if (route.name === 'addSelectedToPlaylist') {
+      globalState?.updateSearchFilters (route.name, INITIAL_SEARCH_FILTERS);
+      globalState?.setSearchIsActive(route.name, false);
+    }
+    navigation.goBack(e);
   }
 };
 
