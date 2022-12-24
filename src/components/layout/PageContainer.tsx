@@ -31,9 +31,7 @@ export function PageContent({ children }: PageContentProps) {
   return (
     <View style={styles.pageContent}>
       <View>
-        <Card>
-          <Card.Content>{children}</Card.Content>
-        </Card>
+        {children}
       </View>
     </View>
   );

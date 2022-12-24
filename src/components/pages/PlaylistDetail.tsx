@@ -2,7 +2,7 @@ import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { useSnack } from 'mediashare/hooks/useSnack'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { ScrollView } from 'react-native';
+import { ScrollView, Text } from 'react-native'
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
@@ -125,9 +125,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       { icon: 'playlist-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
     ];
   }
-
-  // Don't display anything unless we have a selected playlist
-  // TODO: Show loader!
+  
   if (!selected) {
     return null;
   }
@@ -185,19 +183,6 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             shares={shareCount}
             views={viewCount}
           >
-            {/* TODO: Make this work and add it back in! */}
-            {/* <Button
-              icon="live-tv"
-              color={theme.colors.default}
-              mode="outlined"
-              styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
-              compact
-              dark
-              onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
-            >
-              Play From Beginning
-            </Button>
-            <Divider /> */}
             {!disableControls && !allowEdit && playlistMediaItems.length > 0 ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
@@ -236,18 +221,18 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             />
           </MediaCard>
         </ScrollView>
-        <PageActions>
-          {isSelectable ? (
-            <ActionButtons
-              onPrimaryClicked={confirmDeletePlaylistItems}
-              onSecondaryClicked={cancelDeletePlaylistItems}
-              primaryLabel="Remove"
-              primaryIconColor={theme.colors.error}
-              primaryButtonStyles={{ backgroundColor: theme.colors.error }}
-            />
-          ) : null}
-        </PageActions>
       </PageContent>
+      <PageActions>
+        {isSelectable ? (
+          <ActionButtons
+            onPrimaryClicked={confirmDeletePlaylistItems}
+            onSecondaryClicked={cancelDeletePlaylistItems}
+            primaryLabel="Remove"
+            primaryIconColor={theme.colors.error}
+            primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+          />
+        ) : null}
+      </PageActions>
       {element}
       {!build.forFreeUser && !isSelectable && !disableControls ? (
         <FAB.Group
@@ -276,12 +261,6 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   async function sharePlaylist() {
     await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistResponseDto }));
     goToShareWith();
-  }
-
-  // TODO: This is unused! Implement or remove ASAP!
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function cancelSharePlaylist() {
-    dispatch(selectPlaylist({ isChecked: false, plist: selected as PlaylistResponseDto }));
   }
   
   async function clonePlaylist() {
