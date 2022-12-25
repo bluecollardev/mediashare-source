@@ -44,6 +44,11 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       return availableTags;
     }, []);
     
+    const shouldShowApplyButton = () => {
+      return (searchFilters?.text != searchText)
+      || (JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags));
+    }
+    
     useEffect(() => {
       if (forcedSearchMode) {
         setForcedSearchMode(searchKey, true);
@@ -106,14 +111,16 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               modalWithTouchable={false}
               modalWithSafeAreaView={false}
             />
-            <ActionButtons
-              loading={!isLoaded}
-              primaryLabel="Apply"
-              primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
-              showSecondary={false}
-              containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
-              onPrimaryClicked={() => submitSearch()}
-            />
+            {shouldShowApplyButton() && (
+              <ActionButtons
+                loading={!isLoaded}
+                primaryLabel="Apply"
+                primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
+                showSecondary={false}
+                containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
+                onPrimaryClicked={() => submitSearch()}
+              />
+            )}
             <Divider />
           </>
         ) : null}
