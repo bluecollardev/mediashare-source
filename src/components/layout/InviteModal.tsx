@@ -1,11 +1,8 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Portal, Text, Button, Dialog } from 'react-native-paper';
-import { StyleSheet, TextInput, Platform, KeyboardAvoidingView, SafeAreaView } from 'react-native';
-import { theme } from 'mediashare/styles';
-import { View } from 'react-native';
+import { StyleSheet, TextInput, Platform, KeyboardAvoidingView, SafeAreaView, View } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { sendEmail } from 'mediashare/store/modules/userConnections';
+import { theme } from 'mediashare/styles';
 
 interface AccountCardProps {
   userId: string;
@@ -17,7 +14,7 @@ interface IFromInput {
   email: string;
 }
 
-export default function ModalSheet({ showDialog, onDismiss, userId }: AccountCardProps) {
+export default function ModalSheet({ showDialog, onDismiss, onSubmit = (data) => undefined }: AccountCardProps) {
   const {
     control,
     handleSubmit,
@@ -28,12 +25,12 @@ export default function ModalSheet({ showDialog, onDismiss, userId }: AccountCar
       email: '',
     },
   });
-  const dispatch = useDispatch();
-  const onSubmit: SubmitHandler<IFromInput> = async (data) => {
+  
+  const submitForm: SubmitHandler<IFromInput> = async (data) => {
     if (!data.email) {
       return;
     }
-    await dispatch(sendEmail({ userId, email: data.email }));
+    onSubmit(data)
     reset();
     onDismiss();
   };
@@ -83,7 +80,7 @@ export default function ModalSheet({ showDialog, onDismiss, userId }: AccountCar
                 </View>
               </View>
 
-              <Button mode="contained" dark color={theme.colors.white} buttonColor={theme.colors.primary} onPress={handleSubmit(onSubmit)}>
+              <Button mode="contained" dark color={theme.colors.white} buttonColor={theme.colors.primary} onPress={handleSubmit(submitForm)}>
                 {'confirm'}
               </Button>
             </Dialog.Content>

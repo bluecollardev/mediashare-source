@@ -6,12 +6,13 @@ import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
 import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
 import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -77,7 +78,7 @@ export const MediaComponent = ({
 
 const actionModes = { delete: 'delete', default: 'default' };
 
-const MediaComponentWithSearch = withPlaylistSearch(MediaComponent);
+const MediaComponentWithSearch = withSearchComponent(MediaComponent, 'media');
 
 export const Media = ({ navigation, globalState }: PageProps) => {
   const dispatch = useDispatch();
@@ -92,7 +93,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities, selected, loaded, loading } = useAppSelector((state) => state?.mediaItems);
-
+  
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
@@ -100,12 +101,12 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   }, []);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
+  
   const [fabState, setState] = useState({ open: false });
   const fabActions = [
-    { icon: 'delete-forever', onPress: activateDeleteMode, color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-    { icon: 'cloud-download', onPress: addFromFeed, color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-    { icon: 'add-circle', onPress: addMedia, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+    { icon: 'delete-forever', label: `Delete`, onPress: activateDeleteMode, color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+    { icon: 'cloud-download', label: `Import From S3`, onPress: addFromFeed, color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+    { icon: 'add-circle', label: `Add Media`, onPress: addMedia, color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
   ];
 
   return (
@@ -136,15 +137,15 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           onViewDetail={onEditItem}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 && (
+        {loaded && entities.length === 0 ? (
           <NoContent
             onPress={addMedia}
             messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
             icon="add-circle"
           />
-        )}
+        ) : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.delete && (
+      {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
             onPrimaryClicked={openDeleteDialog}
@@ -154,8 +155,8 @@ export const Media = ({ navigation, globalState }: PageProps) => {
             primaryButtonStyles={styles.deleteActionButton}
           />
         </PageActions>
-      )}
-      {!isSelectable && (
+      ) : null}
+      {!isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -169,7 +170,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           }}
           // onPress={() => setOpen(!open)}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 
@@ -178,10 +179,10 @@ export const Media = ({ navigation, globalState }: PageProps) => {
    * This will change once we have cloud search on tags implemented.
    */
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.getSearchFilters('media');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
 
     await dispatch(findMediaItems(args));
@@ -194,7 +195,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   }
 
   async function onEditItem(item: MediaItem) {
-    editMedia({ mediaId: item._id, uri: item.uri });
+    await editMedia ({ mediaId: item._id, uri: item.uri });
   }
 
   function activateDeleteMode() {

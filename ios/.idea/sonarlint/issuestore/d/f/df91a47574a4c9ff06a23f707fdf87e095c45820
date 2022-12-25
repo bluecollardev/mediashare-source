@@ -1,8 +1,0 @@
-
-„typescript:S1488?"aImmediately return this expression instead of assigning it to the temporary variable "mediaItem".(¾ô‚÷8¨ÒÎÛ·/
-Ytypescript:S4123I"1Refactor this redundant 'await' on a non-promise.(‚å¹Üúÿÿÿÿ8¨ÒÎÛ·/
-ˆtypescript:S1488Q"`Immediately return this expression instead of assigning it to the temporary variable "response".(³­Î½ÿÿÿÿÿ8¨ÒÎÛ·/
-Ytypescript:S4123Q"1Refactor this redundant 'await' on a non-promise.(³­Î½ÿÿÿÿÿ8©ÒÎÛ·/
-Ttypescript:S4123X"1Refactor this redundant 'await' on a non-promise.(”š¸ç8©ÒÎÛ·/
-†typescript:S1488_"^Immediately return this expression instead of assigning it to the temporary variable "mapped".(ÌĞè¡øÿÿÿÿ8©ÒÎÛ·/
-Atypescript:S125|"Remove this commented out code.(¥¿¹­8©ÒÎÛ·/

@@ -36,7 +36,7 @@ const MediaListItem = ({
   titleStyle = {},
   description,
   onViewDetail,
-  onChecked = () => {},
+  onChecked = (b: boolean) => {},
   selectable = true,
   showActions = true,
   showThumbnail = false,
@@ -86,12 +86,12 @@ const MediaListItem = ({
         ) : showThumbnail ? (
           image ? (
             <View style={defaultStyles.mediaListItem}>
-              {showActions === 'left' && <IconButton icon={iconLeft} iconColor={iconLeftColor} onPress={onViewDetail} />}
+              {showActions === 'left' ? <IconButton icon={iconLeft} iconColor={iconLeftColor} onPress={onViewDetail} /> : null}
               <MediaPreview {...mediaPreviewConfig} showPlayableIcon={showPlayableIcon} />
             </View>
           ) : (
             <View style={defaultStyles.mediaListItem}>
-              {showActions === 'left' && <IconButton icon={iconLeft} iconColor={iconLeftColor} onPress={onViewDetail} />}
+              {showActions === 'left' ? <IconButton icon={iconLeft} iconColor={iconLeftColor} onPress={onViewDetail} /> : null}
               <MediaPreview {...mediaPreviewConfig} showPlayableIcon={showPlayableIcon} />
             </View>
           )
@@ -150,4 +150,4 @@ const defaultStyles: any = StyleSheet.create({
   iconButton: {
     marginRight: 0,
   },
-});
+} as any);

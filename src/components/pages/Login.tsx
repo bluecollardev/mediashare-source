@@ -4,12 +4,13 @@ import { useDispatch } from 'react-redux';
 import { loginAction } from 'mediashare/store/modules/user';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Text, Card, TextInput, HelperText, Button } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 
 interface FormData {
@@ -20,7 +21,7 @@ interface FormData {
 const LoginComponent = ({}: PageProps) => {
   const dispatch = useDispatch();
   const nav = useNavigation();
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const {
     control,
@@ -39,7 +40,7 @@ const LoginComponent = ({}: PageProps) => {
       const response = await Auth.signIn(data.username, data.password);
       const accessToken = response.signInUserSession.accessToken.jwtToken;
       const idToken = response.signInUserSession.idToken.jwtToken;
-      dispatch(loginAction({ accessToken, idToken }));
+      await dispatch(loginAction({ accessToken, idToken }));
     } catch (error) {
       setMessage(error.message);
       onToggleSnackBar();
@@ -93,13 +94,13 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
               }}
             />
-
+        
             <Controller
               control={control}
               name="password"
@@ -109,6 +110,7 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
                   <TextInput
+                    autoComplete={false}
                     autoCapitalize="none"
                     label="password"
                     secureTextEntry
@@ -121,7 +123,7 @@ const LoginComponent = ({}: PageProps) => {
                 </>
               )}
             />
-
+        
             <Button
               style={{
                 borderRadius: 10,

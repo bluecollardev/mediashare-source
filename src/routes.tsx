@@ -25,111 +25,118 @@ const routeConfig = {
     name: 'search',
     options: {
       title: 'Search',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" hideSearchIcon={true} showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
     },
   },
   playlists: {
     name: 'playlists',
     options: {
-      title: 'Playlists',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccountMenu={true} />,
+      title: 'My Playlists',
+      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
     },
   },
   playlistAdd: {
     name: 'playlistAdd',
-    options: { title: 'Create Playlist', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Create Playlist', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   playlistDetail: {
     name: 'playlistDetail',
-    options: { title: 'Playlist', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Playlist', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   playlistEdit: {
     name: 'playlistEdit',
-    options: { title: 'Edit Playlist', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Edit Playlist', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   playlistItemDetail: {
     name: 'playlistItemDetail',
-    options: { title: 'Playlist Item', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Playlist Item', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   playlistItemEdit: {
     name: 'playlistItemEdit',
-    options: { title: 'Edit Playlist Item', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Edit Playlist Item', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   media: {
     name: 'media',
     options: {
       title: 'Media Library',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="media" showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} searchTarget="media" showAccount={true} />,
     },
   },
   mediaItemAdd: {
     name: 'addMediaItem',
-    options: { title: 'Upload', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Upload', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   mediaItemDetail: {
     name: 'mediaItemDetail',
-    options: { title: 'File Details', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'File Details', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   mediaItemEdit: {
     name: 'mediaItemEdit',
-    options: { title: 'Edit Media', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Edit Media', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   addFromFeed: {
     name: 'addFromFeed',
-    options: { title: 'Import From S3 Bucket', header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: 'Import From S3 Bucket', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
-  addItemsToPlaylist: {
-    name: 'addItemsToPlaylist',
+  addSelectedToPlaylist: {
+    name: 'addSelectedToPlaylist',
     options: {
       title: 'Add Items To Playlist',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
     },
   },
   shareWith: {
     name: 'shareWith',
     options: {
       title: 'Share With',
-      header: (props) => <AppHeader {...props} searchable={true} showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} showAccount={true} />,
     },
   },
   account: {
     name: 'account',
     options: {
-      title: 'My Account',
-      header: (props) => <AppHeader {...props} showNotificationsMenu={true} showAccountMenu={false} />,
+      title: 'Shared Items',
+      header: (props) => <AppHeader {...props} showAccount={true} showNotifications={true} />,
     },
   },
   accountEdit: {
     name: 'accountEdit',
-    options: { title: 'Update Account', header: (props) => <AppHeader {...props} showAccountMenu={false} /> },
+    options: { title: 'Manage Account', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
   },
   contact: {
     name: 'contact',
     options: {
-      title: 'Contact',
-      header: (props) => <AppHeader {...props} showAccountMenu={false} showNotificationsMenu={true} />,
+      title: 'Contact Info',
+      header: (props) => <AppHeader {...props} showAccount={true} showNotifications={false} />,
+    },
+  },
+  invitation: {
+    name: 'invitation',
+    options: {
+      title: 'Invitation',
+      header: (props) => <AppHeader {...props} showAccount={false} showNotifications={false} />,
     },
   },
   sharedWithContact: {
     name: 'sharedWithContact',
-    options: { title: `Items You're Sharing`, header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: `Items You're Sharing`, header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   sharedByContact: {
     name: 'sharedByContact',
-    options: { title: `Items They're Sharing`, header: (props) => <AppHeader {...props} showAccountMenu={true} /> },
+    options: { title: `Items They're Sharing`, header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
   feed: {
     name: 'feed',
     options: {
       title: 'My Feed',
-      header: (props) => <AppHeader {...props} searchable={true} showDisplayControls={false} showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} showDisplayControls={false} showAccount={true} />,
     },
   },
   feedSharedWithMe: {
     name: 'feedSharedWithMe',
     options: {
       title: 'Shared With Me',
-      header: (props) => <AppHeader {...props} searchable={false} showDisplayControls={true} showAccountMenu={true} />,
+      header: (props) => <AppHeader {...props} searchable={false} showDisplayControls={true} showAccount={true} />,
     },
   },
 } as const;

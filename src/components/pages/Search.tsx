@@ -1,3 +1,6 @@
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -6,10 +9,11 @@ import { searchPlaylists, selectPlaylist } from 'mediashare/store/modules/search
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
@@ -24,7 +28,7 @@ export interface SearchProps {
   globalState?: GlobalStateProps;
 }
 
-export const SearchComponent = withPlaylistSearch(
+export const SearchComponent = withSearchComponent(
   ({ list = [], onViewDetailClicked, selectable = false, showActions = true, onChecked = () => undefined }: SearchProps) => {
     const sortedList = list.map((item) => item);
     sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
@@ -54,11 +58,13 @@ export const SearchComponent = withPlaylistSearch(
       );
     }
   }
-);
+, 'search');
 
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
 export const Search = ({ globalState }: PageProps) => {
+  const { tags = [] } = globalState;
+  
   const dispatch = useDispatch();
 
   const shareWith = useRouteName(routeNames.shareWith);
@@ -70,7 +76,7 @@ export const Search = ({ globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
-  const searchResults = globalState?.searchIsFiltering() ? entities : [];
+  const searchResults = globalState?.searchIsFiltering('search') ? entities : [];
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -80,12 +86,8 @@ export const Search = ({ globalState }: PageProps) => {
   const [fabState, setFabState] = useState({ open: false });
   const fabActions =
     searchResults.length > 0
-      ? [{ icon: 'share', onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
+      ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
-
-  console.log('search results filtering');
-  console.log(globalState?.searchIsFiltering());
-  console.log(searchResults);
 
   return (
     <PageContainer>
@@ -103,14 +105,24 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {searchResults.length === 0 && <NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />}
+        {searchResults.length === 0 ? (
+          <>
+            <TagBlocks list={tags} />
+            {/*<NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />*/}
+            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+            <RecentlyAdded list={searchResults} />
+            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+            <RecentlyPlayed list={searchResults} />
+          </>
+          
+        ) : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.share && (
+      {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
-      )}
-      {!isSelectable && searchResults.length > 0 && (
+      ) : null}
+      {!isSelectable && searchResults.length > 0 ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -122,15 +134,15 @@ export const Search = ({ globalState }: PageProps) => {
             setFabState(open);
           }}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.getSearchFilters('search');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
     await dispatch(searchPlaylists(args));
   }

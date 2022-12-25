@@ -28,9 +28,9 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   const initialMediaDisplayMode = isPlayable ? (getMediaDisplayMode() as MediaDisplayMode) : 'image';
   const [mediaDisplayMode, setMediaDisplayMode] = useState(initialMediaDisplayMode);
 
-  console.log(`[DisplayPreviewOrVideo] thumbnail: ${thumbnail}`);
+  // console.log(`[DisplayPreviewOrVideo] thumbnail: ${thumbnail}`);
   const { imageSrc, isDefaultImage } = usePreviewImage(thumbnail);
-  console.log(`imageSrc: ${imageSrc}, isDefaultImage: ${isDefaultImage}`);
+  // console.log(`imageSrc: ${imageSrc}, isDefaultImage: ${isDefaultImage}`);
   return (
     <View
       style={{
@@ -45,7 +45,7 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
       {/* TODO: Use MediaPreview component here! */}
       {mediaDisplayMode === 'image' && !isDefaultImage ? (
         <ImageBackground source={{ uri: imageSrc }} resizeMode="cover" style={{ width: '100%', height: '100%' }}>
-          {isPlayable && (
+          {isPlayable ? (
             <TouchableWithoutFeedback onPress={toggleMediaMode}>
               <View style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                 <Button icon="play-circle-filled" textColor="rgba(255,255,255,0.666)" labelStyle={{ fontSize: 50 }}>
@@ -53,7 +53,7 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
                 </Button>
               </View>
             </TouchableWithoutFeedback>
-          )}
+          ) : null}
         </ImageBackground>
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <>

@@ -8,6 +8,7 @@ import { CreateMediaItemDto, MediaCategoryType } from 'mediashare/rxjs-api';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   KeyboardAvoidingPageContent,
   PageActions,

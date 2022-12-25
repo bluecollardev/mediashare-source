@@ -1,51 +1,45 @@
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
+import { MediaComponent } from 'mediashare/components/pages/Media'
+import { createRandomRenderKey } from 'mediashare/core/utils/uuid'
+import { AuthorProfileDto, MediaItemResponseDto } from 'mediashare/rxjs-api'
+import { theme } from 'mediashare/styles'
 import React, { useEffect, useState } from 'react';
+import { Divider } from 'react-native-paper'
 import { useDispatch } from 'react-redux';
-import { FlatList } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { useAppSelector } from 'mediashare/store';
 import { getFeedMediaItems, saveFeedMediaItems } from 'mediashare/store/modules/mediaItem';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageActions, PageProps, NoItems, ActionButtons, MediaListItem, NoContent } from 'mediashare/components/layout';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
-  const dispatch = useDispatch();
 
-  const goToMediaItems = useMediaItems();
-  const selectedItems = new Set<AwsMediaItem>();
-
-  const entities = useAppSelector((state) => state?.mediaItem?.feed?.entities) || [];
-  const { loading, loaded } = useAppSelector((state) => state?.mediaItem?.feed);
-
-  const searchFilters = globalState?.search?.filters || { text: '', tags: [] };
-  const [prevSearchFilters, setPrevSearchFilters] = useState({ filters: { text: '', tags: [] } });
-  useEffect(() => {
-    const currentSearchFilters = globalState?.search;
-    if (!loaded || JSON.stringify(currentSearchFilters) !== JSON.stringify(prevSearchFilters)) {
-      setPrevSearchFilters(currentSearchFilters);
-      loadData().then();
-    }
-  }, [loaded, globalState, searchFilters]);
-
+export const AddFromFeedComponent = ({
+  list = [],
+  selectable,
+  showActions = true,
+  onViewDetail,
+  onChecked = () => undefined,
+}: {
+  navigation: any;
+  list: MediaItemResponseDto[];
+  onViewDetail: any;
+  selectable: boolean;
+  showActions?: boolean;
+  onChecked?: (checked: boolean, item?: any) => void;
+}) => {
+  const sortedList = list.map((item) => item) || [];
+  sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
+  
   return (
-    <PageContainer>
-      <PageContent>
-        {loaded && entities.length > 0 && <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} />}
-        {loaded && entities.length === 0 && (
-          <NoContent
-            messageButtonText="There are no items in your S3 bucket to import. Please choose another bucket or add files to this bucket to continue."
-            icon="cloud-download"
-          />
-        )}
-      </PageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Add Media" onSecondaryClicked={goToMediaItems} />
-      </PageActions>
-    </PageContainer>
+    <View>
+      <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `media_item_${_id}`} />
+    </View>
   );
-
+  
   function renderVirtualizedListItem(item) {
     const { key, size, lastModified } = item;
     return (
@@ -60,12 +54,69 @@ export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
       />
     );
   }
+  
+  function addItem(item: AwsMediaItem) {
+    // selectedItems.add(item);
+  }
+  
+  function removeItem(item: AwsMediaItem) {
+    // selectedItems.delete(item);
+  }
+};
+
+const AddFromFeedComponentWithSearch = withSearchComponent(AddFromFeedComponent, 'addFromFeed');
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
+  const dispatch = useDispatch();
+
+  const goToMediaItems = useMediaItems();
+  const selectedItems = new Set<AwsMediaItem>();
+  
+  const { entities, loaded, loading } = useAppSelector((state) => state?.mediaItem?.feed);
+  
+  // const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
+  useEffect(() => {
+    // clearCheckboxSelection();
+    loadData().then();
+  }, []);
+
+  return (
+    <PageContainer>
+      <PageContent>
+        <AddFromFeedComponentWithSearch
+          globalState={globalState}
+          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loadData={loadData}
+          searchTarget="media"
+          // key={clearSelectionKey}
+          navigation={navigation}
+          list={entities}
+          // showActions={!isSelectable}
+          // selectable={isSelectable}
+          // onViewDetail={onEditItem}
+          // onChecked={updateSelection}
+        />
+        {loaded && entities.length === 0 ? (
+          <NoContent
+            messageButtonText="There are no items in your S3 bucket to import. Please choose another bucket or add files to this bucket to continue."
+            icon="cloud-download"
+          />
+        ) : null}
+      </PageContent>
+      <PageActions>
+        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Add Media" onSecondaryClicked={goToMediaItems} />
+      </PageActions>
+    </PageContainer>
+  );
+
+  
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.getSearchFilters('addFromFeed');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
 
     if (args.text || args.tags.length > 0) {
@@ -73,14 +124,6 @@ export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
     } else {
       await dispatch(getFeedMediaItems());
     }
-  }
-
-  function addItem(item: AwsMediaItem) {
-    selectedItems.add(item);
-  }
-
-  function removeItem(item: AwsMediaItem) {
-    selectedItems.delete(item);
   }
 
   async function saveItems() {

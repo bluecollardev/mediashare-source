@@ -7,6 +7,5 @@ export * from './SearchApi';
 export * from './ShareItemsApi';
 export * from './TagsApi';
 export * from './UserApi';
-export * from './UserConnectionApi';
 export * from './UsersApi';
 export * from './ViewsApi';

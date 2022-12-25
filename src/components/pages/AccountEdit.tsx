@@ -16,6 +16,7 @@ import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { TextField } from 'mediashare/components/form/TextField';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
 
 const awsUrl = Config.AWS_URL;
@@ -32,7 +33,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const profile = useProfile();
-  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc']));
+  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
   const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
   const fullName = state?.firstName || state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
 
@@ -58,18 +59,18 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               email={state?.email}
               phoneNumber={state?.phoneNumber}
               image={state?.imageSrc}
-              likes={state?.likesCount}
-              shared={state?.sharedCount}
-              shares={state?.sharesCount}
+              // likes={state?.likesCount}
+              // shared={state?.sharedCount}
+              // shares={state?.sharesCount}
               showSocial={true}
               showActions={true}
               isCurrentUser={true}
               onProfileImageClicked={() => getDocument()}
             />
           </View>
-
+      
           <View style={styles.formSection}>
-            <TextField label="Account Type" value={state?.role} disabled={true} />
+            <TextField label="Shared Type" value={state?.role} disabled={true} />
             <TextField onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username} disabled={!isLoaded} />
           </View>
           <View style={styles.formSection}>
@@ -80,7 +81,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
             <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email} disabled={!isLoaded} />
             <TextField onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
           </View>
-
+      
           <ActionButtons
             disablePrimary={withoutName()}
             disableSecondary={withoutName()}
@@ -114,7 +115,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   }
 
   function cancel() {
-    setState(profile);
+    setState(profile as any);
     viewAccount({ userId });
   }
 

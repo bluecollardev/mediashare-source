@@ -4,6 +4,7 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { mapAvailableTags } from 'mediashare/store/modules/tags';
 import { useAppSelector } from 'mediashare/store';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard } from 'mediashare/components/layout';
 import { AuthorProfileDto } from 'mediashare/rxjs-api';
 

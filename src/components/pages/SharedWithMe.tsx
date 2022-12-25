@@ -9,6 +9,7 @@ import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { ScrollView, View } from 'react-native';
 import { List, Card } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, MediaCard, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { useDispatch } from 'react-redux';
 import { PlaylistsComponent } from './Playlists';
@@ -104,12 +105,12 @@ export const Browse = ({
     <PageContainer>
       <Card>
         <Card.Content>
-          {globalState?.displayMode === 'list' && <SharedList globalState={globalState} />}
-          {globalState?.displayMode === 'article' && (
+          {globalState?.displayMode === 'list' ? <SharedList globalState={globalState} /> : null}
+          {globalState?.displayMode === 'article' ? (
             <ScrollView>
               <SharedBlock globalState={globalState} />
             </ScrollView>
-          )}
+          ) : null}
         </Card.Content>
       </Card>
     </PageContainer>

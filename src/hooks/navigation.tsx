@@ -11,8 +11,9 @@ import { getPlaylistById } from 'mediashare/store/modules/playlist';
 // TODO: Fix ts-ignores!
 
 type RouteConfigKeyType = EnumLiteralsOf<typeof routeNames>;
-// @ts-ignore
-type RouteParentKeyType = keyof Pick<typeof routeConfig, 'Browse' | 'Media' | 'Playlists' | 'Account'>;
+// TODO: Fix types
+// type RouteParentKeyType = keyof Pick<typeof routeConfig, 'Private' | 'Public' | 'Account'>;
+type RouteParentKeyType = 'Private' | 'Public' | 'Account';
 
 export function useGoToAccount() {
   const nav = useNavigation();
@@ -89,13 +90,14 @@ export function usePlaylists() {
   };
 }
 
-export function useViewPlaylistById() {
+export function useViewPlaylistById(config: { disableEdit: boolean, disableControls: boolean } = { disableEdit: false, disableControls: false }) {
+  const { disableEdit = false, disableControls = false } = config;
   const nav = useNavigation();
   const dispatch = useDispatch();
   return async ({ playlistId }: { playlistId: string }) => {
     await dispatch(getPlaylistById(playlistId));
     // @ts-ignore
-    nav.navigate(routeNames.playlistDetail, { playlistId });
+    nav.navigate(routeNames.playlistDetail, { playlistId, disableEdit, disableControls });
   };
 }
 

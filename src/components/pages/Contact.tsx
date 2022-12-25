@@ -9,6 +9,7 @@ import { useProfile } from 'mediashare/hooks/useProfile';
 import { useViewItemsSharedByMe, useViewItemsSharedWithMe } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, AccountCard, ListItem } from 'mediashare/components/layout';
 // import { theme } from 'mediashare/styles';
 
@@ -71,18 +72,18 @@ const Contact = ({ route, globalState }: ContactProps) => {
         onViewDetail={() => viewSharedWithContact(userId)}
       />
       {/* !isSelectable && (
-        <FAB.Group
-          visible={true}
-          open={fabState.open}
-          icon={fabState.open ? 'close' : 'more-vert'}
-          actions={fabActions}
-          color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
-          onStateChange={(open) => {
-            setFabState(open);
-          }}
-        />
-      ) */}
+      <FAB.Group
+        visible={true}
+        open={fabState.open}
+        icon={fabState.open ? 'close' : 'more-vert'}
+        actions={fabActions}
+        color={theme.colors.text}
+        fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+        onStateChange={(open) => {
+          setFabState(open);
+        }}
+      />
+    ) */}
     </PageContainer>
   );
 };

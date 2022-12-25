@@ -14,8 +14,8 @@ export const searchActions = makeActions(searchActionNames);
 export const searchPlaylists = createAsyncThunk(searchActions.searchPlaylists.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
   const { api } = extra as { api: ApiService };
   const { text, tags = [] } = args;
-  console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
-  console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
+  // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
+  // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   return await api.search.searchControllerFindAll({ text, tags }).toPromise();
 });
 

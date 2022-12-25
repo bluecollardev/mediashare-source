@@ -10,7 +10,7 @@ import { useUser } from 'mediashare/hooks/useUser';
 
 interface SharedListProps {
   sharedItems: ProfileShareItem[];
-  showActions?: boolean;
+  showActions?: boolean | 'left' | 'right';
   onDelete?: any;
   onView?: any;
   selectable?: boolean;
@@ -63,14 +63,19 @@ export const SharedList = ({
         return (
           <View>
             <ShareItemCard
+              {...item}
               title={item.title}
               date={item.createdAt}
               read={item.read}
               image={item.imageSrc}
               selectable={selectable}
               showActions={showActions}
-              onDelete={() => onDelete(item.shareId)}
-              onView={() => onView(item.playlistId, item.shareId)}
+              onDelete={() => {
+                onDelete(item.shareId)
+              }}
+              onView={() => {
+                onView(item.playlistId, item.shareId)
+              }}
               onChecked={(checked) => onChecked(checked, item.shareId)}
             />
           </View>

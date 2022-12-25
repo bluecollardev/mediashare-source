@@ -17,6 +17,7 @@ const theme = {
     textDarker: '#BDC1C6',
     text: 'rgba(255,255,255,1)',
     error: 'rgba(242,22,81,1)',
+    errorDark: 'rgba(242,22,81,0.5)',
     white: '#ffffff',
   },
   fonts: {
@@ -136,7 +137,7 @@ const styles: any = StyleSheet.create({
     borderTopColor: theme.colors.defaultBorder,
     borderTopWidth: 1,
   },
-});
+} as any);
 
 const components = {
   multiSelect: {
@@ -160,6 +161,7 @@ const components = {
       },
       container: {
         backgroundColor: '#1a1a1a',
+
       },
       selectToggle: {
         marginVertical: 10,
@@ -187,11 +189,11 @@ const components = {
         color: theme.colors.text,
       },
       selectedItemText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       itemText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       selectedSubItemText: {
@@ -203,7 +205,7 @@ const components = {
         fontFamily: theme.fonts.thin.fontFamily,
       },
       confirmText: {
-        fontSize: 15,
+        fontSize: 17,
         fontFamily: theme.fonts.regular.fontFamily,
       },
       button: {

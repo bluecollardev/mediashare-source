@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Divider } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { useAppSelector } from 'mediashare/store';
@@ -7,23 +6,18 @@ import { findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { filterUnique } from 'mediashare/utils';
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { NoContent, PageContainer, PageContent, PageProps } from 'mediashare/components/layout';
-import { FeedTags, FeedRecentlyPlayed, FeedSharedByContact } from 'mediashare/components/feed';
 
 const FeedComponent = ({ list, tags }) => {
   return (
     <>
-      <FeedTags list={tags} />
-      <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-      <FeedSharedByContact list={list} />
-      <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-      <FeedRecentlyPlayed list={list} />
     </>
   );
 };
 
-const FeedComponentWithSearch = withPlaylistSearch(FeedComponent);
+const FeedComponentWithSearch = withSearchComponent(FeedComponent, 'feed');
 
 export const Feed = ({
   globalState = {
@@ -55,17 +49,17 @@ export const Feed = ({
       <PageContent>
         <ScrollView>
           {(!loaded && !loading) ||
-            (loaded && list.length > 0 && (
-              <FeedComponentWithSearch
-                globalState={globalState}
-                loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
-                loadData={loadData}
-                searchTarget="playlists"
-                list={list}
-                tags={tags}
-              />
-            ))}
-          {list.length === 0 && <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" />}
+          (loaded && list.length > 0 ? (
+            <FeedComponentWithSearch
+              globalState={globalState}
+              loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+              loadData={loadData}
+              searchTarget="playlists"
+              list={list}
+              tags={tags}
+            />
+          ) : null)}
+          {list.length === 0 ? <NoContent messageButtonText="Items that are shared with you will show up in your feed." icon="view-list" /> : null}
         </ScrollView>
       </PageContent>
     </PageContainer>

@@ -1,4 +1,4 @@
-import { withPlaylistSearch } from 'mediashare/components/hoc/withPlaylistSearch';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -6,11 +6,12 @@ import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
-import { withGlobalStateConsumer } from 'mediashare/core/globalState';
+import { INITIAL_SEARCH_FILTERS, withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
   PageContainer,
@@ -65,13 +66,14 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
 
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
-const PlaylistsComponentWithSearch = withPlaylistSearch(PlaylistsComponent);
+const PlaylistsComponentWithSearch = withSearchComponent(PlaylistsComponent, 'playlists');
 
 export const Playlists = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
 
   const shareWith = useRouteName(routeNames.shareWith);
   const createPlaylist = useRouteName(routeNames.playlistAdd);
+  const viewMedia = useRouteName(routeNames.media);
   const viewPlaylist = useViewPlaylistById();
 
   const [isSelectable, setIsSelectable] = useState(false);
@@ -93,11 +95,15 @@ export const Playlists = ({ globalState }: PageProps) => {
   const fabActions =
     entities.length > 0
       ? [
-          { icon: 'delete-forever', onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-          { icon: 'share', onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-          { icon: 'add-circle', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+          { icon: 'delete-forever', label: `Delete`, onPress: () => activateDeleteMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+          { icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+          { icon: 'playlist-add', label: `Create`, onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+          { icon: 'video-library', label: `Media Items`, onPress: () => manageMediaItems(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
         ]
-      : [{ icon: 'add-circle', onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }];
+      : [
+          { icon: 'playlist-add', label: `Create`, onPress: () => createPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+          { icon: 'video-library', label: `Media Items`, onPress: () => manageMediaItems(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+        ];
 
   return (
     <PageContainer>
@@ -126,20 +132,20 @@ export const Playlists = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 && (
+        {loaded && entities.length === 0 ? (
           <NoContent
             onPress={() => createPlaylist()}
             messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
             icon="add-circle"
           />
-        )}
+        ) : null}
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.share && (
+      {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
-      )}
-      {isSelectable && actionMode === actionModes.delete && (
+      ) : null}
+      {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
             onPrimaryClicked={openDeleteDialog}
@@ -149,8 +155,8 @@ export const Playlists = ({ globalState }: PageProps) => {
             primaryButtonStyles={styles.deleteActionButton}
           />
         </PageActions>
-      )}
-      {!isSelectable && (
+      ) : null}
+      {!isSelectable ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -162,15 +168,19 @@ export const Playlists = ({ globalState }: PageProps) => {
             setFabState(open);
           }}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
+  
+  async function manageMediaItems() {
+    viewMedia()
+  }
 
   async function loadData() {
-    const { search } = globalState;
+    const search = globalState?.getSearchFilters('playlists');
     const args = {
-      text: search?.filters?.text ? search.filters.text : '',
-      tags: search?.filters?.tags || [],
+      text: search?.text ? search.text : '',
+      tags: search?.tags || [],
     };
 
     if (args.text || args.tags.length > 0) {

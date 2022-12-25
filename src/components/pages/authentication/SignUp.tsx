@@ -1,11 +1,12 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { ThemeProvider, useNavigation } from '@react-navigation/native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 import PhoneInput from 'react-native-phone-number-input';
 import { theme } from 'mediashare/styles';
@@ -34,7 +35,7 @@ const SignUpComponent = ({}: PageProps) => {
     },
   });
 
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
@@ -87,12 +88,12 @@ const SignUpComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
             />
-
+        
             <Controller
               control={control}
               name="password"
@@ -106,6 +107,7 @@ const SignUpComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
                   <TextInput
+                    autoComplete={false}
                     autoCapitalize="none"
                     label="password"
                     secureTextEntry
@@ -118,7 +120,7 @@ const SignUpComponent = ({}: PageProps) => {
                 </>
               )}
             />
-
+        
             <Controller
               control={control}
               name="email"
@@ -131,7 +133,7 @@ const SignUpComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.email?.message}</HelperText>
                 </>
               )}
@@ -160,7 +162,7 @@ const SignUpComponent = ({}: PageProps) => {
                 </View>
               )}
             />
-
+        
             <Button
               style={{
                 borderRadius: 10,
@@ -171,7 +173,7 @@ const SignUpComponent = ({}: PageProps) => {
             >
               Sign Up
             </Button>
-
+        
             <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
               Back to sign in
             </Button>

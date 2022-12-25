@@ -1,11 +1,19 @@
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
+import { useSnack } from 'mediashare/hooks/useSnack'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { ScrollView } from 'react-native';
+import { ScrollView } from 'react-native'
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { getPlaylistById, removeUserPlaylist, selectMappedPlaylistMediaItems, updateUserPlaylist } from 'mediashare/store/modules/playlist';
+import {
+  addUserPlaylist,
+  getPlaylistById,
+  removeUserPlaylist,
+  selectMappedPlaylistMediaItems,
+  updateUserPlaylist,
+  MappedPlaylistMediaItem,
+} from 'mediashare/store/modules/playlist'
 import { addPlaylistItem } from 'mediashare/store/modules/playlistItem';
 import { getUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
 import { loadUsers } from 'mediashare/store/modules/users';
@@ -20,26 +28,38 @@ import {
 } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB } from 'react-native-paper';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
-import { AuthorProfileDto, MediaCategoryType, PlaylistItem, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import {
+  AuthorProfileDto,
+  CreatePlaylistDto,
+  MediaCategoryType,
+  PlaylistResponseDto,
+} from 'mediashare/rxjs-api'
 import { theme } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
 
+export interface PlaylistDetailProps extends PageProps {
+  disableEdit?: boolean;
+  disableControls?: boolean;
+}
+
 // @ts-ignore
-export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }: PageProps) => {
+export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }: PlaylistDetailProps) => {
   const dispatch = useDispatch();
 
-  const { playlistId = '' } = route?.params || {};
+  const { playlistId = '', disableEdit = false, disableControls = false } = route?.params || {};
 
   const edit = useRouteWithParams(routeNames.playlistEdit);
-  const addToPlaylist = useRouteWithParams(routeNames.addItemsToPlaylist);
+  const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
   const viewMediaItemById = useViewMediaItemById();
   const viewPlaylistItemById = useViewPlaylistItemById();
   const editPlaylistItemById = useEditPlaylistItemById();
   const goToShareWith = useRouteName(routeNames.shareWith);
   const goToPlaylists = usePlaylists();
   const playFromBeginning = useViewPlaylistItemById();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const { loaded, selected } = useAppSelector((state) => state?.playlist);
   const [isLoaded, setIsLoaded] = useState(loaded);
@@ -61,7 +81,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     // mediaItems = [],
   } = selected || {};
 
-  const allowEdit = createdBy === appUserId;
+  const allowEdit = createdBy === appUserId && !disableEdit;
 
   const { tags = [], build } = globalState;
   const tagKeys = (selected?.tags || []).map(({ key }) => key);
@@ -75,8 +95,10 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [selectedItems, setSelectedItems] = useState([]);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeleteItemsDialog, setShowDeleteItemsDialog] = useState(false);
+  const [showAddToLibraryDialog, setShowAddToLibraryDialog] = useState(false);
 
-  const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
+  const playlistMediaItems: MappedPlaylistMediaItem[] = selectMappedPlaylistMediaItems(selected) || [];
 
   useEffect(() => {
     if (!isLoaded) {
@@ -94,18 +116,15 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   let fabActions;
   if (allowEdit) {
     fabActions = [
-      { icon: 'delete-forever', onPress: () => setShowDeleteDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
-      { icon: 'share', onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'edit', onPress: () => editPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
+      { icon: 'delete-forever', label: `Delete`, onPress: () => setShowDeleteDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.error } },
+      { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'edit', label: `Edit`, onPress: () => editPlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } },
     ];
   } else {
-    fabActions = [{ icon: 'share', onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }];
-  }
-
-  // Don't display anything unless we have a selected playlist
-  // TODO: Show loader!
-  if (!selected) {
-    return null;
+    fabActions = [
+      { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      { icon: 'playlist-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
+    ];
   }
 
   return (
@@ -122,6 +141,38 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
           color={theme.colors.white}
           buttonColor={theme.colors.error}
+        />
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => setShowDeleteItemsDialog(false)}
+          rightActionCb={async () => {
+            setShowDeleteItemsDialog(false);
+            await confirmDeletePlaylistItems();
+          }}
+          onDismiss={() => setShowDeleteItemsDialog(false)}
+          showDialog={showDeleteItemsDialog}
+          title="Delete Playlist Items"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Confirm"
+          leftActionCb={() => {
+            setShowAddToLibraryDialog(false);
+          }}
+          rightActionCb={async () => {
+            await clonePlaylist();
+            setShowAddToLibraryDialog(false);
+          }}
+          onDismiss={() => setShowAddToLibraryDialog(false)}
+          showDialog={showAddToLibraryDialog}
+          title="Save Playlist to Library"
+          subtitle={`Add ${title} to your Library.`}
+          color={theme.colors.white}
+          buttonColor={theme.colors.primary}
         />
         <ScrollView>
           <MediaCard
@@ -144,32 +195,19 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             shares={shareCount}
             views={viewCount}
           >
-            {/* TODO: Make this work and add it back in! */}
-            {/* <Button
-                icon="live-tv"
-                color={theme.colors.default}
-                mode="outlined"
-                styles={{ width: '100%', marginTop: 25, marginBottom: 25 }}
-                compact
-                dark
-                onPress={() => (playlistMediaItems && playlistMediaItems.length > 0 ? viewPlaylistMediaItem({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri }) : undefined)}
-              >
-                Play From Beginning
-              </Button>
-              <Divider /> */}
-            {!allowEdit && playlistMediaItems.length > 0 && (
+            {!disableControls && !allowEdit && playlistMediaItems.length > 0 ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginVertical: 15 }}
                 showSecondary={false}
                 showPrimary={true}
                 onPrimaryClicked={async () => {
-                  playFromBeginning({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
+                  await playFromBeginning ({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
                 }}
                 primaryLabel="Play from Beginning"
                 primaryIcon="live-tv"
               />
-            )}
-            {!build.forFreeUser && allowEdit && (
+            ) : null}
+            {!build.forFreeUser && allowEdit ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
                 showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
@@ -181,33 +219,34 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
                 onPrimaryClicked={() => addToPlaylist({ playlistId })}
               />
-            )}
+            ) : null}
             <MediaList
               key={clearSelectionKey}
               list={playlistMediaItems}
               showThumbnail={true}
               selectable={isSelectable}
-              showActions={!isSelectable}
-              onViewDetail={activatePlaylistDetail}
-              addItem={onAddItem}
+              showActions={!isSelectable && !disableControls}
+              onViewDetail={!disableControls ? activatePlaylistDetail : undefined}
+              addItem={!disableControls ? onAddItem : undefined}
               removeItem={onRemoveItem}
               actionIconRight={allowEdit ? 'edit' : undefined}
             />
           </MediaCard>
         </ScrollView>
-        <PageActions>
-          {isSelectable && (
-            <ActionButtons
-              onPrimaryClicked={confirmDeletePlaylistItems}
-              onSecondaryClicked={cancelDeletePlaylistItems}
-              primaryLabel="Remove"
-              primaryIconColor={theme.colors.error}
-              primaryButtonStyles={{ backgroundColor: theme.colors.error }}
-            />
-          )}
-        </PageActions>
       </PageContent>
-      {!build.forFreeUser && !isSelectable && (
+      <PageActions>
+        {isSelectable ? (
+          <ActionButtons
+            onPrimaryClicked={() => setShowDeleteItemsDialog(true)}
+            onSecondaryClicked={cancelDeletePlaylistItems}
+            primaryLabel="Remove"
+            primaryIconColor={theme.colors.error}
+            primaryButtonStyles={{ backgroundColor: theme.colors.error }}
+          />
+        ) : null}
+      </PageActions>
+      {element}
+      {!build.forFreeUser && !isSelectable && !disableControls ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -221,7 +260,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           }}
           onPress={() => undefined}
         />
-      )}
+      ) : null}
     </PageContainer>
   );
 
@@ -235,11 +274,26 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistResponseDto }));
     goToShareWith();
   }
-
-  // TODO: This is unused! Implement or remove ASAP!
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function cancelSharePlaylist() {
-    dispatch(selectPlaylist({ isChecked: false, plist: selected as PlaylistResponseDto }));
+  
+  async function clonePlaylist() {
+    try {
+      const dto: CreatePlaylistDto = {
+        ...selected as CreatePlaylistDto,
+        _id: undefined,
+        cloneOf: selected._id,
+        mediaIds: selected.mediaItems.map(item => item._id),
+      } as CreatePlaylistDto;
+  
+      // @ts-ignore TODO: Fix types on dispatch?
+      await dispatch(addUserPlaylist(dto));
+      setMessage(`Playlist added to library`);
+      onToggleSnackBar(true);
+      await dispatch(getUserPlaylists());
+      setIsSaved(false);
+    } catch (error) {
+      setMessage(error.message);
+      onToggleSnackBar(false);
+    }
   }
 
   async function editPlaylist() {
@@ -269,9 +323,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   async function viewPlaylistMediaItem({ playlistItemId = undefined, mediaId = undefined, uri = undefined }) {
     console.log('viewPlaylistMediaItem');
     if (playlistItemId) {
-      viewPlaylistItemById({ playlistItemId, uri });
+      await viewPlaylistItemById({ playlistItemId, uri });
     } else if (mediaId) {
-      viewMediaItemById({ mediaId, uri });
+      await viewMediaItemById({ mediaId, uri });
     }
   }
 
@@ -288,7 +342,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       console.log('reload playlist');
       await dispatch(getPlaylistById(playlistId));
     }
-    editPlaylistItemById({ playlistItemId: itemId });
+    await editPlaylistItemById({ playlistItemId: itemId });
   }
 
   async function savePlaylistItems() {
@@ -333,13 +387,17 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     );
   }
 
-  function onAddItem(item: PlaylistItem) {
-    const updatedItems = selectedItems.concat([item.mediaId]);
+  function onAddItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onAddItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.concat([selected.mediaItemId]);
     setSelectedItems(updatedItems);
   }
 
-  function onRemoveItem(selected: PlaylistItem) {
-    const updatedItems = selectedItems.filter((item) => item !== selected.mediaId);
+  function onRemoveItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onRemoveItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.filter((item) => item !== selected.mediaItemId);
     setSelectedItems(updatedItems);
   }
 

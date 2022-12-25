@@ -55,7 +55,7 @@ export const MediaList = ({
               onViewDetail={() => onViewDetail(item)}
               iconRight={actionIconRight}
             />
-            {idx !== arr.length && <Divider />}
+            {idx !== arr.length ? <Divider /> : null}
           </View>
         );
       })}

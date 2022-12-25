@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
+import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
-import { userSnack } from 'mediashare/hooks/useSnack';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 
 interface FormData {
@@ -30,7 +31,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
     },
   });
 
-  const { element, onToggleSnackBar, setMessage } = userSnack();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const sendCodePassword = async (data) => {
     try {
@@ -95,13 +96,13 @@ const ResetPasswordComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
             />
-
-            {showCode && (
+        
+            {showCode ? (
               <>
                 <Controller
                   control={control}
@@ -111,7 +112,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>
-                      <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <TextInput autoComplete={false} autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                       <HelperText type="error">{errors.code?.message}</HelperText>
                     </>
                   )}
@@ -124,13 +125,13 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>
-                      <TextInput autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <TextInput autoComplete={false} autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                       <HelperText type="error">{errors.newPassword?.message}</HelperText>
                     </>
                   )}
                 />
               </>
-            )}
+            ) : null}
             <Button
               style={{
                 borderRadius: 10,
@@ -141,7 +142,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
             >
               {showCode ? 'Confirm' : 'Send code'}
             </Button>
-
+        
             <Button style={{ paddingTop: 10 }} labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleBack}>
               Back to sign in
             </Button>
