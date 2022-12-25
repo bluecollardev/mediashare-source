@@ -327,9 +327,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   async function viewPlaylistMediaItem({ playlistItemId = undefined, mediaId = undefined, uri = undefined }) {
     console.log('viewPlaylistMediaItem');
     if (playlistItemId) {
-      viewPlaylistItemById({ playlistItemId, uri });
+      await viewPlaylistItemById({ playlistItemId, uri });
     } else if (mediaId) {
-      viewMediaItemById({ mediaId, uri });
+      await viewMediaItemById({ mediaId, uri });
     }
   }
 
@@ -346,7 +346,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       console.log('reload playlist');
       await dispatch(getPlaylistById(playlistId));
     }
-    editPlaylistItemById({ playlistItemId: itemId });
+    await editPlaylistItemById({ playlistItemId: itemId });
   }
 
   async function savePlaylistItems() {

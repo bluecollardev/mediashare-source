@@ -1,4 +1,5 @@
 import { ActionButtons } from 'mediashare/components/layout';
+import { useIsMounted } from 'mediashare/hooks/useIsMounted'
 import React, { useEffect, useMemo, useState } from 'react';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
@@ -27,6 +28,8 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     forcedSearchMode,
     ...rest
   }: any) {
+    const isMountedRef = useIsMounted();
+    
     const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode } = globalState;
     const searchFilters = getSearchFilters(searchKey);
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
@@ -48,19 +51,24 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     }, [forcedSearchMode]);
     
     useEffect(() => {
+      // Only update state if component is mounted
       if (displaySearch === false) {
         loadData().then(() => {
-          setSearchText('');
-          setSearchTags([]);
+          if (!isMountedRef.current) return;
+          updateSearchText('');
+          updateSearchTags([]);
         });
       }
     }, [displaySearch])
-    
+  
     useEffect(() => {
       if (!loaded || !isLoaded) {
-        loadData().then(() => setIsLoaded(true));
+        loadData().then(() => {
+          if (!isMountedRef.current) return;
+          setIsLoaded(true);
+        });
       }
-    }, [loaded, isLoaded]);
+    }, [loaded, isLoaded, isMountedRef]);
 
     return (
       <>
@@ -72,9 +80,6 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               placeholder="Keywords"
               value={searchText}
               onChangeText={(text) => updateSearchText(text)}
-              icon=""
-              // icon="arrow-back-ios"
-              // onIconPress={() => closeSearchConsole()}
               clearIcon="clear"
               autoCapitalize="none"
             />
