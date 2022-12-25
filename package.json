@@ -113,5 +113,8 @@
     "remote-redux-devtools": "0.5.16",
     "remote-redux-devtools-on-debugger": "0.8.3",
     "typescript": "~4.3.5"
+  },
+  "resolutions": {
+    "react-devtools-core": "4.11.0"
   }
 }

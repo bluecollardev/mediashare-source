@@ -2,7 +2,13 @@ import { createAsyncThunk, createAction, createSlice, createSelector } from '@re
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreatePlaylistDto, CreatePlaylistResponseDto, UpdatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import {
+  CreatePlaylistDto,
+  CreatePlaylistResponseDto,
+  UpdatePlaylistDto,
+  PlaylistResponseDto,
+  PlaylistItemResponseDto,
+} from 'mediashare/rxjs-api'
 
 import { flattenDeep } from 'remeda';
 import { take } from 'rxjs/operators';
@@ -150,6 +156,12 @@ export const selectPlaylistMediaItems = createSelector(selectActivePlaylistItems
     };
   });
 });
+
+export interface MappedPlaylistMediaItem extends PlaylistItemResponseDto {
+  playlistItemId?: string;
+  mediaItemId?: string;
+  sortIndex: number;
+}
 
 export const selectMappedPlaylistMediaItems = createSelector(selectPlaylistMediaItems, (playlistMediaItems) => {
   const mapped = playlistMediaItems.map((pmi) => {

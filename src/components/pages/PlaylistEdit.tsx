@@ -2,14 +2,20 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useAppSelector } from 'mediashare/store';
-import { getPlaylistById, removeUserPlaylist, selectMappedPlaylistMediaItems, updateUserPlaylist } from 'mediashare/store/modules/playlist';
+import {
+  getPlaylistById,
+  removeUserPlaylist,
+  selectMappedPlaylistMediaItems,
+  updateUserPlaylist,
+  MappedPlaylistMediaItem,
+} from 'mediashare/store/modules/playlist'
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { usePlaylists, useRouteWithParams, useViewMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { View, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -24,7 +30,7 @@ import {
 } from 'mediashare/components/layout';
 import { routeNames } from 'mediashare/routes';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { PlaylistCategoryType, MediaItem, MediaCategoryType, PlaylistItem } from 'mediashare/rxjs-api';
+import { PlaylistCategoryType, MediaCategoryType } from 'mediashare/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -57,28 +63,29 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   const [actionMode, setActionMode] = useState(actionModes.default);
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-
+  
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
+  const [showDeleteItemsDialog, setShowDeleteItemsDialog] = useState(false);
+  
+  const playlistMediaItems: MappedPlaylistMediaItem[] = selectMappedPlaylistMediaItems(selected) || [];
+  
+  const options = [];
+  for (const value in PlaylistCategoryType) {
+    options.push(value);
+  }
+  
   useEffect(() => {
     if (!isLoaded) {
       loadData().then();
     }
   }, [isLoaded]);
 
-  const options = [];
-  for (const value in PlaylistCategoryType) {
-    options.push(value);
-  }
-
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
 
   useEffect(() => {
     clearCheckboxSelection();
   }, []);
-
-  const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
-
+  
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent>
@@ -90,6 +97,21 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
           onDismiss={() => setShowDeleteDialog(false)}
           showDialog={showDeleteDialog}
           title="Delete Playlist"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+          color={theme.colors.white}
+          buttonColor={theme.colors.error}
+        />
+        <AppDialog
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete"
+          leftActionCb={() => setShowDeleteItemsDialog(false)}
+          rightActionCb={async () => {
+            setShowDeleteItemsDialog(false);
+            await confirmDeletePlaylistItems();
+          }}
+          onDismiss={() => setShowDeleteItemsDialog(false)}
+          showDialog={showDeleteItemsDialog}
+          title="Delete Playlist Items"
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
           color={theme.colors.white}
           buttonColor={theme.colors.error}
@@ -271,14 +293,18 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
       })
     );
   }
-
-  function onAddItem(item: PlaylistItem) {
-    const updatedItems = selectedItems.concat([item.mediaId]);
+  
+  function onAddItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onAddItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.concat([selected.mediaItemId]);
     setSelectedItems(updatedItems);
   }
-
-  function onRemoveItem(selected: PlaylistItem) {
-    const updatedItems = selectedItems.filter((item) => item !== selected.mediaId);
+  
+  function onRemoveItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onRemoveItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.filter((item) => item !== selected.mediaItemId);
     setSelectedItems(updatedItems);
   }
 
@@ -292,6 +318,12 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
     setIsSelectable(true);
   }
 
+  async function deletePlaylist() {
+    await dispatch(removeUserPlaylist(playlistId));
+    await dispatch(getUserPlaylists());
+    await goToPlaylists();
+  }
+  
   async function confirmDeletePlaylistItems() {
     await savePlaylistItems();
     setActionMode(actionModes.default);
@@ -299,18 +331,12 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
     setIsSelectable(false);
     resetData();
   }
-
+  
   function cancelDeletePlaylistItems() {
     setActionMode(actionModes.default);
     clearCheckboxSelection();
     setIsSelectable(false);
     resetData();
-  }
-
-  async function deletePlaylist() {
-    await dispatch(removeUserPlaylist(playlistId));
-    await dispatch(getUserPlaylists());
-    await goToPlaylists();
   }
 
   function resetData() {

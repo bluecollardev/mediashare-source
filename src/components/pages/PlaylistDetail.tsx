@@ -2,7 +2,7 @@ import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { useSnack } from 'mediashare/hooks/useSnack'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { ScrollView, Text } from 'react-native'
+import { ScrollView } from 'react-native'
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
@@ -12,6 +12,7 @@ import {
   removeUserPlaylist,
   selectMappedPlaylistMediaItems,
   updateUserPlaylist,
+  MappedPlaylistMediaItem,
 } from 'mediashare/store/modules/playlist'
 import { addPlaylistItem } from 'mediashare/store/modules/playlistItem';
 import { getUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
@@ -27,13 +28,12 @@ import {
 } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
 import {
   AuthorProfileDto,
   CreatePlaylistDto,
   MediaCategoryType,
-  PlaylistItem,
   PlaylistResponseDto,
 } from 'mediashare/rxjs-api'
 import { theme } from 'mediashare/styles';
@@ -98,7 +98,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [showDeleteItemsDialog, setShowDeleteItemsDialog] = useState(false);
   const [showAddToLibraryDialog, setShowAddToLibraryDialog] = useState(false);
 
-  const playlistMediaItems = selectMappedPlaylistMediaItems(selected) || [];
+  const playlistMediaItems: MappedPlaylistMediaItem[] = selectMappedPlaylistMediaItems(selected) || [];
 
   useEffect(() => {
     if (!isLoaded) {
@@ -125,10 +125,6 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       { icon: 'playlist-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
     ];
-  }
-  
-  if (!selected) {
-    return null;
   }
 
   return (
@@ -391,13 +387,17 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     );
   }
 
-  function onAddItem(item: PlaylistItem) {
-    const updatedItems = selectedItems.concat([item.mediaId]);
+  function onAddItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onAddItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.concat([selected.mediaItemId]);
     setSelectedItems(updatedItems);
   }
 
-  function onRemoveItem(selected: PlaylistItem) {
-    const updatedItems = selectedItems.filter((item) => item !== selected.mediaId);
+  function onRemoveItem(selected: MappedPlaylistMediaItem) {
+    console.log(`onRemoveItem`);
+    console.log(selected);
+    const updatedItems = selectedItems.filter((item) => item !== selected.mediaItemId);
     setSelectedItems(updatedItems);
   }
 
