@@ -1,3 +1,7 @@
+// https://github.com/reduxjs/redux-thunk/issues/333
+// TODO: https://react-redux.js.org/tutorials/typescript-quick-start#define-typed-hooks
+import type {} from 'redux-thunk/extend-redux';
+
 import React, { useEffect, useState } from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';

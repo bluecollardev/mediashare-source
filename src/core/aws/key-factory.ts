@@ -1,11 +1,11 @@
 import Config from 'mediashare/config';
 
-const mediaRoot = Config.AWS_ROOT;
+const mediaRoot = Config.AwsRoot;
 
-const videoRoot = Config.VIDEO_ROOT;
-const thumbnailRoot = Config.THUMBNAIL_ROOT;
-const uploadRoot = Config.UPLOAD_ROOT;
-const awsUrl = Config.AWS_URL;
+const videoRoot = Config.VideoRoot;
+const thumbnailRoot = Config.ThumbnailRoot;
+const uploadRoot = Config.UploadRoot;
+const awsUrl = Config.AwsUrl;
 
 export interface KeyFactoryProps {
   root: string;

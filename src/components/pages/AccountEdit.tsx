@@ -19,7 +19,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
 
-const awsUrl = Config.AWS_URL;
+const awsUrl = Config.AwsUrl;
 interface AccountEditProps extends PageProps {}
 
 const AccountEdit = ({ route }: AccountEditProps) => {

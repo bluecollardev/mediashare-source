@@ -94,7 +94,7 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
@@ -110,7 +110,6 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
                   <TextInput
-                    autoComplete={false}
                     autoCapitalize="none"
                     label="password"
                     secureTextEntry

@@ -8,6 +8,7 @@ interface AccountCardProps {
   userId: string;
   showDialog: boolean;
   onDismiss: () => void;
+  onSubmit: (data: any) => any;
 }
 
 interface IFromInput {

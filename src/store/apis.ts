@@ -54,9 +54,10 @@ function apiFactory() {
 
     return [cookieMiddleware];
   }
-
+  
+  console.log(`Configuration: ${JSON.stringify(Config, null, 2)}`);
   const configuration = new Configuration({
-    basePath: servers[Config.API_SERVER].getUrl(),
+    basePath: servers[Config.ApiServer].getUrl(),
     middleware: middlewareFactory(),
   });
 

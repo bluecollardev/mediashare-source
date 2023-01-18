@@ -23,7 +23,7 @@ import { forkJoin } from 'rxjs';
 
 import Config from 'mediashare/config';
 
-const s3Url = Config.AWS_URL;
+const s3Url = Config.AwsUrl;
 const mediaPlaceholder = 'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/temp/background-comp.jpg';
 
 const createFeedItemThumbnail = async (key) => {
