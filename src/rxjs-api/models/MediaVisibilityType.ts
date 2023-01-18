@@ -16,8 +16,9 @@
  * @export
  * @enum {string}
  */
-export enum MediaCategoryType {
-    Free = 'free',
-    Paid = 'paid'
+export enum MediaVisibilityType {
+    Private = 'private',
+    Shared = 'shared',
+    Public = 'public'
 }
 

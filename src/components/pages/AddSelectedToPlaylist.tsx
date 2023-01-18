@@ -114,12 +114,12 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   }
 
   async function saveItems() {
-    const { category, tags } = playlist as any;
+    const { visibility, tags } = playlist as any;
     const dto: UpdatePlaylistDto = {
       mediaIds: mediaItems.map((item) => item._id),
       description: playlist.description,
       title: playlist.title,
-      category: category,
+      visibility: visibility,
       tags: tags,
       _id: playlistId,
       // @ts-ignore

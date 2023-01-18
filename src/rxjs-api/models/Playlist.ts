@@ -12,7 +12,7 @@
  */
 
 import {
-    PlaylistCategoryType,
+    PlaylistVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -72,10 +72,10 @@ export interface Playlist {
      */
     mediaIds: Array<string> | null;
     /**
-     * @type {PlaylistCategoryType}
+     * @type {PlaylistVisibilityType}
      * @memberof Playlist
      */
-    category?: PlaylistCategoryType;
+    visibility?: PlaylistVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof Playlist

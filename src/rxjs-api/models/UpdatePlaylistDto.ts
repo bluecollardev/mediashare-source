@@ -12,7 +12,7 @@
  */
 
 import {
-    PlaylistCategoryType,
+    PlaylistVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -42,10 +42,10 @@ export interface UpdatePlaylistDto {
      */
     imageSrc: string;
     /**
-     * @type {PlaylistCategoryType}
+     * @type {PlaylistVisibilityType}
      * @memberof UpdatePlaylistDto
      */
-    category?: PlaylistCategoryType;
+    visibility?: PlaylistVisibilityType;
     /**
      * @type {Array<string>}
      * @memberof UpdatePlaylistDto

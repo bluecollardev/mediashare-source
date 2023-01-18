@@ -1,3 +1,4 @@
+export * from './ActionsApi';
 export * from './DefaultApi';
 export * from './LikesApi';
 export * from './MediaItemsApi';
@@ -9,3 +10,4 @@ export * from './TagsApi';
 export * from './UserApi';
 export * from './UsersApi';
 export * from './ViewsApi';
+export * from './WellKnownApi';

@@ -6,6 +6,6 @@ export const titleValidator = (title) => !title ? true : minLength(3)(title);
 
 export const descriptionValidator = (desc) => !desc ? true : minLength(3)(desc);
 
-export const categoryValidator = (category) => !category ? true : minLength(1)(category);
+export const visibilityValidator = (visibility) => !visibility ? true : minLength(1)(visibility);
 
 export const tagValidator = (tag) => !tag ? true : minLength(1)(tag);

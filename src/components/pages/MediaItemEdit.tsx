@@ -6,7 +6,7 @@ import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem, updateMediaItem } from 'mediashare/store/modules/mediaItem';
 // TODO: Fix update dto! Not sure why it's not being exported normally...
 import { UpdateMediaItemDto } from 'mediashare/rxjs-api/models/UpdateMediaItemDto';
-import { MediaCategoryType } from 'mediashare/rxjs-api';
+import { MediaVisibilityType } from 'mediashare/rxjs-api';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
@@ -38,7 +38,7 @@ const MediaItemEdit = ({
   const dispatch = useDispatch();
 
   const options = [];
-  for (const value in MediaCategoryType) {
+  for (const value in MediaVisibilityType) {
     options.push(value);
   }
 
@@ -49,7 +49,7 @@ const MediaItemEdit = ({
   const [showDialog, setShowDialog] = useState(false);
   const [title, setTitle] = useState(mediaItem?.title);
   const [description, setDescription] = useState(mediaItem?.description);
-  const [category, setCategory] = useState();
+  const [visibility, setVisibility] = useState();
 
   const { tags = [] } = globalState;
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
@@ -65,7 +65,7 @@ const MediaItemEdit = ({
       const mediaItemTags = (mediaItem?.tags || []).map(({ key }) => key);
       setTitle(mediaItem?.title);
       setDescription(mediaItem?.description);
-      setCategory(mediaItem?.category as any);
+      setVisibility(mediaItem?.visibility as any);
       setSelectedTagKeys(mediaItemTags as any[]);
     }
   }, [mediaItem]);
@@ -100,10 +100,10 @@ const MediaItemEdit = ({
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
+            visibility={visibility}
+            visibilityOptions={options}
+            onVisibilityChange={(e: any) => {
+              setVisibility(e);
             }}
             availableTags={availableTags}
             tags={selectedTagKeys}
@@ -180,7 +180,7 @@ const MediaItemEdit = ({
       description,
       thumbnail,
       isPlayable: true,
-      category: MediaCategoryType[category as any],
+      visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],
     };
 

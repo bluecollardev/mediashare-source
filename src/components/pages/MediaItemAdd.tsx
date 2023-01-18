@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { addMediaItem } from 'mediashare/store/modules/mediaItem';
-import { CreateMediaItemDto, MediaCategoryType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, MediaVisibilityType } from 'mediashare/rxjs-api';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
@@ -19,7 +19,7 @@ import {
   AppUpload,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
-import { minLength, titleValidator, descriptionValidator, categoryValidator, tagValidator } from 'mediashare/core/utils/validators';
+import { minLength, titleValidator, descriptionValidator, visibilityValidator, tagValidator } from 'mediashare/core/utils/validators';
 import { theme } from 'mediashare/styles';
 
 // @ts-ignore
@@ -30,7 +30,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const [title, setTitle] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState(MediaCategoryType.Free);
+  const [visibility, setVisibility] = useState(MediaVisibilityType.Private);
 
   const { tags = [] } = globalState;
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
@@ -42,11 +42,11 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const [uploading, setUploading] = useState(false);
   // const mediaSrc = useAppSelector((state) => state?.mediaItem?.mediaSrc);
   const isValid = function () {
-    return !titleValidator(title) && !descriptionValidator(description) && !categoryValidator(category) && !minLength(1)(mediaUri);
+    return !titleValidator(title) && !descriptionValidator(description) && !visibilityValidator(visibility) && !minLength(1)(mediaUri);
   };
 
   const options = [];
-  for (const value in MediaCategoryType) {
+  for (const value in MediaVisibilityType) {
     options.push(value);
   }
 
@@ -62,10 +62,10 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
             mediaSrc={mediaUri}
             showThumbnail={!!mediaUri}
             thumbnail={thumbnail}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
+            visibility={visibility}
+            visibilityOptions={options}
+            onVisibilityChange={(e: any) => {
+              setVisibility(e);
             }}
             availableTags={availableTags}
             tags={selectedTagKeys}
@@ -123,14 +123,14 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
       thumbnail: thumbnail,
       isPlayable: true,
       uri: mediaUri,
-      category: MediaCategoryType[category],
+      visibility: MediaVisibilityType[visibility],
       tags: selectedTags || [],
       eTag: '',
     };
 
     await dispatch(addMediaItem(dto));
 
-    setCategory(MediaCategoryType.Free);
+    setVisibility(MediaVisibilityType.Private);
     setSelectedTagKeys([]);
     setDescription('');
     setThumbnail('');
@@ -140,7 +140,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
 
   function resetData() {
     setTitle('');
-    setCategory(MediaCategoryType.Free);
+    setVisibility(MediaVisibilityType.Private);
     setSelectedTagKeys([] as any[]);
     setDescription('');
     setThumbnail('');

@@ -13,7 +13,7 @@
 
 import {
     AuthorProfileDto,
-    MediaCategoryType,
+    MediaVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -78,10 +78,10 @@ export interface MediaItemResponseDto {
      */
     isPlayable?: boolean;
     /**
-     * @type {MediaCategoryType}
+     * @type {MediaVisibilityType}
      * @memberof MediaItemResponseDto
      */
-    category?: MediaCategoryType;
+    visibility?: MediaVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof MediaItemResponseDto

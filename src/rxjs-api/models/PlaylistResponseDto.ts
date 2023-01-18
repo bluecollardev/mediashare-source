@@ -14,8 +14,8 @@
 import {
     AuthorProfileDto,
     MediaItem,
-    PlaylistCategoryType,
     PlaylistItemResponseDto,
+    PlaylistVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -75,10 +75,10 @@ export interface PlaylistResponseDto {
      */
     mediaIds: Array<string> | null;
     /**
-     * @type {PlaylistCategoryType}
+     * @type {PlaylistVisibilityType}
      * @memberof PlaylistResponseDto
      */
-    category?: PlaylistCategoryType;
+    visibility?: PlaylistVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof PlaylistResponseDto

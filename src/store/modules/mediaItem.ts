@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaCategoryType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'mediashare/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { getVideoPath, getThumbnailPath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
 import {
@@ -70,9 +70,9 @@ export const createThumbnail = createAsyncThunk(mediaItemActions.createMediaItem
 
 export const addMediaItem = createAsyncThunk(
   mediaItemActions.addMediaItem.type,
-  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'category' | 'tags' | 'uri'>, { extra }) => {
+  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'visibility' | 'tags' | 'uri'>, { extra }) => {
     const { api } = extra as { api: ApiService };
-    const { uri: fileUri, title, category, tags = [], summary, description } = dto;
+    const { uri: fileUri, title, visibility, tags = [], summary, description } = dto;
     try {
       const options = { description: dto.description, summary: dto.summary, contentType: 'video/mp4' };
       const sanitizedKey = sanitizeKey(`${title}.${getFileExtension(fileUri)}`);
@@ -90,7 +90,7 @@ export const addMediaItem = createAsyncThunk(
         title,
         description,
         summary,
-        category: category || MediaCategoryType.Free,
+        visibility: visibility || MediaVisibilityType.Private,
         tags: tags || [],
         thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),
@@ -169,7 +169,7 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
         title: automaticTitle,
         description: `${item.size} - ${item.lastModified}`,
         summary: '',
-        category: MediaCategoryType.Free,
+        visibility: MediaVisibilityType.Private,
         tags: [],
         thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),

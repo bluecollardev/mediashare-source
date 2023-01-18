@@ -44,8 +44,8 @@ export interface UserControllerRemoveUserConnectionsRequest {
 }
 
 export interface UserControllerSendEmailRequest {
-    userId: any;
     email: any;
+    userId: any;
 }
 
 export interface UserControllerUpdateUserRequest {
@@ -216,19 +216,19 @@ export class UserApi extends BaseAPI {
 
     /**
      */
-    userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest): Observable<void>
-    userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
-    userControllerSendEmail({ userId, email }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
-        throwIfNullOrUndefined(userId, 'userId', 'userControllerSendEmail');
+    userControllerSendEmail({ email, userId }: UserControllerSendEmailRequest): Observable<void>
+    userControllerSendEmail({ email, userId }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
+    userControllerSendEmail({ email, userId }: UserControllerSendEmailRequest, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
         throwIfNullOrUndefined(email, 'email', 'userControllerSendEmail');
+        throwIfNullOrUndefined(userId, 'userId', 'userControllerSendEmail');
 
         const headers: HttpHeaders = {
             ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
-            'userId': userId,
             'email': email,
+            'userId': userId,
         };
 
         return this.request<void>({

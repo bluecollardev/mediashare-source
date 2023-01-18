@@ -1,5 +1,5 @@
 .gitignore
-.openapi-generator-ignore
+apis/ActionsApi.ts
 apis/DefaultApi.ts
 apis/LikesApi.ts
 apis/MediaItemsApi.ts
@@ -11,6 +11,7 @@ apis/TagsApi.ts
 apis/UserApi.ts
 apis/UsersApi.ts
 apis/ViewsApi.ts
+apis/WellKnownApi.ts
 apis/index.ts
 index.ts
 models/AuthorProfileDto.ts
@@ -22,16 +23,16 @@ models/CreatePlaylistItemDto.ts
 models/CreatePlaylistResponseDto.ts
 models/InviteDto.ts
 models/Like.ts
-models/MediaCategoryType.ts
 models/MediaItem.ts
 models/MediaItemResponseDto.ts
 models/MediaShareItemResponseDto.ts
+models/MediaVisibilityType.ts
 models/Playlist.ts
-models/PlaylistCategoryType.ts
 models/PlaylistItem.ts
 models/PlaylistItemResponseDto.ts
 models/PlaylistResponseDto.ts
 models/PlaylistShareItemResponseDto.ts
+models/PlaylistVisibilityType.ts
 models/ProfileDto.ts
 models/ProfileShareItem.ts
 models/ShareItem.ts

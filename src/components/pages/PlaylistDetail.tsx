@@ -33,7 +33,7 @@ import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaC
 import {
   AuthorProfileDto,
   CreatePlaylistDto,
-  MediaCategoryType,
+  MediaVisibilityType,
   PlaylistResponseDto,
 } from 'mediashare/rxjs-api'
 import { theme } from 'mediashare/styles';
@@ -74,7 +74,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     createdBy,
     description = '',
     imageSrc,
-    category,
+    visibility,
     shareCount = 0,
     viewCount = 0,
     likesCount = 0,
@@ -186,7 +186,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
-            category={category}
+            visibility={visibility}
             availableTags={mappedTags}
             tags={tagKeys}
             showSocial={true}
@@ -370,7 +370,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
         title,
         description,
         mediaIds,
-        category: MediaCategoryType[category as any],
+        visibility: MediaVisibilityType[visibility as any],
         tags: (selectedTags || []) as any[],
         imageSrc,
       })

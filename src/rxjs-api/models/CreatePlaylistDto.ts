@@ -12,7 +12,7 @@
  */
 
 import {
-    PlaylistCategoryType,
+    PlaylistVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -42,15 +42,15 @@ export interface CreatePlaylistDto {
      */
     imageSrc: string;
     /**
-     * @type {PlaylistCategoryType}
-     * @memberof CreatePlaylistDto
-     */
-    category?: PlaylistCategoryType;
-    /**
      * @type {Array<string>}
      * @memberof CreatePlaylistDto
      */
-    mediaIds: Array<string>;
+    mediaIds: Array<string> | null;
+    /**
+     * @type {PlaylistVisibilityType}
+     * @memberof CreatePlaylistDto
+     */
+    visibility?: PlaylistVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof CreatePlaylistDto

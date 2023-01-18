@@ -16,8 +16,9 @@
  * @export
  * @enum {string}
  */
-export enum PlaylistCategoryType {
-    Free = 'free',
-    Paid = 'paid'
+export enum PlaylistVisibilityType {
+    Private = 'private',
+    Shared = 'shared',
+    Public = 'public'
 }
 
