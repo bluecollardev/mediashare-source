@@ -21,7 +21,7 @@ interface AppUploadProps {
   children?: any;
 }
 
-const maxUpload = parseInt(Config.MAX_UPLOAD, 10) || 104857600;
+const maxUpload = parseInt(Config.MaxUpload, 10) || 104857600;
 
 export function AppUpload({
   uploadMode = 'photo',
