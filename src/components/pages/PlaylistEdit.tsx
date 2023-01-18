@@ -8,7 +8,7 @@ import {
   selectMappedPlaylistMediaItems,
   updateUserPlaylist,
   MappedPlaylistMediaItem,
-} from 'mediashare/store/modules/playlist'
+} from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { usePlaylists, useRouteWithParams, useViewMediaItemById } from 'mediashare/hooks/navigation';
