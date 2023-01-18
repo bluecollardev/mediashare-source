@@ -291,7 +291,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
         title,
         description,
         mediaIds,
-        visibility: visibility,
+        visibility: visibility as PlaylistVisibilityType,
         tags: (selectedTags || []) as any[],
         imageSrc,
       })

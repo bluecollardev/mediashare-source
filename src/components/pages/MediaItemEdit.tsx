@@ -49,7 +49,7 @@ const MediaItemEdit = ({
   const [showDialog, setShowDialog] = useState(false);
   const [title, setTitle] = useState(mediaItem?.title);
   const [description, setDescription] = useState(mediaItem?.description);
-  const [visibility, setVisibility] = useState();
+  const [visibility, setVisibility] = useState(mediaItem?.visibility as string);
 
   const { tags = [] } = globalState;
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
@@ -102,14 +102,18 @@ const MediaItemEdit = ({
             }}
             visibility={visibility}
             visibilityOptions={options}
-            onVisibilityChange={(e: any) => {
-              setVisibility(e);
+            onVisibilityChange={(value: string | string[]) => {
+              if (value instanceof Array) {
+                setVisibility(value[0]);
+              } else {
+                setVisibility(value);
+              }
             }}
             availableTags={availableTags}
             tags={selectedTagKeys}
             tagOptions={options}
-            onTagChange={(e: any) => {
-              setSelectedTagKeys(e);
+            onTagChange={(values: any) => {
+              setSelectedTagKeys(values);
             }}
             onTitleChange={setTitle}
             onDescriptionChange={setDescription}
