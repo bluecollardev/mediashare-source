@@ -96,7 +96,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoComplete={false} autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
@@ -112,7 +112,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>
-                      <TextInput autoComplete={false} autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                       <HelperText type="error">{errors.code?.message}</HelperText>
                     </>
                   )}
@@ -125,7 +125,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>
-                      <TextInput autoComplete={false} autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <TextInput autoCapitalize="none" label="newPassword" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                       <HelperText type="error">{errors.newPassword?.message}</HelperText>
                     </>
                   )}
