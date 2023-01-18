@@ -54,7 +54,8 @@ function apiFactory() {
 
     return [cookieMiddleware];
   }
-
+  
+  console.log(`Using basePath at index ${Config.API_SERVER}: ${servers[Config.API_SERVER].getUrl()}`)
   const configuration = new Configuration({
     basePath: servers[Config.API_SERVER].getUrl(),
     middleware: middlewareFactory(),

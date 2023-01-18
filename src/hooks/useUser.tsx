@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from 'mediashare/store';
-import { DEFAULT_USER_ROLE } from 'mediashare/core/globalState';
+import { DEFAULT_USER_ROLE } from 'mediashare/core/globalState/constants';
 import { BcRolesType } from 'mediashare/rxjs-api';
 
 export function useUser() {

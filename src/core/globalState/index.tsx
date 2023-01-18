@@ -1,9 +1,10 @@
-import { usePageRoute } from 'mediashare/hooks/navigation'
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { compose } from 'recompose';
+import { useDispatch } from 'react-redux';
+import { usePageRoute } from 'mediashare/hooks/navigation';
 import { useAppSelector } from 'mediashare/store';
 import { useUser } from 'mediashare/hooks/useUser';
+import { INITIAL_DISPLAY_MODE } from 'mediashare/core/globalState/constants';
 import { loadUser, setIsAcceptingInvitationAction } from 'mediashare/store/modules/user'
 import { getTags } from 'mediashare/store/modules/tags';
 import { BcRolesType, ProfileDto, Tag } from 'mediashare/rxjs-api';
@@ -46,9 +47,6 @@ export const INITIAL_SEARCH_FILTERS = {
   text: '',
   tags: [],
 };
-
-export const INITIAL_DISPLAY_MODE = 'list';
-export const DEFAULT_USER_ROLE = 'free';
 
 export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
   return function GlobalStateProvider(props: any) {
