@@ -115,7 +115,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   // TODO: Use consts or something instead of strings!
   const visibilityOptions = [
     { key: 'private', value: `Don't Share - Private` },
-    { key: 'shared', value: `Share With Subscribers` },
+    { key: 'shared', value: `Share With Contacts` },
+    { key: 'subscription', value: `Share With Subscribers` },
     { key: 'public', value: `Share With Public` },
   ];
   

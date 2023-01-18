@@ -19,6 +19,7 @@
 export enum MediaVisibilityType {
     Private = 'private',
     Shared = 'shared',
+    Subscription = 'subscription',
     Public = 'public'
 }
 

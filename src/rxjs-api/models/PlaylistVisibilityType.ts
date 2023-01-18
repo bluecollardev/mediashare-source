@@ -19,6 +19,7 @@
 export enum PlaylistVisibilityType {
     Private = 'private',
     Shared = 'shared',
+    Subscription = 'subscription',
     Public = 'public'
 }
 
