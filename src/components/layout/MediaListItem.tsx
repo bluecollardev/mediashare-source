@@ -137,7 +137,7 @@ const defaultStyles: any = StyleSheet.create({
   },
   titleText: {
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.medium.fontFamily,
     lineHeight: Platform.OS === 'android' ? 20 : 18,
   },

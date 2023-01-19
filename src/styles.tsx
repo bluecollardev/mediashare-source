@@ -109,7 +109,7 @@ const styles: any = StyleSheet.create({
   textField: {
     marginBottom: 10,
     backgroundColor: theme.colors.surface,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.thin.fontFamily,
   },
   changeImageButton: {
@@ -120,7 +120,7 @@ const styles: any = StyleSheet.create({
   changeImageButtonLabel: {
     textTransform: 'none',
     fontWeight: '300',
-    fontSize: 15,
+    fontSize: 13,
   },
   deleteItemButton: {
     borderWidth: 1,
@@ -172,7 +172,7 @@ const components = {
         backgroundColor: theme.colors.surface,
       },
       selectToggleText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
         color: theme.colors.text,
       },
@@ -197,11 +197,11 @@ const components = {
         fontFamily: theme.fonts.thin.fontFamily,
       },
       selectedSubItemText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       subItemText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       confirmText: {

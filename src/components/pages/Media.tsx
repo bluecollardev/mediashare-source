@@ -52,14 +52,14 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', thumbnail } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', thumbnail, visibility } = item;
     return (
       <>
         <MediaListItem
           key={`media_item_${_id}`}
           title={title}
           titleStyle={styles.titleText}
-          description={<MediaListItem.Description data={{ authorProfile, description }} />}
+          description={<MediaListItem.Description data={{ authorProfile, description, visibility }} />}
           showThumbnail={true}
           image={thumbnail}
           showPlayableIcon={false}
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   titleText: {
     marginBottom: 2,
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.medium.fontFamily,
   },
   deleteActionButton: {

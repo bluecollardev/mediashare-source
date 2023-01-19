@@ -265,14 +265,14 @@ const defaultStyles = StyleSheet.create({
   },
   description: {
     marginBottom: 15,
-    fontSize: 15,
+    fontSize: 13,
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
   },
   descriptionWithSocial: {
     marginTop: 15,
     marginBottom: 30,
-    fontSize: 15,
+    fontSize: 13,
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
   },

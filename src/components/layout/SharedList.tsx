@@ -90,6 +90,6 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   sectionHeaderTitle: {
-    fontSize: 15,
+    fontSize: 13,
   },
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Chip, Text } from 'react-native-paper'
+import { Button, Text } from 'react-native-paper'
 import { AuthorProfileDto } from 'mediashare/rxjs-api';
 import { shortenText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
@@ -45,6 +45,8 @@ export const MediaListItemDescription = ({
             compact
             mode="contained"
             style={styles.visibilityButton}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonText}
             disabled={false}
             textColor={theme.colors.white}
             buttonColor={theme.colors.secondary}>
@@ -79,6 +81,7 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   line2: {
+    marginTop: 5,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -89,14 +92,23 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     justifyContent: 'center',
     borderColor: theme.colors.primary,
-    transform: [{ scale: 0.6 }, { translateX: -30 }], // Match videoCount translateX
+    marginRight: 10,
+  },
+  buttonContent: {
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+    marginHorizontal: 0,
+    marginVertical: 0,
   },
   videoCount: {
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,
     fontSize: 12,
     fontWeight: 'bold',
-    transform: [{ translateX: -30 + 5 }], // Match visibilityButton translateX + 5
+    // transform: [{ translateX: -30 + 5 }], // Match visibilityButton translateX + 5
   },
   description: {
     flex: 0,
