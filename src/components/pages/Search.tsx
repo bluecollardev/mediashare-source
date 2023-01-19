@@ -1,6 +1,3 @@
-import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
-import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
-import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -12,9 +9,12 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme } from 'mediashare/styles';
 
@@ -110,7 +110,7 @@ export const Search = ({ globalState }: PageProps & any) => {
         />
         {!globalState.searchIsFiltering(searchKey) && searchResults.length === 0
           ? (
-            <>
+            <ScrollView>
               <TagBlocks
                 list={tags}
                 onViewDetailClicked={async (item) => {
@@ -125,7 +125,7 @@ export const Search = ({ globalState }: PageProps & any) => {
               <RecentlyAdded list={searchResults} />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyPlayed list={searchResults} />
-            </>
+            </ScrollView>
           ) : globalState?.searchIsFiltering(searchKey) === true && searchResults.length === 0 ? (
             <>
               <NoContent messageButtonText="No results were found." icon="info" />
