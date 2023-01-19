@@ -98,7 +98,7 @@ const MediaItemEdit = ({
             thumbnail={thumbnail}
             thumbnailStyle={{
               // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 16 / 9,
+              aspectRatio: 1 / 1,
             }}
             visibility={visibility}
             visibilityOptions={options}

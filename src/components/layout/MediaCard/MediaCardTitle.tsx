@@ -51,7 +51,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
         
       }
       titleStyle={defaultStyles.title}
-      titleNumberOfLines={2}
+      titleNumberOfLines={3}
       // TODO: Stupid component doesn't render right on Android if we use a View to wrap, but then the whole f*cking thing appears on a single line!
       subtitle={
         <View style={defaultStyles.subtitle}>

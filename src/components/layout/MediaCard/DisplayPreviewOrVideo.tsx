@@ -33,7 +33,7 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   return (
     <View
       style={{
-        aspectRatio: 16 / 9,
+        aspectRatio: 1 / 1,
         width: '100%',
         height: 'auto',
         marginLeft: 'auto',
