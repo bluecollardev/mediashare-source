@@ -37,7 +37,7 @@ const defaultStyles = StyleSheet.create({
   buttonText: {
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
+    fontSize: 10,
     marginBottom: 2,
     marginLeft: 2,
   },
