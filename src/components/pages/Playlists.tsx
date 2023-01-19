@@ -42,14 +42,23 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '', visibility } = item;
     return (
       <>
         <MediaListItem
           key={`playlist_${_id}`}
           title={title}
           titleStyle={styles.titleText}
-          description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
+          description={
+            <MediaListItem.Description
+              data={{
+                authorProfile,
+                itemCount: mediaIds?.length || mediaItems?.length || 0,
+                visibility
+              }}
+              showItemCount={true}
+            />
+          }
           showThumbnail={true}
           image={imageSrc}
           showPlayableIcon={false}
