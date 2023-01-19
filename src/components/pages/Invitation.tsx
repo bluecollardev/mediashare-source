@@ -38,7 +38,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
     <PageContainer>
       <AccountCard
         title={fullName}
-        text={`@${username} has invited you to join their network on Mediashare.`}
+        text={`${username} has invited you to join their network on Mediashare.`}
         image={imageSrc}
         email={null}
         phoneNumber={null}

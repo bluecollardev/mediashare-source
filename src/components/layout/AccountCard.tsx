@@ -78,7 +78,7 @@ export const AccountCard = ({
             </View>
             <View style={defaultStyles.main}>
               {title ? (<Title style={defaultStyles.titleText}>{title}</Title>) : null}
-              {username ? (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>@{username}</Subheading>) : null}
+              {username ? (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>{username}</Subheading>) : null}
               {email ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>) : null}
               {phoneNumber ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>) : null}
               {text ? (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>) : null}
