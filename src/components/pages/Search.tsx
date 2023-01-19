@@ -9,14 +9,14 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
-import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
-import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
-import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export interface SearchProps {
   list: PlaylistResponseDto[];
@@ -145,7 +145,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}

@@ -1,7 +1,6 @@
-import { useAppSelector } from 'mediashare/store';
 import React, { useEffect } from 'react';
-
 import { StyleSheet } from 'react-native';
+import { useAppSelector } from 'mediashare/store';
 import { useDispatch } from 'react-redux';
 import { findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { loadProfile } from 'mediashare/store/modules/profile';
@@ -11,7 +10,7 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { FAB, Divider } from 'react-native-paper';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, AccountCard, ListItem } from 'mediashare/components/layout';
-// import { theme } from 'mediashare/styles';
+// import { theme, components } from 'mediashare/styles';
 
 interface ContactProps extends PageProps {}
 
@@ -78,7 +77,7 @@ const Contact = ({ route, globalState }: ContactProps) => {
         icon={fabState.open ? 'close' : 'more-vert'}
         actions={fabActions}
         color={theme.colors.text}
-        fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+        fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
         onStateChange={(open) => {
           setFabState(open);
         }}

@@ -1,7 +1,3 @@
-import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
-import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
-import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
-import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -9,11 +5,12 @@ import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
-import { INITIAL_SEARCH_FILTERS, withGlobalStateConsumer } from 'mediashare/core/globalState'
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, ScrollView, StyleSheet, Text } from 'react-native'
+import { FlatList, RefreshControl, StyleSheet } from 'react-native'
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
@@ -26,7 +23,7 @@ import {
   AppDialog,
 } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export interface PlaylistsProps {
   list: PlaylistResponseDto[];
@@ -183,7 +180,7 @@ export const Playlists = ({ globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}

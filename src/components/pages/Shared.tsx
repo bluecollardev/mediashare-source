@@ -15,7 +15,7 @@ import { useSnack } from 'mediashare/hooks/useSnack'
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AppDialog } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 import InviteModal from '../layout/InviteModal';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -142,7 +142,7 @@ export const Shared = ({ globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             // open && setOpen(!open);
             setFabState(open);

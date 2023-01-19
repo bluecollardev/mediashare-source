@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { StyleSheet, FlatList, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
@@ -20,13 +20,12 @@ import {
   PageActions,
   MediaListItem,
   ActionButtons,
-  NoItems,
   AppDialog,
   NoContent,
 } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { selectMediaItem } from 'mediashare/store/modules/mediaItems';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export const MediaComponent = ({
   list = [],
@@ -172,7 +171,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             // open && setOpen(!open);
             setState(open);

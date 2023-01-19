@@ -139,8 +139,15 @@ const styles: any = StyleSheet.create({
   },
 } as any);
 
-const components = {
+const components: any = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
   multiSelect: {
+    // @ts-ignore
     colors: {
       primary: theme.colors.primary,
       text: theme.colors.text,
@@ -221,7 +228,7 @@ const components = {
       },
     },
   },
-};
+});
 
 export default styles;
 
