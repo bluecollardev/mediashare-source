@@ -12,19 +12,19 @@ export interface MediaCardSocialProps {
 export const MediaCardSocial: React.FC<MediaCardSocialProps> = ({ likes = 0, views = 0, shares = 0 }: MediaCardSocialProps) => {
   return (
     <View style={{ marginBottom: 0 }}>
-      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
         <View style={{ marginRight: 2 }}>
-          <Button icon="visibility" mode="text">
+          <Button icon="visibility" mode="text" textColor={theme.colors.textDarker}>
             <Text style={defaultStyles.buttonText}>{views}</Text>
           </Button>
         </View>
         <View style={{ marginRight: 2 }}>
-          <Button icon="share" mode="text">
+          <Button icon="share" mode="text" textColor={theme.colors.textDarker}>
             <Text style={defaultStyles.buttonText}>{shares}</Text>
           </Button>
         </View>
         <View>
-          <Button icon="favorite" mode="text">
+          <Button icon="favorite" mode="text" textColor={theme.colors.textDarker}>
             <Text style={defaultStyles.buttonText}>{likes}</Text>
           </Button>
         </View>

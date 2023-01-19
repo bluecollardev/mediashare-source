@@ -1,5 +1,6 @@
+import { MediaCardSocial } from 'mediashare/components/layout/MediaCard/MediaCardSocial'
 import React from 'react';
-import { Avatar, Card, IconButton, Title, Text } from 'react-native-paper';
+import { Avatar, Card, IconButton, Title, Text, Button } from 'react-native-paper'
 import { View, StyleSheet, Platform } from 'react-native';
 
 import { getAuthorText } from 'mediashare/utils';
@@ -11,33 +12,63 @@ export const DEFAULT_AVATAR = 'https://i.pinimg.com/originals/db/fa/08/dbfa0875b
 
 export interface MediaCardTitleProps {
   title?: string;
+  // TODO: Use an enum
+  visibility?: string;
   authorProfile?: AuthorProfileDto;
-  showActions?: boolean;
   showThumbnail?: boolean;
+  showActions?: boolean;
+  showSocial?: boolean;
+  likes?: number;
+  shares?: number;
+  views?: number;
   onActionsClicked?: () => void;
   style?: any;
 }
 
 export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
   title = '',
+  visibility,
   authorProfile = {} as AuthorProfileDto,
-  showActions = false,
   showThumbnail = true,
+  showActions = false,
+  showSocial = false,
+  likes = undefined,
+  shares = undefined,
+  views = undefined,
   onActionsClicked = () => {},
   style = {},
 }: MediaCardTitleProps) => {
   return authorProfile ? (
     <Card.Title
       style={{ ...defaultStyles.component, ...style }}
-      title={<Title style={defaultStyles.titleText}>{title}</Title>}
+      title={
+        <>
+          <Title style={defaultStyles.titleText}>
+            {title} {authorProfile?.authorName ? <Text style={defaultStyles.author}>by {authorProfile?.authorName}</Text> : null}
+            {authorProfile?.authorUsername ? <Text style={defaultStyles.username}> ({authorProfile?.authorUsername})</Text> : null}
+          </Title>
+        </>
+        
+      }
       titleStyle={defaultStyles.title}
       titleNumberOfLines={2}
       // TODO: Stupid component doesn't render right on Android if we use a View to wrap, but then the whole f*cking thing appears on a single line!
       subtitle={
         <View style={defaultStyles.subtitle}>
-          <View style={defaultStyles.createdBy}>
-            {authorProfile?.authorName ? <Text style={defaultStyles.author}>{authorProfile?.authorName}</Text> : null}
-            {authorProfile?.authorUsername ? <Text style={defaultStyles.username}>@{authorProfile?.authorUsername}</Text> : null}
+          <View style={defaultStyles.line2}>
+            {visibility ?
+              <Button
+                compact
+                mode="contained"
+                style={defaultStyles.visibilityButton}
+                contentStyle={defaultStyles.buttonContent}
+                labelStyle={defaultStyles.buttonText}
+                disabled={false}
+                textColor={theme.colors.white}
+                buttonColor={theme.colors.secondary}>
+                {visibility}
+              </Button> : null}
+            {showSocial ? <MediaCardSocial likes={likes} shares={shares} views={views} /> : null}
           </View>
         </View>
       }
@@ -67,12 +98,10 @@ const defaultStyles = StyleSheet.create({
   avatar: {
     width: 50,
   },
-  title: {
-    marginBottom: 4,
-  },
+  title: {},
   titleText: {
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 17,
     fontFamily: theme.fonts.medium.fontFamily,
     lineHeight: Platform.OS === 'android' ? 24 : 20,
   },
@@ -96,6 +125,27 @@ const defaultStyles = StyleSheet.create({
     fontFamily: theme.fonts.thin.fontFamily,
     fontSize: 13,
     marginBottom: 2,
-    marginLeft: 2,
+  },
+  line2: {
+    marginTop: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  visibilityButton: {
+    fontSize: 11,
+    fontWeight: 'normal',
+    justifyContent: 'center',
+    borderColor: theme.colors.primary,
+    marginRight: 10,
+  },
+  buttonContent: {
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+    marginHorizontal: 0,
+    marginVertical: 0,
   },
 });

@@ -35,8 +35,8 @@ export const MediaListItemDescription = ({
     <View style={styles.line1}>
       {(showAuthor || showUsername) ? (
         <View style={styles.createdBy}>
-          {showAuthor ? <Text style={styles.author}>{authorProfile?.authorName}</Text> : null}
-          {showUsername ? <Text style={styles.username}>@{authorProfile?.authorUsername}</Text> : null}
+          {showAuthor ? <Text style={styles.author}>by {authorProfile?.authorName}</Text> : null}
+          {showUsername ? <Text style={styles.username}> ({authorProfile?.authorUsername})</Text> : null}
         </View>
       ) : null}
       <View style={styles.line2}>
@@ -72,12 +72,12 @@ const styles = StyleSheet.create({
   author: {
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
+    fontSize: 12,
   },
   username: {
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
+    fontSize: 12,
     marginLeft: 2,
   },
   line2: {

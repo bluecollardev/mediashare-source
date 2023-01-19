@@ -145,7 +145,7 @@ const defaultStyles = StyleSheet.create({
     overflow: 'hidden',
   },
   secondaryButton: {
-    width: 54,
+    width: 64,
     height: 41,
     // flex: Platform.OS === 'android' ? 0 : 1,
     flexDirection: 'row',

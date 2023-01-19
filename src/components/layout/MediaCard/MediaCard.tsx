@@ -238,8 +238,13 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       <MediaCardTitle
         title={title}
         authorProfile={authorProfile}
+        visibility={visibility}
         showThumbnail={showAvatar}
         showActions={showActions}
+        showSocial={showSocial}
+        likes={likes}
+        shares={shares}
+        views={views}
         onActionsClicked={onActionsClicked}
         style={!showMediaPreview ? { marginTop: 0 } : {}}
       />
@@ -247,7 +252,6 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         <MediaCardTags tags={mappedSelectedTags} />
       </Card.Content>
       <Card.Content style={{ marginTop: 0, marginBottom: 30 }}>
-        {showSocial ? <MediaCardSocial likes={likes} shares={shares} views={views} /> : null}
         {children}
         {showDescription ? <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph> : null}
       </Card.Content>
