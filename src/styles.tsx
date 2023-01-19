@@ -180,11 +180,11 @@ const components = {
         marginTop: 10,
       },
       parentChipText: {
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       chipText: {
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: theme.fonts.thin.fontFamily,
         color: theme.colors.text,
       },
