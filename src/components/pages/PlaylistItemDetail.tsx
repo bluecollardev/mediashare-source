@@ -43,7 +43,7 @@ export const PlaylistItemDetail = ({ globalState = { tags: [] } }: PageProps) =>
             thumbnail={thumbnail}
             thumbnailStyle={{
               // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
             }}
             visibility={visibility}
             availableTags={mappedTags}

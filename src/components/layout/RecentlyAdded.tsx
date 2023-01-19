@@ -80,7 +80,7 @@ export const RecentlyAdded = ({ list = [], displayNoContent = false }: RecentlyA
             showThumbnail={true}
             thumbnail={mediaPreview.imageSrc}
             thumbnailStyle={{
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
               padding: 10,
               paddingBottom: 0
             }}

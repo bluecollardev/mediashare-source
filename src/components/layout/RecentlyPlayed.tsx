@@ -62,7 +62,7 @@ export const RecentlyPlayed = ({ list = [], displayNoContent = false }: Recently
             showThumbnail={true}
             thumbnail={mediaPreview.imageSrc}
             thumbnailStyle={{
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
               padding: 10
             }}
             showActions={false}

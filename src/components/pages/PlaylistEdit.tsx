@@ -124,7 +124,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             thumbnail={imageSrc}
             thumbnailStyle={{
               // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
             }}
             visibility={visibility}
             visibilityOptions={options}
