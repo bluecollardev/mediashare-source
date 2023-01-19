@@ -1,4 +1,7 @@
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -10,7 +13,7 @@ import { INITIAL_SEARCH_FILTERS, withGlobalStateConsumer } from 'mediashare/core
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text } from 'react-native'
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
@@ -141,13 +144,21 @@ export const Playlists = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 ? (
-          <NoContent
-            onPress={() => createPlaylist()}
-            messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
-            icon="add-circle"
-          />
-        ) : null}
+        {globalState.searchIsFiltering('playlists') === undefined && entities.length === 0
+          ? (
+            <>
+              <NoContent
+                onPress={() => createPlaylist()}
+                messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
+                icon="add-circle"
+              />
+            </>
+          ) : globalState?.searchIsFiltering('playlists') === true && entities.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.share ? (
         <PageActions>

@@ -89,9 +89,7 @@ export const AccountCard = ({
                   visible={visible}
                   onDismiss={() => setVisible(false)}
                   anchor={
-                    <IconButton icon="more-vert" onPress={() => setVisible(!visible)}>
-                      Show menu
-                    </IconButton>
+                    <IconButton icon="more-vert" onPress={() => setVisible(!visible)} />
                   }
                 >
                   {isCurrentUser ? <Menu.Item onPress={() => {}} title="Deactive Account" /> : null}

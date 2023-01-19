@@ -92,7 +92,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               colors={components.multiSelect.colors}
               styles={components.multiSelect.styles}
               items={mappedTags}
-              IconRenderer={MultiSelectIcon}
+              IconRenderer={MultiSelectIcon as any}
               uniqueKey="key"
               displayKey="value"
               subKey="children"

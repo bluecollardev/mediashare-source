@@ -137,13 +137,22 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           onViewDetail={onEditItem}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 ? (
-          <NoContent
-            onPress={addMedia}
-            messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
-            icon="add-circle"
-          />
-        ) : null}
+        {globalState.searchIsFiltering('media') === undefined && entities.length === 0
+          ? (
+            <>
+              <NoContent
+                onPress={addMedia}
+                messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
+                icon="add-circle"
+              />
+            </>
+          ) : globalState?.searchIsFiltering('media') === true && entities.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
+        
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>

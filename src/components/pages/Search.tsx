@@ -12,7 +12,7 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
@@ -105,17 +105,21 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {searchResults.length === 0 ? (
-          <>
-            <TagBlocks list={tags} />
-            {/*<NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />*/}
-            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-            <RecentlyAdded list={searchResults} />
-            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-            <RecentlyPlayed list={searchResults} />
-          </>
-          
-        ) : null}
+        {globalState.searchIsFiltering('search') === undefined && searchResults.length === 0
+          ? (
+            <>
+              <TagBlocks list={tags} />
+              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              <RecentlyAdded list={searchResults} />
+              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              <RecentlyPlayed list={searchResults} />
+            </>
+          ) : globalState?.searchIsFiltering('search') === false && searchResults.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
