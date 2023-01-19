@@ -8,7 +8,8 @@ interface ContactListItemProps {
   title: string;
   description: string;
   avatar: string;
-  showFollow?: boolean;
+  role?: string;
+  showRole?: boolean;
   selectable?: boolean;
   checked?: boolean;
   onChecked?: (bool: boolean, userId: string) => void;
@@ -20,11 +21,12 @@ interface ContactListItemProps {
 }
 
 export const ContactListItem: React.FC<ContactListItemProps> = ({
-  showFollow = true,
   description = '',
   title = '',
   avatar,
   userId = '',
+  role = '',
+  showRole = true,
   showLetterLabel = false,
   onViewDetail,
   selectable,
@@ -70,10 +72,18 @@ export const ContactListItem: React.FC<ContactListItemProps> = ({
           return showActions ? (
             <IconButton icon={iconRight} iconColor={iconRightColor} onPress={() => onViewDetail(userId)} />
           ) : (
-            <View>
-              {showFollow ? (
-                <Button mode={selectable ? 'contained' : 'outlined'} style={defaultStyles.followButton} disabled={selectable}>
-                  Following
+            <View style={defaultStyles.centered} >
+              {showRole ? (
+                <Button
+                  compact
+                  mode="contained"
+                  style={defaultStyles.visibilityButton}
+                  contentStyle={defaultStyles.buttonContent}
+                  labelStyle={defaultStyles.buttonText}
+                  disabled={false}
+                  textColor={theme.colors.white}
+                  buttonColor={theme.colors.secondary}>
+                  {role}
                 </Button>
               ) : null}
             </View>
@@ -95,6 +105,12 @@ export const ContactListItem: React.FC<ContactListItemProps> = ({
 };
 
 const defaultStyles = StyleSheet.create({
+  centered: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   titleText: {
     color: theme.colors.text,
     fontSize: 13,
@@ -111,5 +127,20 @@ const defaultStyles = StyleSheet.create({
   letterLabelWrapper: { display: 'flex', justifyContent: 'center', alignContent: 'center' },
   headline: { marginLeft: 10, color: theme.colors.default },
   avatarWrapper: { display: 'flex', justifyContent: 'center', alignContent: 'center' },
-  followButton: { justifyContent: 'center', borderColor: theme.colors.primary, transform: [{ scale: 0.75 }] },
+  visibilityButton: {
+    fontSize: 11,
+    fontWeight: 'normal',
+    justifyContent: 'center',
+    borderColor: theme.colors.primary,
+    marginRight: 10,
+  },
+  buttonContent: {
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+    marginHorizontal: 0,
+    marginVertical: 0,
+  },
 });
