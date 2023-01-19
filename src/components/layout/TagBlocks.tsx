@@ -1,8 +1,7 @@
 import React from 'react';
 import { Dimensions, View } from 'react-native';
-// import { Divider } from 'react-native-paper';
 import { MediaListItem, SectionHeader } from 'mediashare/components/layout/index';
-import styles, { theme } from 'mediashare/styles';
+import styles from 'mediashare/styles';
 
 export interface TagBlocksProps {
   list: any[];
