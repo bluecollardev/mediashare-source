@@ -103,7 +103,7 @@ const MediaItemEdit = ({
             visibility={visibility}
             visibilityOptions={options}
             onVisibilityChange={(value: string | string[]) => {
-              if (value instanceof Array) {
+              if (Array.isArray(value)) {
                 setVisibility(value[0]);
               } else {
                 setVisibility(value);

@@ -28,6 +28,8 @@ export interface SearchProps {
   globalState?: GlobalStateProps;
 }
 
+export const searchKey = 'search';
+
 export const SearchComponent = withSearchComponent(
   ({ list = [], onViewDetailClicked, selectable = false, showActions = true, onChecked = () => undefined }: SearchProps) => {
     const sortedList = list.map((item) => item);
@@ -58,11 +60,12 @@ export const SearchComponent = withSearchComponent(
       );
     }
   }
-, 'search');
+, searchKey);
 
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
-export const Search = ({ globalState }: PageProps) => {
+// TODO: Add updateSearchText / updateSearchTags to some interface for withSearchComponent
+export const Search = ({ globalState }: PageProps & any) => {
   const { tags = [] } = globalState;
   
   const dispatch = useDispatch();
@@ -76,7 +79,7 @@ export const Search = ({ globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
-  const searchResults = globalState?.searchIsFiltering('search') ? entities : [];
+  const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -88,7 +91,7 @@ export const Search = ({ globalState }: PageProps) => {
     searchResults.length > 0
       ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
-
+  
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -105,16 +108,25 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {globalState.searchIsFiltering('search') === undefined && searchResults.length === 0
+        {!globalState.searchIsFiltering(searchKey) && searchResults.length === 0
           ? (
             <>
-              <TagBlocks list={tags} />
+              <TagBlocks
+                list={tags}
+                onViewDetailClicked={async (item) => {
+                  // Update global search filters
+                  const searchValue = { text: '', tags: [item.key] };
+                  globalState?.updateSearchFilters(searchKey, searchValue);
+                  await loadData();
+                  
+                }}
+              />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyAdded list={searchResults} />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyPlayed list={searchResults} />
             </>
-          ) : globalState?.searchIsFiltering('search') === false && searchResults.length === 0 ? (
+          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults.length === 0 ? (
             <>
               <NoContent messageButtonText="No results were found." icon="info" />
             </>
@@ -143,7 +155,7 @@ export const Search = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const search = globalState?.getSearchFilters('search');
+    const search = globalState?.getSearchFilters(searchKey);
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],

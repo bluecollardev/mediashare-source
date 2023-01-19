@@ -21,13 +21,14 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       updateSearchFilters: (searchKey: string, value: any) => undefined,
       setForcedSearchMode: (searchKey: string, value: any) => undefined,
       getSearchFilters: (searchKey: string) => undefined,
+      setDisplayMode: (value: string) => undefined,
     },
     loaded,
     loadData = () => undefined,
     searchTarget,
     forcedSearchMode,
     ...rest
-  }: any) {
+  }: PlaylistSearchProps & any) {
     const isMountedRef = useIsMounted();
     
     const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode } = globalState;
@@ -74,7 +75,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
         });
       }
     }, [loaded, isLoaded, isMountedRef]);
-
+  
+    useEffect(() => {
+      if (searchFilters?.text) {
+        updateSearchText(searchFilters.text);
+      }
+      if (Array.isArray(searchFilters?.tags)) {
+        updateSearchTags(searchFilters.tags);
+      }
+    }, [searchFilters]);
     return (
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
@@ -124,7 +133,12 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             <Divider />
           </>
         ) : null}
-        <WrappedComponent globalState={globalState} {...rest} />
+        <WrappedComponent
+          globalState={globalState}
+          {...rest}
+          updateSearchText={updateSearchText}
+          updateSearchTags={updateSearchTags}
+        />
       </>
     );
 
