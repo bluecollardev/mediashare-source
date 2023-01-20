@@ -124,14 +124,14 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               modalWithTouchable={false}
               modalWithSafeAreaView={false}
             />
+            <Divider style={{ marginBottom: 10 }} />
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
                 <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
               </View>
               <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
-                <Switch value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+                <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
               </View>
-              
             </View>
             {shouldShowApplyButton() && (
               <ActionButtons
