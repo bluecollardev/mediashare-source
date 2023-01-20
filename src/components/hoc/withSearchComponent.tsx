@@ -1,10 +1,11 @@
 import { ActionButtons } from 'mediashare/components/layout';
 import { useIsMounted } from 'mediashare/hooks/useIsMounted'
 import React, { useEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
 import { GlobalStateProps } from 'mediashare/core/globalState';
-import { Divider, Searchbar } from 'react-native-paper';
+import { Divider, Searchbar, Switch } from 'react-native-paper'
 import { components, theme } from 'mediashare/styles';
 
 export interface PlaylistSearchProps {
@@ -13,6 +14,7 @@ export interface PlaylistSearchProps {
   loadData: () => Promise<void>;
   searchTarget: 'playlists' | 'media';
   forcedSearchMode?: boolean;
+  networkContent?: boolean;
 }
 
 export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
@@ -27,6 +29,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     loadData = () => undefined,
     searchTarget,
     forcedSearchMode,
+    networkContent = false,
     ...rest
   }: PlaylistSearchProps & any) {
     const isMountedRef = useIsMounted();
@@ -37,6 +40,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
     const [isLoaded, setIsLoaded] = useState(true);
     const displaySearch = searchIsActive(searchKey);
+    const [includeNetworkContent, setIncludeNetworkContent] = useState(false);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
@@ -120,6 +124,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               modalWithTouchable={false}
               modalWithSafeAreaView={false}
             />
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
+                <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+              </View>
+              <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+                <Switch value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+              </View>
+              
+            </View>
             {shouldShowApplyButton() && (
               <ActionButtons
                 loading={!isLoaded}
@@ -130,7 +143,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 onPrimaryClicked={() => submitSearch()}
               />
             )}
-            <Divider />
+            <Divider style={{ marginTop: 15 }} />
           </>
         ) : null}
         <WrappedComponent
@@ -141,6 +154,14 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
         />
       </>
     );
+    
+    function toggleNetworkContent() {
+      if (includeNetworkContent) {
+        setIncludeNetworkContent(false);
+      } else {
+        setIncludeNetworkContent(true);
+      }
+    }
 
     function updateSearchText(value) {
       // Set the in-component state value

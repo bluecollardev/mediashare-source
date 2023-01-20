@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet } from 'react-native'
 import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
@@ -11,7 +11,17 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
-import { PageContainer, PageActions, PageProps, PageContent, ActionButtons, MediaListType, MediaListItem, NoContent } from 'mediashare/components/layout';
+import {
+  PageContainer,
+  PageActions,
+  PageProps,
+  PageContent,
+  ActionButtons,
+  MediaListType,
+  MediaListItem,
+  NoContent,
+  KeyboardAvoidingPageContent,
+} from 'mediashare/components/layout'
 
 import { theme } from 'mediashare/styles';
 
@@ -53,6 +63,9 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   const goBack = useGoBack();
 
   const playlist = useAppSelector((state) => state?.playlist?.selected);
+  
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(refresh, [dispatch]);
   // @ts-ignore
   const [mediaItems, setMediaItems] = useState((playlist?.mediaItems as MediaListType[]) || []);
 
@@ -64,7 +77,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
 
   return (
     <PageContainer>
-      <PageContent>
+      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <AddToPlaylistComponentWithSearch
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
@@ -78,7 +91,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
         {loaded && entities.length === 0 ? (
           <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
         ) : null}
-      </PageContent>
+      </KeyboardAvoidingPageContent>
       <PageActions>
         <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
       </PageActions>
@@ -128,6 +141,12 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
     await dispatch(updateUserPlaylist(dto));
     await dispatch(getPlaylistById(playlistId));
     goBack();
+  }
+  
+  async function refresh() {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
   }
 
   function cancel() {
