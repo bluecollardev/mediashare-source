@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 import { useDispatch } from 'react-redux';
 import Config from 'mediashare/config';
 
@@ -94,7 +94,7 @@ export function RNImagePickerUploader({
           if (!res) {
             console.warn(`You may not be able to access file system if you aren't signed in with an Apple ID.`);
           }
-          
+
           handleUploadComplete(image);
         })
         .catch((err) => {
@@ -106,4 +106,4 @@ export function RNImagePickerUploader({
   async function handleUploadComplete(mediaUri) {
     onUploadComplete(mediaUri);
   }
-}
+} */
