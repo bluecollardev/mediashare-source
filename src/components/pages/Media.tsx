@@ -10,9 +10,9 @@ import { withSearchComponent } from 'mediashare/components/hoc/withSearchCompone
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
-import { RefreshControl } from 'react-native';
+// import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -110,7 +110,8 @@ export const Media = ({ navigation, globalState }: PageProps) => {
 
   return (
     <PageContainer>
-      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      {/*<KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />*/}
+      <KeyboardAvoidingPageContent>
         <AppDialog
           leftActionLabel="Cancel"
           rightActionLabel="Delete"

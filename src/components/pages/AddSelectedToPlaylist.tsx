@@ -87,6 +87,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
           viewMediaItem={viewMediaItem}
           addItem={addItem}
           removeItem={removeItem}
+          showNetworkContentSwitch={true}
         />
         {loaded && entities.length === 0 ? (
           <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />

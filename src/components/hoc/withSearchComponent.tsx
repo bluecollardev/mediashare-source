@@ -29,7 +29,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     loadData = () => undefined,
     searchTarget,
     forcedSearchMode,
-    networkContent = false,
+    showNetworkContentSwitch = false,
     ...rest
   }: PlaylistSearchProps & any) {
     const isMountedRef = useIsMounted();
@@ -124,16 +124,20 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               modalWithTouchable={false}
               modalWithSafeAreaView={false}
             />
-            <Divider style={{ marginBottom: 10 }} />
-            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
-                <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
-              </View>
-              <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
-                <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
-              </View>
-            </View>
-            {shouldShowApplyButton() && (
+            {showNetworkContentSwitch ? (
+              <>
+                <Divider style={{ marginBottom: 10 }} />
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
+                    <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+                  </View>
+                  <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+                    <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+                  </View>
+                </View>
+              </>
+            ) : null}
+            {shouldShowApplyButton() ? (
               <ActionButtons
                 loading={!isLoaded}
                 primaryLabel="Apply"
@@ -142,7 +146,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
                 onPrimaryClicked={() => submitSearch()}
               />
-            )}
+            ) : null}
             <Divider style={{ marginTop: 15 }} />
           </>
         ) : null}
