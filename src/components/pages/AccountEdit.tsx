@@ -1,15 +1,11 @@
-import * as DevMenu from 'expo-dev-menu';
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import Config from 'mediashare/config';
 import * as R from 'remeda';
 import { from } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { UserDto } from 'mediashare/rxjs-api';
 import { loadUser, updateAccount } from 'mediashare/store/modules/user';
-import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
-import { thumbnailRoot } from 'mediashare/core/aws/key-factory';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
