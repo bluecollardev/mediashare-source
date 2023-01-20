@@ -18,7 +18,7 @@ interface AccountCardProps {
   text?: string;
   showSocial?: boolean;
   showActions?: boolean;
-  onProfileImageClicked?: () => void;
+  onUpdateAvatarClicked?: () => void;
   isCurrentUser?: boolean;
 }
 
@@ -29,73 +29,58 @@ export const AccountCard = ({
   phoneNumber = null,
   text = null,
   image = null,
-  likes = null,
-  shares = null,
-  shared = null,
-  showSocial = false,
   showActions = false,
   isCurrentUser = false,
-  onProfileImageClicked = () => {},
+  onUpdateAvatarClicked = () => {},
 }: AccountCardProps) => {
-  const [visible, setVisible] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const profile = useProfile();
   const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
   const [state] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc']));
-
-  // <MaterialIcons name={read ? 'visibility' : 'visibility-off'} size={24} />
-  // <View styles={defaultStyles.buttonContainer}>
-  //   <IconButton icon="delete-outline" iconColor={theme.colors.text} size={20} onPress={onDelete} />
-  //   <IconButton icon="play-circle-filled" iconColor={theme.colors.text} size={20} onPress={onView} />
-  // </View>
-  // <Menu.Item icon="play-circle-filled" onPress={() => {}} title="Watch" />
+  
   return (
     <>
-      <Card mode="elevated" style={defaultStyles.card}>
-        {/* <View
-          style={defaultStyles.header}
-          leftStyle={defaultStyles.left}
-          title={<Title style={defaultStyles.titleText}>{title}</Title>}
-          titleStyle={defaultStyles.title}
-          subtitle={
-          
-          }
-          subtitleStyle={defaultStyles.subtitle}
-          rightStyle={defaultStyles.right}
-        /> */}
+      <Card elevation={0} style={defaultStyles.card}>
         <Card.Content>
           <View style={defaultStyles.cardContent}>
-            <View style={defaultStyles.left}>
-              {image ? (
-                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                  <Avatar.Image size={108} source={{ uri: image }} />
-                </TouchableWithoutFeedback>
-              ) : (
-                <TouchableWithoutFeedback onPress={onProfileImageClicked}>
-                  <Avatar.Icon size={108} icon="person" />
-                </TouchableWithoutFeedback>
-              )}
-            </View>
-            <View style={defaultStyles.main}>
+            <View style={defaultStyles.info}>
               {title ? (<Title style={defaultStyles.titleText}>{title}</Title>) : null}
               {username ? (<Subheading style={{ ...defaultStyles.subtitleTextPrimary }}>{username}</Subheading>) : null}
               {email ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{email}</Subheading>) : null}
               {phoneNumber ? (<Subheading style={{ ...defaultStyles.subtitleTextSecondary }}>{phoneNumber}</Subheading>) : null}
               {text ? (<Text style={{ ...defaultStyles.subtitleTextPrimary }} numberOfLines={5}>{text}</Text>) : null}
             </View>
-            <View style={defaultStyles.right}>
+            <View style={defaultStyles.avatar}>
               {showActions ? (
                 <Menu
-                  visible={visible}
-                  onDismiss={() => setVisible(false)}
+                  visible={showMenu}
+                  onDismiss={() => setShowMenu(false)}
                   anchor={
-                    <IconButton icon="more-vert" onPress={() => setVisible(!visible)} />
+                    image ? (
+                      <TouchableWithoutFeedback onPress={() => setShowMenu(true)}>
+                        <Avatar.Image size={108} source={{ uri: image }} />
+                      </TouchableWithoutFeedback>
+                    ) : (
+                      <TouchableWithoutFeedback onPress={() => setShowMenu(true)}>
+                        <Avatar.Icon size={108} icon="person" />
+                      </TouchableWithoutFeedback>
+                    )
                   }
                 >
+                  {isCurrentUser ? <Menu.Item onPress={() => onUpdateAvatarClicked()} title="Change Photo" /> : null}
                   {isCurrentUser ? <Menu.Item onPress={() => {}} title="Deactivate Account" /> : null}
                   {isCurrentUser ? <Menu.Item onPress={() => {}} title="Delete Account" /> : null}
                 </Menu>
-              ) : null}
+              ) : image ? (
+                <TouchableWithoutFeedback onPress={() => setShowMenu(true)}>
+                  <Avatar.Image size={108} source={{ uri: image }} />
+                </TouchableWithoutFeedback>
+              ) : (
+                <TouchableWithoutFeedback onPress={() => setShowMenu(true)}>
+                  <Avatar.Icon size={108} icon="person" />
+                </TouchableWithoutFeedback>
+              )}
             </View>
           </View>
           {withoutName() ? (
@@ -108,22 +93,6 @@ export const AccountCard = ({
             </Card>
           ) : null}
         </Card.Content>
-        {showSocial ? (
-          <View style={defaultStyles.social}>
-            <View style={defaultStyles.labelledElement}>
-              <Subheading>{likes}</Subheading>
-              <Caption>Likes</Caption>
-            </View>
-            <View style={defaultStyles.labelledElement}>
-              <Subheading>{shares}</Subheading>
-              <Caption>Shares</Caption>
-            </View>
-            <View style={defaultStyles.labelledElement}>
-              <Subheading>{shared}</Subheading>
-              <Caption>Shared</Caption>
-            </View>
-          </View>
-        ) : null}
       </Card>
     </>
   );
@@ -138,12 +107,18 @@ const defaultStyles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  main: {
+  info: {
+    flex: 3,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 15,
+  },
+  avatar: {
+    flex: 1,
+    marginLeft: 15,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     flexDirection: 'row',
@@ -182,34 +157,5 @@ const defaultStyles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'top',
     minHeight: 'auto',
-  },
-  left: {
-    flex: 0,
-    width: 115,
-    marginLeft: 10,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  right: {
-    flex: 0,
-    height: 92,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  social: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 20,
-  },
-  labelledElement: {
-    display: 'flex',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'column',
   },
 });

@@ -95,7 +95,6 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
           email={email}
           phoneNumber={phoneNumber}
           image={imageSrc}
-          showSocial={false}
           showActions={false}
           isCurrentUser={false}
         />

@@ -68,13 +68,9 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               email={state?.email}
               phoneNumber={state?.phoneNumber}
               image={state?.imageSrc}
-              // likes={state?.likesCount}
-              // shared={state?.sharedCount}
-              // shares={state?.sharesCount}
-              showSocial={true}
               showActions={true}
               isCurrentUser={true}
-              onProfileImageClicked={() => pickImage()}
+              onUpdateAvatarClicked={() => pickImage()}
             />
           </View>
       

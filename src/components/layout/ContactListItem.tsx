@@ -123,7 +123,7 @@ const defaultStyles = StyleSheet.create({
     marginBottom: 4,
   },
   listItem: { margin: 0, justifyContent: 'center' },
-  leftOuterWrapper: { flexDirection: 'row', width: 100, justifyContent: 'space-between' },
+  leftOuterWrapper: { flexDirection: 'row', width: 100, justifyContent: 'space-between', marginRight: 10 },
   letterLabelWrapper: { display: 'flex', justifyContent: 'center', alignContent: 'center' },
   headline: { marginLeft: 10, color: theme.colors.default },
   avatarWrapper: { display: 'flex', justifyContent: 'center', alignContent: 'center' },

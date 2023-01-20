@@ -42,7 +42,6 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
         image={imageSrc}
         email={null}
         phoneNumber={null}
-        showSocial={false}
         showActions={false}
         isCurrentUser={false}
       />
