@@ -22,7 +22,7 @@ import {
   PageActions,
   PageProps,
   ActionButtons,
-  AppUpload,
+  ExpoUploader,
   MediaList,
   MediaCard,
   UploadPlaceholder,
@@ -163,7 +163,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                     </Button>
                   </View>
                   <View style={{ flex: 4 }}>
-                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                       <Button
                         icon="cloud-upload"
                         mode="outlined"
@@ -177,15 +177,15 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                       >
                         <Text>Change Cover Photo</Text>
                       </Button>
-                    </AppUpload>
+                    </ExpoUploader>
                   </View>
                 </View>
               ) : (
                 <View style={styles.itemControls}>
                   <View style={{ flex: 1 }}>
-                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                       <UploadPlaceholder buttonText="Add Cover Photo" />
-                    </AppUpload>
+                    </ExpoUploader>
                   </View>
                 </View>
               )

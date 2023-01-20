@@ -19,7 +19,7 @@ import {
   PageProps,
   ActionButtons,
   MediaCard,
-  AppUpload,
+  ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
 import { CreatePlaylistDto, PlaylistVisibilityType } from 'mediashare/rxjs-api';
@@ -80,11 +80,11 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
             isEdit={true}
             topDrawer={() =>
               !imageSrc ? (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                   <UploadPlaceholder buttonText="Add Cover Photo" />
-                </AppUpload>
+                </ExpoUploader>
               ) : (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                   <Button
                     icon="cloud-upload"
                     mode="outlined"
@@ -97,7 +97,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
                   >
                     <Text>Change Cover Photo</Text>
                   </Button>
-                </AppUpload>
+                </ExpoUploader>
               )
             }
           />

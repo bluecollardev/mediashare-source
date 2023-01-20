@@ -17,6 +17,10 @@ export interface StorageOptions {
   description?: string;
   summary?: string;
   contentType?: string;
+  completeCallback?: (event) => void;
+  progressCallback?: (progress) => void;
+  errorCallback?: (err) => void;
+  resumable?: boolean;
 }
 
 export interface PutStorageParams {
@@ -113,15 +117,15 @@ export function sanitizeFolderName(key: string, folder: string) {
   return key.replace(new RegExp(folder), '');
 }
 
-export function getStorage(key: string) {
+export function getFromStorage(key: string) {
   return Storage.get(key);
 }
 
-export function downloadStorage(key: string): Promise<Object> {
+export function downloadFromStorage(key: string): Promise<Object> {
   return Storage.get(key);
 }
 
-export function deleteStorage(key: string) {
+export function deleteFromStorage(key: string) {
   return Storage.remove(key);
 }
 
@@ -146,35 +150,48 @@ function copyStorageFactory({ root, uploadRoot, videoRoot }: Pick<KeyFactoryProp
 
 export const copyStorage = copyStorageFactory({ root: mediaRoot, uploadRoot, videoRoot });
 
-export async function putToS3({ key, file, options = {} }: PutStorageParams) {
-  const { title = '', description = '', summary = '', contentType = 'video/mp4' } = options;
-  const result = await Storage.put(key, file, { contentType, metadata: { summary, description }, contentDisposition: title });
+export async function putToS3({ key, file, options = {} }: PutStorageParams): Promise<any> {
+  const { title = '', description = '', summary = '', contentType = 'video/mp4', progressCallback } = options;
+  const result = await Storage.put(key, file, {
+    contentType,
+    metadata: { summary, description },
+    contentDisposition: title,
+    progressCallback,
+  } as StorageOptions);
   console.log('[putToS3] PUT to S3 storage');
   console.log(result);
   return result;
 }
 
-export async function fetchMedia(path: string) {
-  console.log(`[fetchMedia] fetch ${path}`);
+export async function fetchMediaFromFileUri(fileUri: string) {
+  console.log(`[fetchMedia] fetch ${fileUri}`);
   let response;
   try {
-    response = await fetch(path);
+    response = await fetch(fileUri);
   } catch (err) {
-    console.log(`[fetchMedia] fetch(${path}) failed`);
+    console.log(`[fetchMedia] fetch(${fileUri}) failed`);
   }
 
   if (response) {
     const blob = await response.blob();
     if (!blob) {
-      console.log('[fetchMedia] no blob in storage.service/fetchmedia');
+      console.log(`[fetchMedia] no blob in storage.service/${fileUri}`);
     }
     return blob;
   }
 }
 
-export async function fetchAndPutToS3({ fileUri, key, options }: { fileUri: string; key: string; options?: StorageOptions }) {
+export async function fetchAndPutToS3({
+  fileUri,
+  key,
+  options
+}: {
+  fileUri: string;
+  key: string;
+  options?: StorageOptions
+}): Promise<any> {
   try {
-    const file = await fetchMedia(fileUri);
+    const file = await fetchMediaFromFileUri(fileUri);
     return await putToS3({ key, file, options });
   } catch (err) {
     console.log('[fetchAndPutToS3] fetchAndPutToS3 failed');
@@ -211,7 +228,7 @@ export async function uploadThumbnailToS3({ fileUri, key }): Promise<string> {
   console.log(`[uploadThumbnailToS3] ${JSON.stringify(payload, null, 2)}`);
   const uploadResponse = await fetchAndPutToS3(payload);
   console.log(`[uploadThumbnailToS3] uploadResponse: ${JSON.stringify(uploadResponse, null, 2)}`);
-  const storageKey = await getStorage(uploadResponse.key);
+  const storageKey = await getFromStorage(uploadResponse.key);
   console.log(`[uploadThumbnailToS3] storageKey: ${storageKey}`);
   return storageKey;
 }

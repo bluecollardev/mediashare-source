@@ -15,7 +15,7 @@ import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, KeyboardAvoidingPageContent, PageActions, PageProps } from 'mediashare/components/layout/PageContainer';
 import { AppDialog } from 'mediashare/components/layout/AppDialog';
 import { MediaCard } from 'mediashare/components/layout/MediaCard';
-import { AppUpload } from 'mediashare/components/layout/AppUpload';
+import { ExpoUploader } from 'mediashare/components/layout/ExpoUploader';
 import { ActionButtons } from 'mediashare/components/layout/ActionButtons';
 import styles, { theme } from 'mediashare/styles';
 
@@ -135,7 +135,7 @@ const MediaItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <AppUpload uploadMode="photo" onUploadComplete={setThumbnail}>
+                  <ExpoUploader uploadMode="photo" onUploadComplete={setThumbnail}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -148,7 +148,7 @@ const MediaItemEdit = ({
                     >
                       Change Preview Image
                     </Button>
-                  </AppUpload>
+                  </ExpoUploader>
                 </View>
               </View>
             )}

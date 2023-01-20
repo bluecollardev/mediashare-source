@@ -16,7 +16,7 @@ import {
   PageProps,
   ActionButtons,
   MediaCard,
-  AppUpload,
+  ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
 import { minLength, titleValidator, descriptionValidator, visibilityValidator, tagValidator } from 'mediashare/core/utils/validators';
@@ -79,15 +79,15 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
             isPlayable={true}
             topDrawer={() =>
               !mediaUri ? (
-                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                   <UploadPlaceholder uploading={uploading} uploaded={!!mediaUri} buttonText="Upload Media" />
-                </AppUpload>
+                </ExpoUploader>
               ) : (
-                <AppUpload uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="video" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                   <Button icon="cloud-upload" mode="outlined" dark color={theme.colors.default} compact>
                     Replace Media
                   </Button>
-                </AppUpload>
+                </ExpoUploader>
               )
             }
           />
