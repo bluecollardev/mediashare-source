@@ -92,7 +92,7 @@ export const AccountCard = ({
                     <IconButton icon="more-vert" onPress={() => setVisible(!visible)} />
                   }
                 >
-                  {isCurrentUser ? <Menu.Item onPress={() => {}} title="Deactive Account" /> : null}
+                  {isCurrentUser ? <Menu.Item onPress={() => {}} title="Deactivate Account" /> : null}
                   {isCurrentUser ? <Menu.Item onPress={() => {}} title="Delete Account" /> : null}
                 </Menu>
               ) : null}
