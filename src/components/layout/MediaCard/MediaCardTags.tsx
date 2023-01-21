@@ -1,6 +1,7 @@
+import { theme } from 'mediashare/styles'
 import React from 'react';
-import { View } from 'react-native';
-import { Chip } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native'
+import { Button, Chip } from 'react-native-paper'
 // import { Tag } from 'mediashare/rxjs-api';
 
 export interface MediaCardTagsProps {
@@ -14,11 +15,39 @@ export const MediaCardTags: React.FC<MediaCardTagsProps> = ({ tags = [] as any[]
         tags.length > 0 &&
         tags.map((tag, idx) => {
           return (
-            <View key={`${tag?._id}_${idx}`} style={{ flex: 0, marginLeft: 3, marginRight: 3, marginBottom: 10 }}>
-              <Chip textStyle={{ fontSize: 12 }}>{tag?.value || 'Unknown'}</Chip>
+            <View key={`${tag?._id}_${idx}`} style={{ flex: 0 }}>
+              <Button
+                compact
+                mode="contained"
+                style={styles.button}
+                contentStyle={styles.buttonContent}
+                labelStyle={styles.buttonText}
+                disabled={false}
+                textColor={theme.colors.white}
+                buttonColor={theme.colors.secondary}>
+                {tag?.value || 'Unknown'}
+              </Button>
             </View>
           );
         })}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    fontSize: 11,
+    fontWeight: 'normal',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  buttonContent: {
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+    marginHorizontal: 0,
+    marginVertical: 0,
+  },
+});

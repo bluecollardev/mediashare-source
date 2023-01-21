@@ -44,7 +44,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
       title={
         <>
           <Title style={defaultStyles.titleText}>
-            {title} {authorProfile?.authorName ? <Text style={defaultStyles.author}>by {authorProfile?.authorName}</Text> : null}
+            {title} {authorProfile?.authorName ? <Text style={defaultStyles.author}>{"\n"}by {authorProfile?.authorName}</Text> : null}
             {authorProfile?.authorUsername ? <Text style={defaultStyles.username}> ({authorProfile?.authorUsername})</Text> : null}
           </Title>
         </>
@@ -73,19 +73,15 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
         </View>
       }
       subtitleStyle={defaultStyles.subtitle}
-      leftStyle={showThumbnail ? defaultStyles.avatar : undefined}
-      left={
-        showThumbnail
-          ? () => {
-              return authorProfile?.authorImage ? (
-                <View>
-                  <Avatar.Image source={{ uri: authorProfile?.authorImage || DEFAULT_AVATAR }} size={52} />
-                </View>
-              ) : null;
-            }
-          : undefined
-      }
-      right={(buttonProps: any) => showActions ? <IconButton {...buttonProps} icon="more-vert" onPress={onActionsClicked} /> : null}
+      right={(buttonProps: any) => {
+        // showActions ? <IconButton {...buttonProps} icon="more-vert" onPress={onActionsClicked} /> : null
+        return showThumbnail && authorProfile?.authorImage ? (
+          <View style={defaultStyles.avatar}>
+            <Avatar.Image source={{ uri: authorProfile?.authorImage || DEFAULT_AVATAR }} size={defaultStyles.avatar.width} />
+          </View>
+        ) : null;
+      }}
+      rightStyle={showThumbnail ? defaultStyles.right : undefined}
     />
   ) : null;
 };
@@ -95,8 +91,15 @@ const defaultStyles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 25,
   },
+  right: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
   avatar: {
-    width: 50,
+    width: 52,
+    marginRight: 16,
   },
   title: {},
   titleText: {
@@ -128,11 +131,15 @@ const defaultStyles = StyleSheet.create({
   },
   line2: {
     marginTop: 5,
+    width: '100%',
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   visibilityButton: {
+    flex: 0,
     fontSize: 11,
     fontWeight: 'normal',
     justifyContent: 'center',

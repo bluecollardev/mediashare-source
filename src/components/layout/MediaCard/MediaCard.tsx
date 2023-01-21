@@ -60,7 +60,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   showSocial = false,
   showActions = false,
   showDescription = true,
-  showAvatar = true,
+  showAvatar = false,
   showThumbnail = true,
   thumbnail = null,
   thumbnailStyle,
@@ -246,9 +246,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         shares={shares}
         views={views}
         onActionsClicked={onActionsClicked}
-        style={!showMediaPreview ? { marginTop: 0 } : {}}
+        style={!showMediaPreview ? { marginTop: 0, marginBottom: 5 } : { marginBottom: 5 }}
       />
-      <Card.Content style={{ marginBottom: 15 }}>
+      <Card.Content style={{ marginBottom: 15, marginTop: 0, paddingTop: 0 }}>
         <MediaCardTags tags={mappedSelectedTags} />
       </Card.Content>
       <Card.Content style={{ marginTop: 0, marginBottom: 30 }}>

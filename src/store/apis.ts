@@ -27,15 +27,22 @@ function apiFactory() {
     // };
     const cookieMiddleware: Middleware = {
       post: (response: ResponseArgs) => {
-        const originalEvent = response.xhr as any;
-
-        const cookie = originalEvent.responseHeaders['Set-Cookie'];
-        const token = originalEvent.responseHeaders.Authorization;
-        const idToken = originalEvent.responseHeaders.Id;
-        COOKIE = cookie ? cookie : COOKIE;
-        TOKEN = token ? token : TOKEN;
-        ID_TOKEN = idToken ? idToken : ID_TOKEN;
-        // console.log(TOKEN);
+        try {
+          const originalEvent = response.xhr;
+          // TODO: In native app we can use originalEvent.responseHeaders and in web we have to use
+          // const responseHeaders = originalEvent.responseHeaders || originalEvent;
+          const cookie = originalEvent.responseHeaders['Set-Cookie'];
+          const token = originalEvent.responseHeaders.Authorization;
+          const idToken = originalEvent.responseHeaders.Id;
+          COOKIE = cookie ? cookie : COOKIE;
+          TOKEN = token ? token : TOKEN;
+          ID_TOKEN = idToken ? idToken : ID_TOKEN;
+          console.log(TOKEN);
+        } catch (err) {
+          console.log(err);
+          throw err;
+        }
+        
         return response;
       },
       pre: (request: RequestArgs) => {
