@@ -13,17 +13,17 @@ export const MediaCardSocial: React.FC<MediaCardSocialProps> = ({ likes = 0, vie
   return (
     <View style={defaultStyles.container}>
       <View style={defaultStyles.row}>
-        <View>
+        <View style={defaultStyles.wrapper}>
           <Button icon="visibility" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
             <Text style={defaultStyles.buttonText}>{views} Views</Text>
           </Button>
         </View>
-        <View>
+        <View style={defaultStyles.wrapper}>
           <Button icon="share" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
             <Text style={defaultStyles.buttonText}>{shares} Shares</Text>
           </Button>
         </View>
-        <View>
+        <View style={defaultStyles.wrapper}>
           <Button icon="favorite" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
             <Text style={defaultStyles.buttonText}>{likes} Likes</Text>
           </Button>
@@ -35,13 +35,18 @@ export const MediaCardSocial: React.FC<MediaCardSocialProps> = ({ likes = 0, vie
 
 const defaultStyles = StyleSheet.create({
   container: {
+    flex: 1,
+    maxWidth: '100%',
     marginBottom: 0,
-    paddingRight: 15,
   },
   row: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+  },
+  wrapper: {
+    flex: 1,
   },
   button: {
     marginHorizontal: 8,

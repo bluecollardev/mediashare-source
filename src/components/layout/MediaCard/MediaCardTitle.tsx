@@ -81,7 +81,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
           </View>
         ) : null;
       }}
-      rightStyle={showThumbnail ? defaultStyles.right : undefined}
+      rightStyle={showThumbnail ? defaultStyles.avatarWrapper : undefined}
     />
   ) : null;
 };
@@ -91,15 +91,16 @@ const defaultStyles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 25,
   },
-  right: {
+  avatarWrapper: {
+    width: 36,
+    marginRight: 16,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start'
   },
   avatar: {
-    width: 52,
-    marginRight: 16,
+    width: 36,
   },
   title: {},
   titleText: {
@@ -132,7 +133,7 @@ const defaultStyles = StyleSheet.create({
   line2: {
     marginTop: 5,
     width: '100%',
-    flex: 1,
+    flex: 0,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

@@ -90,7 +90,7 @@ const AppHeaderComponent = ({
       {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
-          <Avatar.Image style={{ marginHorizontal: 15 }} source={avatar ? { uri: avatar } : undefined} size={36}  />
+          <Avatar.Image style={{ marginHorizontal: 16 }} source={avatar ? { uri: avatar } : undefined} size={36}  />
         </TouchableWithoutFeedback>
       ) : null}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}

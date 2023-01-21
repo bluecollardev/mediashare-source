@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
     // transform: [{ translateX: -30 + 5 }], // Match visibilityButton translateX + 5
   },
   description: {
-    flex: 0,
+    flex: 1,
     width: '100%',
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
+    fontSize: 12,
     marginBottom: 4,
   },
 });
