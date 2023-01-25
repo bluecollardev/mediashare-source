@@ -65,13 +65,7 @@ const LoginComponent = ({}: PageProps) => {
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            height: '100%',
-            justifyContent: 'flex-start',
-          }}
-        >
+        <ScrollView>
           <View style={{ flex: 1, justifyContent: 'flex-start' }}>
             <Card elevation={0}>
               <Card.Cover
