@@ -44,7 +44,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
     authorProfile = {} as AuthorProfileDto,
     createdBy,
     description = '',
-    image,
+    imageSrc,
     uri,
     visibility,
     shareCount = 0,
@@ -76,7 +76,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
             description={description}
             mediaSrc={uri}
             showImage={true}
-            image={image}
+            image={imageSrc}
             imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
@@ -102,6 +102,16 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
               />
             ) : null}
           </MediaCard>
+          {isPortrait ? (
+            <MediaList
+              key={playlistId}
+              list={playlistMediaItems}
+              showImage={true}
+              selectable={false}
+              showActions={true}
+              onViewDetail={activatePlaylistDetail}
+            />
+          ) : null}
         </ScrollView>
       </PageContent>
     </PageContainer>
