@@ -1,9 +1,10 @@
 // https://github.com/reduxjs/redux-thunk/issues/333
+
 // TODO: https://react-redux.js.org/tutorials/typescript-quick-start#define-typed-hooks
 import type {} from 'redux-thunk/extend-redux';
 
 import React, { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import { Platform, ScrollView } from 'react-native';
 import { Provider, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,7 +12,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import { createMaterialBottomTabNavigator as createBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialBottomTabNavigator as createBottomTabNavigator } from 'mediashare/lib/material-bottom-tabs';
 import { Provider as PaperProvider, Text, Card } from 'react-native-paper';
-import { View, ActivityIndicator, Linking } from 'react-native'
+import { View, ActivityIndicator, Linking } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -19,13 +20,14 @@ import Amplify, { Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { store, useAppSelector } from './store';
 import { routeConfig } from './routes'
-import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user'
+import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user';
 import { useUser } from 'mediashare/hooks/useUser';
 import { theme } from './styles';
 import { useFonts } from 'expo-font';
 import { createBottomTabListeners } from './screenListeners';
 import { GlobalStateProps, withGlobalStateProvider } from './core/globalState';
 
+import { PageContainer, PageContent } from 'mediashare/components/layout';
 import Login from './components/pages/Login';
 import SignUp from './components/pages/authentication/SignUp';
 import Confirm from './components/pages/authentication/ConfirmCode';
@@ -51,7 +53,7 @@ import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
-import Invitation from 'mediashare/components/pages/Invitation'
+import Invitation from 'mediashare/components/pages/Invitation';
 import { Auth } from 'aws-amplify';
 
 // Map route names to icons
@@ -199,22 +201,28 @@ const RootNavigator = createStackNavigator();
 const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
   if (isCurrentUser === undefined && !isLoggedIn) {
     return (
-      <View style={{ flexGrow: 1, height: '100%', justifyContent: 'center', backgroundColor: theme.colors.background }}>
-        <View
-          style={{
-            justifyContent: 'center',
-          }}
-        >
-          <Card elevation={0}>
-            <Card.Cover
-              resizeMode="contain"
-              source={require('mediashare/assets/splash.png')}
-              style={{ maxWidth: 150, width: '100%', marginLeft: 'auto', marginRight: 'auto', backgroundColor: theme.colors.background }}
-            />
-          </Card>
-        </View>
-        <ActivityIndicator />
-      </View>
+      <PageContainer>
+        <PageContent>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              height: '100%',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+              <Card elevation={0}>
+                <Card.Cover
+                  resizeMode="contain"
+                  source={require('mediashare/assets/splash.png')}
+                  style={{ height: 300, width: '100%', marginHorizontal: 'auto', marginVertical: 15, marginBottom: 50, backgroundColor: theme.colors.background }}
+                />
+              </Card>
+              <ActivityIndicator />
+            </View>
+          </ScrollView>
+        </PageContent>
+      </PageContainer>
     );
   }
   
