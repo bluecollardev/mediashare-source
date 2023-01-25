@@ -1,8 +1,7 @@
-import { useAppSelector } from 'mediashare/store';
 import React, { useEffect, useState } from 'react';
-
 import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'mediashare/store';
 import { removeShareItem, readShareItem, removeAllShareItems, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { useProfile } from 'mediashare/hooks/useProfile';
@@ -22,7 +21,7 @@ import {
 } from 'mediashare/components/layout'
 // import { filterUnique } from 'mediashare/utils';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 interface SharedWithContactProps extends PageProps {}
 
@@ -37,7 +36,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
 
   const profile = useProfile();
 
-  const { username, firstName, lastName, email, phoneNumber, imageSrc, likesCount, sharesCount, sharedCount } = profile || {};
+  const { username, firstName, lastName, email, phoneNumber, imageSrc } = profile || {};
   const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
 
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -63,6 +62,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
   const [fabState, setFabState] = useState({ open: false });
   const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
 
+  // @ts-ignore
   return (
     <PageContainer>
       <PageContent>
@@ -97,7 +97,6 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
           email={email}
           phoneNumber={phoneNumber}
           image={imageSrc}
-          showSocial={false}
           showActions={false}
           isCurrentUser={false}
         />
@@ -129,7 +128,7 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}

@@ -207,7 +207,7 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
           <Card elevation={0}>
             <Card.Cover
               resizeMode="contain"
-              source={require('mediashare/assets/logo/mediashare/256.png')}
+              source={require('mediashare/assets/splash.png')}
               style={{ maxWidth: 150, width: '100%', marginLeft: 'auto', marginRight: 'auto', backgroundColor: theme.colors.background }}
             />
           </Card>

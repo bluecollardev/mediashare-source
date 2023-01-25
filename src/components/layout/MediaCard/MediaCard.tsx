@@ -27,7 +27,7 @@ export interface MediaCardProps {
   thumbnail?: string;
   thumbnailStyle?: any;
   mediaSrc?: string | null;
-  category?: string;
+  visibility?: string;
   // TODO: Fix Tag type
   // availableTags?: Tag[];
   availableTags?: any[];
@@ -43,8 +43,8 @@ export interface MediaCardProps {
   onSortIndexChange?: (value: string) => void;
   onTagChange?: (value: string) => void;
   tagOptions?: any[];
-  onCategoryChange?: (value: string) => void;
-  categoryOptions?: any[];
+  onVisibilityChange?: (value: string) => void;
+  visibilityOptions?: any[];
   likes?: number;
   views?: number;
   shares?: number;
@@ -60,14 +60,14 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   showSocial = false,
   showActions = false,
   showDescription = true,
-  showAvatar = true,
+  showAvatar = false,
   showThumbnail = true,
   thumbnail = null,
   thumbnailStyle,
   onActionsClicked = () => {},
   children,
   topDrawer = undefined,
-  category = 'None',
+  visibility = 'private',
   // TODO: Fix Tag type
   // availableTags = [] as Tag[],
   availableTags = [] as any[],
@@ -83,8 +83,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSortIndexChange = (value: string) => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onCategoryChange = (value: string) => {},
-  categoryOptions = [],
+  onVisibilityChange = (value: string) => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onTagChange = (value: string) => {},
   tagOptions = [],
@@ -93,10 +92,10 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   shares = 0,
 }: MediaCardProps) => {
   // TODO: Finish default to private!
-  const [selectedCategories, setSelectedCategories] = useState(['private']);
-  const onSelectedCategoriesChange = (categories) => {
-    setSelectedCategories(categories);
-    onCategoryChange(categories);
+  const [selectedVisibility, setSelectedVisibility] = useState([visibility || 'private']);
+  const onSelectedVisibilityChange = (visibility) => {
+    setSelectedVisibility(visibility);
+    onVisibilityChange(visibility);
   };
 
   const mappedSelectedTags = useMemo(() => mappedKeysToTags(tags, availableTags), []);
@@ -115,9 +114,10 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   
   // TODO: Use consts or something instead of strings!
   const visibilityOptions = [
-    { key: 'private', value: `Don't Share - Private` },
-    { key: 'subscribers', value: `Share With Subscribers` },
-    { key: 'public', value: `Share With Public` },
+    { key: 'private', value: `Private` },
+    { key: 'shared', value: `Visible to Contacts` },
+    { key: 'subscription', value: `Visible to Subscribers` },
+    { key: 'public', value: `Visible to Public` },
   ];
   
   return isEdit ? (
@@ -163,7 +163,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             colors={components.multiSelect.colors}
             styles={components.multiSelect.styles}
             items={availableTags}
-            IconRenderer={MultiSelectIcon}
+            IconRenderer={MultiSelectIcon as any}
             uniqueKey="key"
             displayKey="value"
             subKey="children"
@@ -184,15 +184,15 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             colors={components.multiSelect.colors}
             styles={components.multiSelect.styles}
             items={visibilityOptions}
-            IconRenderer={MultiSelectIcon}
+            IconRenderer={MultiSelectIcon as any}
             uniqueKey="key"
             displayKey="value"
             subKey="children"
             searchPlaceholderText="Enter Text"
             selectText="Share With"
             confirmText="Done"
-            onSelectedItemsChange={onSelectedCategoriesChange}
-            selectedItems={selectedCategories}
+            onSelectedItemsChange={onSelectedVisibilityChange}
+            selectedItems={selectedVisibility}
             single={true}
             hideSearch={true}
             expandDropDowns={false}
@@ -238,16 +238,20 @@ export const MediaCard: React.FC<MediaCardProps> = ({
       <MediaCardTitle
         title={title}
         authorProfile={authorProfile}
+        visibility={visibility}
         showThumbnail={showAvatar}
         showActions={showActions}
+        showSocial={showSocial}
+        likes={likes}
+        shares={shares}
+        views={views}
         onActionsClicked={onActionsClicked}
-        style={!showMediaPreview ? { marginTop: 0 } : {}}
+        style={!showMediaPreview ? { marginTop: 0, marginBottom: 5 } : { marginBottom: 5 }}
       />
-      <Card.Content style={{ marginBottom: 15 }}>
+      <Card.Content style={{ marginBottom: 15, marginTop: 0, paddingTop: 0 }}>
         <MediaCardTags tags={mappedSelectedTags} />
       </Card.Content>
       <Card.Content style={{ marginTop: 0, marginBottom: 30 }}>
-        {showSocial ? <MediaCardSocial likes={likes} shares={shares} views={views} /> : null}
         {children}
         {showDescription ? <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph> : null}
       </Card.Content>
@@ -265,14 +269,14 @@ const defaultStyles = StyleSheet.create({
   },
   description: {
     marginBottom: 15,
-    fontSize: 15,
+    fontSize: 13,
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
   },
   descriptionWithSocial: {
     marginTop: 15,
     marginBottom: 30,
-    fontSize: 15,
+    fontSize: 13,
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
   },

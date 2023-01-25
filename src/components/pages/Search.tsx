@@ -1,6 +1,3 @@
-import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded'
-import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed'
-import { TagBlocks } from 'mediashare/components/layout/TagBlocks'
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -12,11 +9,14 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
+import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
+import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
+import { TagBlocks } from 'mediashare/components/layout/TagBlocks';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export interface SearchProps {
   list: PlaylistResponseDto[];
@@ -27,6 +27,8 @@ export interface SearchProps {
   onChecked?: (checked: boolean, item?: any) => void;
   globalState?: GlobalStateProps;
 }
+
+export const searchKey = 'search';
 
 export const SearchComponent = withSearchComponent(
   ({ list = [], onViewDetailClicked, selectable = false, showActions = true, onChecked = () => undefined }: SearchProps) => {
@@ -58,11 +60,12 @@ export const SearchComponent = withSearchComponent(
       );
     }
   }
-, 'search');
+, searchKey);
 
 const actionModes = { share: 'share', delete: 'delete', default: 'default' };
 
-export const Search = ({ globalState }: PageProps) => {
+// TODO: Add updateSearchText / updateSearchTags to some interface for withSearchComponent
+export const Search = ({ globalState }: PageProps & any) => {
   const { tags = [] } = globalState;
   
   const dispatch = useDispatch();
@@ -76,7 +79,7 @@ export const Search = ({ globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
-  const searchResults = globalState?.searchIsFiltering('search') ? entities : [];
+  const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -88,7 +91,7 @@ export const Search = ({ globalState }: PageProps) => {
     searchResults.length > 0
       ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
-
+  
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -105,17 +108,30 @@ export const Search = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {searchResults.length === 0 ? (
-          <>
-            <TagBlocks list={tags} />
-            {/*<NoContent messageButtonText="Find playlists and media to add to your collection." icon="info" />*/}
-            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-            <RecentlyAdded list={searchResults} />
-            <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-            <RecentlyPlayed list={searchResults} />
-          </>
-          
-        ) : null}
+        {!globalState.searchIsFiltering(searchKey) && searchResults.length === 0
+          ? (
+            <ScrollView>
+              <TagBlocks
+                list={tags}
+                onViewDetailClicked={async (item) => {
+                  // Update global search filters
+                  const searchValue = { text: '', tags: [item.key] };
+                  globalState?.updateSearchFilters(searchKey, searchValue);
+                  await loadData();
+                  
+                }}
+              />
+              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              <RecentlyAdded list={searchResults} />
+              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              <RecentlyPlayed list={searchResults} />
+            </ScrollView>
+          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
@@ -129,7 +145,7 @@ export const Search = ({ globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}
@@ -139,7 +155,7 @@ export const Search = ({ globalState }: PageProps) => {
   );
 
   async function loadData() {
-    const search = globalState?.getSearchFilters('search');
+    const search = globalState?.getSearchFilters(searchKey);
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],

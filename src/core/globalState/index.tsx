@@ -31,7 +31,7 @@ export interface GlobalStateProps {
   updateSearchFilters?: (searchKey: string, value: any) => void;
   getSearchFilters?: (searchKey: string) => any;
   clearSearchFilters?: (searchKey: string) => any;
-  searchIsFiltering?: (searchKey: string) => boolean;
+  searchIsFiltering?: (searchKey: string) => boolean | undefined;
   searchIsActive?: (searchKey: string) => any;
   setSearchIsActive?: (searchKey: string, value: any) => void;
   forcedSearchMode?: (searchKey: string) => any;
@@ -125,8 +125,9 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
       await dispatch(loadUser());
     }
 
-    function searchIsFiltering(searchKey: string): boolean {
+    function searchIsFiltering(searchKey: string): boolean | undefined {
       const filters = getSearchFilters(searchKey);
+      if (filters === undefined) return;
       return !!filters?.text || filters?.tags?.length > 0;
     }
     

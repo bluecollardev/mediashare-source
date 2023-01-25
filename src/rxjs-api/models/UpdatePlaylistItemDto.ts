@@ -12,7 +12,7 @@
  */
 
 import {
-    MediaCategoryType,
+    MediaVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -77,10 +77,10 @@ export interface UpdatePlaylistItemDto {
      */
     isPlayable?: boolean;
     /**
-     * @type {MediaCategoryType}
+     * @type {MediaVisibilityType}
      * @memberof UpdatePlaylistItemDto
      */
-    category?: MediaCategoryType;
+    visibility?: MediaVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof UpdatePlaylistItemDto

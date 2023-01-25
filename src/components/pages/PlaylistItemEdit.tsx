@@ -6,7 +6,7 @@ import { useAppSelector } from 'mediashare/store';
 import { deletePlaylistItem, updatePlaylistItem } from 'mediashare/store/modules/playlistItem';
 // TODO: Fix update dto! Not sure why it's not being exported normally...
 import { UpdatePlaylistItemDto } from 'mediashare/rxjs-api/models/UpdatePlaylistItemDto';
-import { MediaCategoryType } from 'mediashare/rxjs-api';
+import { MediaVisibilityType } from 'mediashare/rxjs-api';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
@@ -15,7 +15,7 @@ import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, KeyboardAvoidingPageContent, PageActions, PageProps } from 'mediashare/components/layout/PageContainer';
 import { AppDialog } from 'mediashare/components/layout/AppDialog';
 import { MediaCard } from 'mediashare/components/layout/MediaCard';
-import { AppUpload } from 'mediashare/components/layout/AppUpload';
+import { ExpoUploader } from 'mediashare/components/layout/ExpoUploader';
 import { ActionButtons } from 'mediashare/components/layout/ActionButtons';
 import styles, { theme } from 'mediashare/styles';
 
@@ -38,7 +38,7 @@ const PlaylistItemEdit = ({
   const viewPlaylistById = useViewPlaylistById();
 
   const options = [];
-  for (const value in MediaCategoryType) {
+  for (const value in MediaVisibilityType) {
     options.push(value);
   }
 
@@ -49,7 +49,7 @@ const PlaylistItemEdit = ({
 
   const [title, setTitle] = useState(playlistItem?.title);
   const [description, setDescription] = useState(playlistItem?.description);
-  const [category, setCategory] = useState(playlistItem?.category);
+  const [visibility, setVisibility] = useState(playlistItem?.visibility);
   const [sortIndex, setSortIndex] = useState(String(playlistItem?.sortIndex));
 
   const { tags = [] } = globalState;
@@ -65,7 +65,7 @@ const PlaylistItemEdit = ({
       const playlistItemTags = (playlistItem?.tags || []).map(({ key }) => key);
       setTitle(playlistItem?.title);
       setDescription(playlistItem?.description);
-      setCategory(playlistItem?.category as any);
+      setVisibility(playlistItem?.visibility as any);
       setSelectedTagKeys(playlistItemTags as any[]);
     }
   }, [playlistItem]);
@@ -101,10 +101,10 @@ const PlaylistItemEdit = ({
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
+            visibility={visibility}
+            visibilityOptions={options}
+            onVisibilityChange={(e: any) => {
+              setVisibility(e);
             }}
             availableTags={availableTags}
             tags={selectedTagKeys}
@@ -133,7 +133,7 @@ const PlaylistItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <AppUpload uploadMode="photo" onUploadComplete={setThumbnail}>
+                  <ExpoUploader uploadMode="photo" onUploadComplete={setThumbnail}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -146,7 +146,7 @@ const PlaylistItemEdit = ({
                     >
                       Change Preview Image
                     </Button>
-                  </AppUpload>
+                  </ExpoUploader>
                 </View>
               </View>
             )}
@@ -180,7 +180,7 @@ const PlaylistItemEdit = ({
       description,
       thumbnail,
       isPlayable: true,
-      category: MediaCategoryType[category as any],
+      visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],
       sortIndex: Number(sortIndex),
     };

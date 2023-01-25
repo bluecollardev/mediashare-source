@@ -12,8 +12,8 @@
  */
 
 import {
-    PlaylistCategoryType,
     PlaylistItemResponseDto,
+    PlaylistVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -73,10 +73,10 @@ export interface CreatePlaylistResponseDto {
      */
     mediaIds: Array<string> | null;
     /**
-     * @type {PlaylistCategoryType}
+     * @type {PlaylistVisibilityType}
      * @memberof CreatePlaylistResponseDto
      */
-    category?: PlaylistCategoryType;
+    visibility?: PlaylistVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof CreatePlaylistResponseDto

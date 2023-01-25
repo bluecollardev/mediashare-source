@@ -4,7 +4,7 @@ export * from './ActionButtons';
 export * from './AppDialog';
 export * from './AppHeader';
 export * from './AppRefresher';
-export * from './AppUpload';
+export * from './ExpoUploader';
 export * from './ContactList';
 export * from './ContactListItem';
 export * from './Highlights';

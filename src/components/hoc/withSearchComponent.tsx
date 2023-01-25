@@ -1,10 +1,11 @@
 import { ActionButtons } from 'mediashare/components/layout';
 import { useIsMounted } from 'mediashare/hooks/useIsMounted'
 import React, { useEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
 import { GlobalStateProps } from 'mediashare/core/globalState';
-import { Divider, Searchbar } from 'react-native-paper';
+import { Divider, Searchbar, Switch } from 'react-native-paper'
 import { components, theme } from 'mediashare/styles';
 
 export interface PlaylistSearchProps {
@@ -13,6 +14,7 @@ export interface PlaylistSearchProps {
   loadData: () => Promise<void>;
   searchTarget: 'playlists' | 'media';
   forcedSearchMode?: boolean;
+  networkContent?: boolean;
 }
 
 export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
@@ -21,13 +23,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       updateSearchFilters: (searchKey: string, value: any) => undefined,
       setForcedSearchMode: (searchKey: string, value: any) => undefined,
       getSearchFilters: (searchKey: string) => undefined,
+      setDisplayMode: (value: string) => undefined,
     },
     loaded,
     loadData = () => undefined,
     searchTarget,
     forcedSearchMode,
+    showNetworkContentSwitch = false,
     ...rest
-  }: any) {
+  }: PlaylistSearchProps & any) {
     const isMountedRef = useIsMounted();
     
     const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode } = globalState;
@@ -36,6 +40,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
     const [isLoaded, setIsLoaded] = useState(true);
     const displaySearch = searchIsActive(searchKey);
+    const [includeNetworkContent, setIncludeNetworkContent] = useState(false);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
@@ -74,7 +79,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
         });
       }
     }, [loaded, isLoaded, isMountedRef]);
-
+  
+    useEffect(() => {
+      if (searchFilters?.text) {
+        updateSearchText(searchFilters.text);
+      }
+      if (Array.isArray(searchFilters?.tags)) {
+        updateSearchTags(searchFilters.tags);
+      }
+    }, [searchFilters]);
     return (
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
@@ -92,7 +105,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               colors={components.multiSelect.colors}
               styles={components.multiSelect.styles}
               items={mappedTags}
-              IconRenderer={MultiSelectIcon}
+              IconRenderer={MultiSelectIcon as any}
               uniqueKey="key"
               displayKey="value"
               subKey="children"
@@ -111,7 +124,20 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               modalWithTouchable={false}
               modalWithSafeAreaView={false}
             />
-            {shouldShowApplyButton() && (
+            {showNetworkContentSwitch ? (
+              <>
+                <Divider style={{ marginBottom: 10 }} />
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
+                    <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+                  </View>
+                  <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+                    <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+                  </View>
+                </View>
+              </>
+            ) : null}
+            {shouldShowApplyButton() ? (
               <ActionButtons
                 loading={!isLoaded}
                 primaryLabel="Apply"
@@ -120,13 +146,26 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
                 onPrimaryClicked={() => submitSearch()}
               />
-            )}
-            <Divider />
+            ) : null}
+            <Divider style={{ marginTop: 15 }} />
           </>
         ) : null}
-        <WrappedComponent globalState={globalState} {...rest} />
+        <WrappedComponent
+          globalState={globalState}
+          {...rest}
+          updateSearchText={updateSearchText}
+          updateSearchTags={updateSearchTags}
+        />
       </>
     );
+    
+    function toggleNetworkContent() {
+      if (includeNetworkContent) {
+        setIncludeNetworkContent(false);
+      } else {
+        setIncludeNetworkContent(true);
+      }
+    }
 
     function updateSearchText(value) {
       // Set the in-component state value

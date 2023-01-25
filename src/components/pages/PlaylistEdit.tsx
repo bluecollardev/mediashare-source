@@ -8,7 +8,7 @@ import {
   selectMappedPlaylistMediaItems,
   updateUserPlaylist,
   MappedPlaylistMediaItem,
-} from 'mediashare/store/modules/playlist'
+} from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { usePlaylists, useRouteWithParams, useViewMediaItemById } from 'mediashare/hooks/navigation';
@@ -22,7 +22,7 @@ import {
   PageActions,
   PageProps,
   ActionButtons,
-  AppUpload,
+  ExpoUploader,
   MediaList,
   MediaCard,
   UploadPlaceholder,
@@ -30,7 +30,7 @@ import {
 } from 'mediashare/components/layout';
 import { routeNames } from 'mediashare/routes';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { PlaylistCategoryType, MediaCategoryType } from 'mediashare/rxjs-api';
+import { PlaylistVisibilityType } from 'mediashare/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -52,7 +52,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
 
   const [title, setTitle] = useState(selected?.title);
   const [description, setDescription] = useState(selected?.description);
-  const [category, setCategory] = useState(selected?.category);
+  const [visibility, setVisibility] = useState(selected?.visibility as string);
   const [imageSrc, setImageSrc] = useState(selected?.imageSrc);
 
   const { tags = [] } = globalState;
@@ -70,7 +70,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   const playlistMediaItems: MappedPlaylistMediaItem[] = selectMappedPlaylistMediaItems(selected) || [];
   
   const options = [];
-  for (const value in PlaylistCategoryType) {
+  for (const value in PlaylistVisibilityType) {
     options.push(value);
   }
   
@@ -124,18 +124,22 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             thumbnail={imageSrc}
             thumbnailStyle={{
               // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
             }}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={(e: any) => {
-              setCategory(e);
+            visibility={visibility}
+            visibilityOptions={options}
+            onVisibilityChange={(value: string | string[]) => {
+              if (Array.isArray(value)) {
+                setVisibility(value[0]);
+              } else {
+                setVisibility(value);
+              }
             }}
             availableTags={availableTags}
             tags={selectedTagKeys}
             tagOptions={options}
-            onTagChange={(e: any) => {
-              setSelectedTagKeys(e);
+            onTagChange={(values: any) => {
+              setSelectedTagKeys(values);
             }}
             onTitleChange={setTitle}
             onDescriptionChange={setDescription}
@@ -159,7 +163,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                     </Button>
                   </View>
                   <View style={{ flex: 4 }}>
-                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                       <Button
                         icon="cloud-upload"
                         mode="outlined"
@@ -173,15 +177,15 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                       >
                         <Text>Change Cover Photo</Text>
                       </Button>
-                    </AppUpload>
+                    </ExpoUploader>
                   </View>
                 </View>
               ) : (
                 <View style={styles.itemControls}>
                   <View style={{ flex: 1 }}>
-                    <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                       <UploadPlaceholder buttonText="Add Cover Photo" />
-                    </AppUpload>
+                    </ExpoUploader>
                   </View>
                 </View>
               )
@@ -287,7 +291,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
         title,
         description,
         mediaIds,
-        category: MediaCategoryType[category as any],
+        visibility: visibility as PlaylistVisibilityType,
         tags: (selectedTags || []) as any[],
         imageSrc,
       })

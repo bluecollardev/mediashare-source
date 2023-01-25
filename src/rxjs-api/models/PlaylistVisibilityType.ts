@@ -16,8 +16,10 @@
  * @export
  * @enum {string}
  */
-export enum MediaCategoryType {
-    Free = 'free',
-    Paid = 'paid'
+export enum PlaylistVisibilityType {
+    Private = 'private',
+    Shared = 'shared',
+    Subscription = 'subscription',
+    Public = 'public'
 }
 

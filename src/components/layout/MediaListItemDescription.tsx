@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper'
 import { AuthorProfileDto } from 'mediashare/rxjs-api';
 import { shortenText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
@@ -8,6 +8,7 @@ import { theme } from 'mediashare/styles';
 interface MediaListItemDescriptionData {
   authorProfile?: AuthorProfileDto;
   description?: string;
+  visibility?: string;
   itemCount?: string | number;
 }
 
@@ -29,23 +30,37 @@ export const MediaListItemDescription = ({
   showItemCount = false,
   maxChars = 25,
 }: MediaListItemDescriptionProps) => {
-  const { authorProfile, description = '', itemCount = 0 } = data;
+  const { authorProfile, description = '', itemCount = 0, visibility } = data;
   return (
-    <View style={styles.details}>
+    <View style={styles.line1}>
       {(showAuthor || showUsername) ? (
         <View style={styles.createdBy}>
-          {showAuthor ? <Text style={styles.author}>{authorProfile?.authorName}</Text> : null}
-          {showUsername ? <Text style={styles.username}>@{authorProfile?.authorUsername}</Text> : null}
+          {showAuthor ? <Text style={styles.author}>by {authorProfile?.authorName}</Text> : null}
+          {showUsername ? <Text style={styles.username}> ({authorProfile?.authorUsername})</Text> : null}
         </View>
       ) : null}
-      {showItemCount ? <Text style={{ ...styles.videoCount }}>{itemCount} videos</Text> : null}
+      <View style={styles.line2}>
+        {visibility ?
+          <Button
+            compact
+            mode="contained"
+            style={styles.visibilityButton}
+            contentStyle={styles.buttonContent}
+            labelStyle={styles.buttonText}
+            disabled={false}
+            textColor={theme.colors.white}
+            buttonColor={theme.colors.secondary}>
+            {visibility}
+          </Button> : null}
+        {showItemCount ? <Text style={styles.videoCount}>{itemCount} videos</Text> : null}
+      </View>
       {showDescription ? <Text style={styles.description}>{shortenText(description || '', maxChars)}</Text> : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  details: {
+  line1: {
     display: 'flex',
     flexDirection: 'column',
   },
@@ -57,30 +72,50 @@ const styles = StyleSheet.create({
   author: {
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
-    marginBottom: 2,
+    fontSize: 12,
   },
   username: {
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
-    marginBottom: 2,
+    fontSize: 12,
     marginLeft: 2,
   },
-  description: {
-    flex: 0,
-    width: '100%',
-    color: theme.colors.text,
-    fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
-    marginTop: 2,
-    marginBottom: 4,
+  line2: {
+    marginTop: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  visibilityButton: {
+    fontSize: 11,
+    fontWeight: 'normal',
+    justifyContent: 'center',
+    borderColor: theme.colors.primary,
+    marginRight: 10,
+  },
+  buttonContent: {
+    marginHorizontal: 8,
+    marginVertical: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+    marginHorizontal: 0,
+    marginVertical: 0,
   },
   videoCount: {
     color: theme.colors.textDarker,
     fontFamily: theme.fonts.thin.fontFamily,
     fontSize: 12,
-    marginBottom: 2,
     fontWeight: 'bold',
+    // transform: [{ translateX: -30 + 5 }], // Match visibilityButton translateX + 5
+  },
+  description: {
+    flex: 1,
+    width: '100%',
+    color: theme.colors.text,
+    fontFamily: theme.fonts.thin.fontFamily,
+    fontSize: 12,
+    marginBottom: 4,
   },
 });

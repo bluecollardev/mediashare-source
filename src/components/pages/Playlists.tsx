@@ -1,4 +1,3 @@
-import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
@@ -6,11 +5,12 @@ import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
-import { INITIAL_SEARCH_FILTERS, withGlobalStateConsumer } from 'mediashare/core/globalState'
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet } from 'react-native'
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
@@ -23,7 +23,7 @@ import {
   AppDialog,
 } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export interface PlaylistsProps {
   list: PlaylistResponseDto[];
@@ -42,14 +42,23 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '', visibility } = item;
     return (
       <>
         <MediaListItem
           key={`playlist_${_id}`}
           title={title}
           titleStyle={styles.titleText}
-          description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
+          description={
+            <MediaListItem.Description
+              data={{
+                authorProfile,
+                itemCount: mediaIds?.length || mediaItems?.length || 0,
+                visibility
+              }}
+              showItemCount={true}
+            />
+          }
           showThumbnail={true}
           image={imageSrc}
           showPlayableIcon={false}
@@ -132,13 +141,21 @@ export const Playlists = ({ globalState }: PageProps) => {
           showActions={!isSelectable}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 ? (
-          <NoContent
-            onPress={() => createPlaylist()}
-            messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
-            icon="add-circle"
-          />
-        ) : null}
+        {globalState.searchIsFiltering('playlists') === undefined && entities.length === 0
+          ? (
+            <>
+              <NoContent
+                onPress={() => createPlaylist()}
+                messageButtonText="You have not created any playlists yet. Please create a playlist, or search for a community one to continue."
+                icon="add-circle"
+              />
+            </>
+          ) : globalState?.searchIsFiltering('playlists') === true && entities.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.share ? (
         <PageActions>
@@ -163,7 +180,7 @@ export const Playlists = ({ globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}

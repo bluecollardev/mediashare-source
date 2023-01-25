@@ -19,7 +19,7 @@ export const PlaylistItemDetail = ({ globalState = { tags: [] } }: PageProps) =>
     description = '',
     thumbnail,
     uri,
-    category,
+    visibility,
     shareCount = 0,
     viewCount = 0,
     likesCount = 0,
@@ -45,7 +45,7 @@ export const PlaylistItemDetail = ({ globalState = { tags: [] } }: PageProps) =>
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
-            category={category}
+            visibility={visibility}
             availableTags={mappedTags}
             tags={tagKeys}
             showSocial={true}

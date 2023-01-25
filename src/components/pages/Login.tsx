@@ -76,7 +76,7 @@ const LoginComponent = ({}: PageProps) => {
             <Card elevation={0}>
               <Card.Cover
                 resizeMode="contain"
-                source={require('mediashare/assets/logo/mediashare/256.png')}
+                source={require('mediashare/assets/splash.png')}
                 style={{ backgroundColor: theme.colors.background }}
               />
             </Card>

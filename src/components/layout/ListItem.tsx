@@ -77,15 +77,7 @@ export const ListItem: React.FC<ListItemProps> = ({
         right={() => {
           return showActions ? (
             <IconButton icon={iconRight} iconColor={iconRightColor} onPress={() => onViewDetail(itemId)} />
-          ) : (
-            <View>
-              {showFollow ? (
-                <Button mode={selectable ? 'contained' : 'outlined'} style={defaultStyles.followButton} disabled={selectable}>
-                  Following
-                </Button>
-              ) : null}
-            </View>
-          );
+          ) : null;
         }}
       />
       <Divider />
@@ -105,7 +97,7 @@ export const ListItem: React.FC<ListItemProps> = ({
 const defaultStyles = StyleSheet.create({
   titleText: {
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.medium.fontFamily,
   },
   description: {

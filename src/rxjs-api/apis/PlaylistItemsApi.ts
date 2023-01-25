@@ -132,11 +132,11 @@ export class PlaylistItemsApi extends BaseAPI {
 
     /**
      */
-    playlistItemControllerGetCategories(): Observable<void>
-    playlistItemControllerGetCategories(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
-    playlistItemControllerGetCategories(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+    playlistItemControllerGetVisibilities(): Observable<void>
+    playlistItemControllerGetVisibilities(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
+    playlistItemControllerGetVisibilities(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
         return this.request<void>({
-            url: '/api/playlist-items/categories',
+            url: '/api/playlist-items/visibilities',
             method: 'GET',
         }, opts?.responseOpts);
     };

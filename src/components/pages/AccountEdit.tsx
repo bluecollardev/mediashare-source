@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import Config from 'mediashare/config';
 import * as R from 'remeda';
 import { from } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { UserDto } from 'mediashare/rxjs-api';
 import { loadUser, updateAccount } from 'mediashare/store/modules/user';
-import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
-import { thumbnailRoot } from 'mediashare/core/aws/key-factory';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
+import { useUploader } from 'mediashare/hooks/useUploader';
 import { TextField } from 'mediashare/components/form/TextField';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
 
-const awsUrl = Config.AwsUrl;
 interface AccountEditProps extends PageProps {}
 
 const AccountEdit = ({ route }: AccountEditProps) => {
@@ -28,7 +24,6 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const dispatch = useDispatch();
 
   const viewAccount = useRouteWithParams(routeNames.account);
-  // const viewProfile = useViewProfileById();
 
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -36,7 +31,17 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
   const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
   const fullName = state?.firstName || state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
-
+  
+  const onUploadStart = () => undefined;
+  const onUploadComplete = (uri) => {
+    setState({ ...state, imageSrc: uri });
+  };
+  
+  const { pickImage } = useUploader({
+    onUploadStart,
+    onUploadComplete
+  });
+  
   useEffect(() => {
     async function loadData() {
       const profile = (await dispatch(loadProfile(userId))) as any;
@@ -59,13 +64,9 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               email={state?.email}
               phoneNumber={state?.phoneNumber}
               image={state?.imageSrc}
-              // likes={state?.likesCount}
-              // shared={state?.sharedCount}
-              // shares={state?.sharesCount}
-              showSocial={true}
               showActions={true}
               isCurrentUser={true}
-              onProfileImageClicked={() => getDocument()}
+              onUpdateAvatarClicked={() => pickImage()}
             />
           </View>
       
@@ -98,22 +99,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   function onUpdate(user: Partial<UserDto>) {
     setState({ ...state, ...user });
   }
-
-  async function getDocument() {
-    launchImageLibrary({ mediaType: 'photo', quality: 0.5, maxWidth: 400, maxHeight: 400 }, function (res) {
-      if (!res.assets) {
-        return;
-      }
-      const image = res.assets[0];
-      const thumbnailKey = thumbnailRoot + image.fileName;
-      fetchAndPutToS3({ key: thumbnailKey, fileUri: image.uri, options: { contentType: image.type } }).then((res: { key: string }) => {
-        // eslint-disable-next-line no-shadow
-        const image = awsUrl + res.key;
-        setState({ ...state, imageSrc: image });
-      });
-    });
-  }
-
+  
   function cancel() {
     setState(profile as any);
     viewAccount({ userId });

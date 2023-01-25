@@ -12,7 +12,7 @@
  */
 
 import {
-    MediaCategoryType,
+    MediaVisibilityType,
     TagKeyValue,
 } from './';
 
@@ -77,10 +77,10 @@ export interface PlaylistItem {
      */
     isPlayable?: boolean;
     /**
-     * @type {MediaCategoryType}
+     * @type {MediaVisibilityType}
      * @memberof PlaylistItem
      */
-    category?: MediaCategoryType;
+    visibility?: MediaVisibilityType;
     /**
      * @type {Array<TagKeyValue>}
      * @memberof PlaylistItem

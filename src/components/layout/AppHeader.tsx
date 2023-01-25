@@ -86,11 +86,11 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls ? renderDisplayControls() : null}
-      {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.success : '#ffffff'} onPress={() => toggleSearch()} /> : null}
+      {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.accent : '#ffffff'} onPress={() => toggleSearch()} /> : null}
       {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
-          <Avatar.Image style={{ marginHorizontal: 15 }} source={avatar ? { uri: avatar } : undefined} size={36}  />
+          <Avatar.Image style={{ marginHorizontal: 16 }} source={avatar ? { uri: avatar } : undefined} size={36}  />
         </TouchableWithoutFeedback>
       ) : null}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}

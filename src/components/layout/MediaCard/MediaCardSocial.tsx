@@ -11,21 +11,21 @@ export interface MediaCardSocialProps {
 
 export const MediaCardSocial: React.FC<MediaCardSocialProps> = ({ likes = 0, views = 0, shares = 0 }: MediaCardSocialProps) => {
   return (
-    <View style={{ marginBottom: 0 }}>
-      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-        <View style={{ marginRight: 2 }}>
-          <Button icon="visibility" mode="text">
-            <Text style={defaultStyles.buttonText}>{views}</Text>
+    <View style={defaultStyles.container}>
+      <View style={defaultStyles.row}>
+        <View style={defaultStyles.wrapper}>
+          <Button icon="visibility" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
+            <Text style={defaultStyles.buttonText}>{views} Views</Text>
           </Button>
         </View>
-        <View style={{ marginRight: 2 }}>
-          <Button icon="share" mode="text">
-            <Text style={defaultStyles.buttonText}>{shares}</Text>
+        <View style={defaultStyles.wrapper}>
+          <Button icon="share" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
+            <Text style={defaultStyles.buttonText}>{shares} Shares</Text>
           </Button>
         </View>
-        <View>
-          <Button icon="favorite" mode="text">
-            <Text style={defaultStyles.buttonText}>{likes}</Text>
+        <View style={defaultStyles.wrapper}>
+          <Button icon="favorite" mode="text" textColor={theme.colors.textDarker} labelStyle={defaultStyles.buttonLabel}>
+            <Text style={defaultStyles.buttonText}>{likes} Likes</Text>
           </Button>
         </View>
       </View>
@@ -34,11 +34,27 @@ export const MediaCardSocial: React.FC<MediaCardSocialProps> = ({ likes = 0, vie
 };
 
 const defaultStyles = StyleSheet.create({
-  buttonText: {
-    color: theme.colors.textDarker,
-    fontFamily: theme.fonts.thin.fontFamily,
-    fontSize: 13,
-    marginBottom: 2,
-    marginLeft: 2,
+  container: {
+    flex: 1,
+    maxWidth: '100%',
+    marginBottom: 0,
   },
+  row: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  wrapper: {
+    flex: 1,
+  },
+  button: {
+    marginHorizontal: 8,
+  },
+  buttonLabel: {
+    marginHorizontal: 8,
+  },
+  buttonText: {
+    fontSize: 8,
+  }
 });

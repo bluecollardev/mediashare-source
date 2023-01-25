@@ -1,9 +1,8 @@
-import { useAppSelector } from 'mediashare/store';
 import React, { useEffect, useState } from 'react';
-
 import { StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { removeShareItem, readShareItem, removeAllShareItems, findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
+import { useAppSelector } from 'mediashare/store';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -22,7 +21,7 @@ import {
 } from 'mediashare/components/layout'
 // import { filterUnique } from 'mediashare/utils';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 interface SharedByContactProps extends PageProps {}
 
@@ -37,7 +36,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
 
   const profile = useProfile();
 
-  const { username, firstName, lastName, email, phoneNumber, imageSrc, likesCount, sharesCount, sharedCount } = profile || {};
+  const { username, firstName, lastName, email, phoneNumber, imageSrc } = profile || {};
   const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
 
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -96,7 +95,6 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
           email={email}
           phoneNumber={phoneNumber}
           image={imageSrc}
-          showSocial={false}
           showActions={false}
           isCurrentUser={false}
         />
@@ -128,7 +126,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             setFabState(open);
           }}

@@ -27,7 +27,7 @@ const environments = {
   production: {
     EnvName: 'production',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
-    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 2),
+    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
@@ -42,7 +42,8 @@ const commonConfigs = {
   facebookAppId: '189foo bar884439',
 }
 
-const env = Updates.releaseChannel || 'default';
+const env = 'default'; // Updates.releaseChannel || 'default';
+console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {
   ...commonConfigs,

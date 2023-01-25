@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { StyleSheet, FlatList, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
@@ -10,9 +10,9 @@ import { withSearchComponent } from 'mediashare/components/hoc/withSearchCompone
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
-import { RefreshControl } from 'react-native';
+// import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -20,13 +20,12 @@ import {
   PageActions,
   MediaListItem,
   ActionButtons,
-  NoItems,
   AppDialog,
   NoContent,
 } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { selectMediaItem } from 'mediashare/store/modules/mediaItems';
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 export const MediaComponent = ({
   list = [],
@@ -52,14 +51,14 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', thumbnail } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', thumbnail, visibility } = item;
     return (
       <>
         <MediaListItem
           key={`media_item_${_id}`}
           title={title}
           titleStyle={styles.titleText}
-          description={<MediaListItem.Description data={{ authorProfile, description }} />}
+          description={<MediaListItem.Description data={{ authorProfile, description, visibility }} />}
           showThumbnail={true}
           image={thumbnail}
           showPlayableIcon={false}
@@ -111,7 +110,8 @@ export const Media = ({ navigation, globalState }: PageProps) => {
 
   return (
     <PageContainer>
-      <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      {/*<KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />*/}
+      <KeyboardAvoidingPageContent>
         <AppDialog
           leftActionLabel="Cancel"
           rightActionLabel="Delete"
@@ -137,13 +137,22 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           onViewDetail={onEditItem}
           onChecked={updateSelection}
         />
-        {loaded && entities.length === 0 ? (
-          <NoContent
-            onPress={addMedia}
-            messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
-            icon="add-circle"
-          />
-        ) : null}
+        {globalState.searchIsFiltering('media') === undefined && entities.length === 0
+          ? (
+            <>
+              <NoContent
+                onPress={addMedia}
+                messageButtonText="You have not added any media items to your library. Please add and item to your library to continue."
+                icon="add-circle"
+              />
+            </>
+          ) : globalState?.searchIsFiltering('media') === true && entities.length === 0 ? (
+            <>
+              <NoContent messageButtonText="No results were found." icon="info" />
+            </>
+          ) : null
+        }
+        
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
@@ -163,7 +172,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             // open && setOpen(!open);
             setState(open);
@@ -253,7 +262,7 @@ const styles = StyleSheet.create({
   titleText: {
     marginBottom: 2,
     color: theme.colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.medium.fontFamily,
   },
   deleteActionButton: {

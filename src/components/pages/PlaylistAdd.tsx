@@ -10,7 +10,7 @@ import { getPlaylistById, addUserPlaylist } from 'mediashare/store/modules/playl
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { titleValidator, descriptionValidator, categoryValidator } from 'mediashare/core/utils/validators';
+import { titleValidator, descriptionValidator, visibilityValidator } from 'mediashare/core/utils/validators';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
@@ -19,10 +19,10 @@ import {
   PageProps,
   ActionButtons,
   MediaCard,
-  AppUpload,
+  ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
-import { CreatePlaylistDto, PlaylistCategoryType } from 'mediashare/rxjs-api';
+import { CreatePlaylistDto, PlaylistVisibilityType } from 'mediashare/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 
 // @ts-ignore
@@ -32,7 +32,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   const author = useAppSelector((state) => state?.user?.entity?.username);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState();
-  const [category, setCategory] = useState(PlaylistCategoryType.Free);
+  const [visibility, setVisibility] = useState(PlaylistVisibilityType.Private);
   const [isSaved, setIsSaved] = useState(false);
   const [imageSrc, setImageSrc] = useState('');
 
@@ -44,12 +44,12 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   const edit = useRouteWithParams(routeNames.playlistEdit);
 
   const isValid = function () {
-    return !titleValidator(title) && !descriptionValidator(description) && !categoryValidator(category);
+    return !titleValidator(title) && !descriptionValidator(description) && !visibilityValidator(visibility);
   };
 
   const options = [];
 
-  for (const value in PlaylistCategoryType) {
+  for (const value in PlaylistVisibilityType) {
     options.push(value);
   }
 
@@ -66,9 +66,9 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
             description={description}
             showThumbnail={!!imageSrc}
             thumbnail={imageSrc}
-            category={category}
-            categoryOptions={options}
-            onCategoryChange={setCategory as any}
+            visibility={visibility}
+            visibilityOptions={options}
+            onVisibilityChange={setVisibility as any}
             availableTags={availableTags}
             tags={selectedTagKeys}
             tagOptions={options}
@@ -80,11 +80,11 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
             isEdit={true}
             topDrawer={() =>
               !imageSrc ? (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                   <UploadPlaceholder buttonText="Add Cover Photo" />
-                </AppUpload>
+                </ExpoUploader>
               ) : (
-                <AppUpload uploadMode="photo" onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
                   <Button
                     icon="cloud-upload"
                     mode="outlined"
@@ -97,7 +97,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
                   >
                     <Text>Change Cover Photo</Text>
                   </Button>
-                </AppUpload>
+                </ExpoUploader>
               )
             }
           />
@@ -120,13 +120,13 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
       title,
       description,
       imageSrc,
-      category: category,
+      visibility: visibility,
       tags: selectedTags || [],
       mediaIds: [],
     };
 
     // @ts-ignore TODO: Fix types on dispatch?
-    const { payload } = await dispatch(addUserPlaylist(dto));
+    const { payload } = await dispatch(addUserPlaylist(dto)) as any;
     const playlistId = payload._id;
     await dispatch(getUserPlaylists());
     await dispatch(getPlaylistById(playlistId));
@@ -140,7 +140,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
 
   function resetData() {
     setTitle('');
-    setCategory(PlaylistCategoryType.Free);
+    setVisibility(PlaylistVisibilityType.Private);
     setSelectedTagKeys([]);
     // @ts-ignore
     setDescription('');

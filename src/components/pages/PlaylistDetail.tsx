@@ -1,9 +1,7 @@
-import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { useSnack } from 'mediashare/hooks/useSnack'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native'
-import { withGlobalStateConsumer } from 'mediashare/core/globalState';
+import { useSnack } from 'mediashare/hooks/useSnack'
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import {
@@ -27,16 +25,18 @@ import {
   useViewMediaItemById,
 } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { withGlobalStateConsumer } from 'mediashare/core/globalState';
+import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { FAB } from 'react-native-paper';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
 import {
   AuthorProfileDto,
   CreatePlaylistDto,
-  MediaCategoryType,
+  MediaVisibilityType,
   PlaylistResponseDto,
 } from 'mediashare/rxjs-api'
-import { theme } from 'mediashare/styles';
+import { theme, components } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
 
@@ -74,7 +74,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     createdBy,
     description = '',
     imageSrc,
-    category,
+    visibility,
     shareCount = 0,
     viewCount = 0,
     likesCount = 0,
@@ -184,9 +184,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             thumbnail={imageSrc}
             thumbnailStyle={{
               // TODO: Can we do this automatically from video metadata?
-              aspectRatio: 1 / 1,
+              aspectRatio: 16 / 9,
             }}
-            category={category}
+            visibility={visibility}
             availableTags={mappedTags}
             tags={tagKeys}
             showSocial={true}
@@ -253,7 +253,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
           icon={fabState.open ? 'close' : 'more-vert'}
           actions={fabActions}
           color={theme.colors.text}
-          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary }}
+          fabStyle={{ backgroundColor: fabState.open ? theme.colors.default : theme.colors.primary, ...components.fab }}
           onStateChange={(open) => {
             // open && setOpen(!open);
             setFabState(open);
@@ -370,7 +370,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
         title,
         description,
         mediaIds,
-        category: MediaCategoryType[category as any],
+        visibility: MediaVisibilityType[visibility as any],
         tags: (selectedTags || []) as any[],
         imageSrc,
       })

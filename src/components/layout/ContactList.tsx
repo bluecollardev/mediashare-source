@@ -54,16 +54,17 @@ export const ContactList: React.FC<ContactListProps> = ({
         return (
           <List.Section key={`section_${idx}`}>
             {section.map((item, idx) => {
-              const { firstName, lastName } = item;
+              const { firstName, lastName, role } = item;
               const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
               return (
                 <ContactListItem
                   key={`contact_${item._id}`}
                   title={fullName}
-                  description={`@${item.username}`}
+                  description={`${item.username}`}
                   avatar={item.imageSrc}
                   showLetterLabel={!idx && (!!firstName || !!lastName)}
                   userId={String(item._id)}
+                  role={role}
                   selectable={selectable}
                   onChecked={onChecked}
                   onViewDetail={onViewDetail}

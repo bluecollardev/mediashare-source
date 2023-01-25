@@ -2,14 +2,14 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaCategoryType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'mediashare/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { getVideoPath, getThumbnailPath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
 import {
   copyStorage,
-  deleteStorage,
+  deleteFromStorage,
   getFileExtension,
-  getStorage,
+  getFromStorage,
   listStorage,
   sanitizeFolderName,
   sanitizeKey,
@@ -58,7 +58,7 @@ export const getMediaItemById = createAsyncThunk(mediaItemActions.getMediaItem.t
   const { api } = extra as { api: ApiService };
   const result = await forkJoin({
     mediaItem: api.mediaItems.mediaItemControllerFindOne({ mediaId }).toPromise(),
-    src: getStorage(uri),
+    src: getFromStorage(uri),
   }).toPromise();
   api.views.viewsControllerCreateMediaView({ mediaId }).pipe(take(1)).subscribe();
   return { mediaItem: result.mediaItem as MediaItemResponseDto, src: result.src };
@@ -70,9 +70,9 @@ export const createThumbnail = createAsyncThunk(mediaItemActions.createMediaItem
 
 export const addMediaItem = createAsyncThunk(
   mediaItemActions.addMediaItem.type,
-  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'category' | 'tags' | 'uri'>, { extra }) => {
+  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'visibility' | 'tags' | 'uri'>, { extra }) => {
     const { api } = extra as { api: ApiService };
-    const { uri: fileUri, title, category, tags = [], summary, description } = dto;
+    const { uri: fileUri, title, visibility, tags = [], summary, description } = dto;
     try {
       const options = { description: dto.description, summary: dto.summary, contentType: 'video/mp4' };
       const sanitizedKey = sanitizeKey(`${title}.${getFileExtension(fileUri)}`);
@@ -90,7 +90,7 @@ export const addMediaItem = createAsyncThunk(
         title,
         description,
         summary,
-        category: category || MediaCategoryType.Free,
+        visibility: visibility || MediaVisibilityType.Private,
         tags: tags || [],
         thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),
@@ -129,7 +129,7 @@ export const shareMediaItem = createAsyncThunk(mediaItemActions.shareMediaItem.t
 export const deleteMediaItem = createAsyncThunk(mediaItemActions.removeMediaItem.type, async (args: { id: string; key: string }, { extra }) => {
   const { api } = extra as { api: ApiService };
   const { id, key } = args;
-  await deleteStorage(key);
+  await deleteFromStorage(key);
   return await api.mediaItems.mediaItemControllerRemove({ mediaId: id }).toPromise();
 });
 
@@ -169,7 +169,7 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
         title: automaticTitle,
         description: `${item.size} - ${item.lastModified}`,
         summary: '',
-        category: MediaCategoryType.Free,
+        visibility: MediaVisibilityType.Private,
         tags: [],
         thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),
@@ -177,7 +177,7 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
         isPlayable: true,
         eTag: item.etag,
       };
-      // await deleteStorage(dto.title)), // TODO: DON'T DELETE THE ITEM FROM S3 STORAGE UPLOAD BUCKET UNTIL WE ARE READY FOR PROD
+      // await deleteFromStorage(dto.title)), // TODO: DON'T DELETE THE ITEM FROM S3 STORAGE UPLOAD BUCKET UNTIL WE ARE READY FOR PROD
       return await api.mediaItems.mediaItemControllerCreate({ createMediaItemDto }).toPromise();
     });
 

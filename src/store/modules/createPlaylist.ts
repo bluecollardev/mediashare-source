@@ -12,13 +12,13 @@ function initialStateFactory(): CreatePlaylistDto & { loading: boolean } {
     createdBy: '',
     title: '',
     mediaIds: [],
-    category: null,
+    visibility: null,
     tags: [],
     loading: false,
   };
 }
 
-// const actions = makeActions(['addItem', 'removeItem', 'setDescription', 'setCreatedBy', 'setTitle', 'setCategory', 'setTag']);
+// const actions = makeActions(['addItem', 'removeItem', 'setDescription', 'setCreatedBy', 'setTitle', 'setVisibility', 'setTag']);
 
 const createPlaylist = createAsyncThunk('createPlaylist', async (createPlaylistDto: CreatePlaylistDto) => {
   return await playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
@@ -34,7 +34,7 @@ const slice = createSlice({
     },
     setCreatedBy: (state, action) => ({ ...state, createdBy: action.payload }),
     setTitle: (state, action) => ({ ...state, title: action.payload }),
-    setCategory: (state, action) => ({ ...state, category: action.payload }),
+    setVisibility: (state, action) => ({ ...state, visibility: action.payload }),
     setTags: (state, action) => ({ ...state, tags: action.payload }),
     setDescription: (state, action) => ({ ...state, description: action.payload }),
   },
@@ -50,7 +50,7 @@ const slice = createSlice({
 });
 
 const {
-  actions: { setCategory, setTags, setDescription, setMediaIds, setTitle },
+  actions: { setVisibility, setTags, setDescription, setMediaIds, setTitle },
   reducer,
 } = slice;
-export { reducer, setCategory, setTags, setDescription, setMediaIds, setTitle, createPlaylist };
+export { reducer, setVisibility, setTags, setDescription, setMediaIds, setTitle, createPlaylist };

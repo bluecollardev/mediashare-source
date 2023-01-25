@@ -132,11 +132,11 @@ export class MediaItemsApi extends BaseAPI {
 
     /**
      */
-    mediaItemControllerGetCategories(): Observable<void>
-    mediaItemControllerGetCategories(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
-    mediaItemControllerGetCategories(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+    mediaItemControllerGetVisibilities(): Observable<void>
+    mediaItemControllerGetVisibilities(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
+    mediaItemControllerGetVisibilities(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
         return this.request<void>({
-            url: '/api/media-items/categories',
+            url: '/api/media-items/visibilities',
             method: 'GET',
         }, opts?.responseOpts);
     };

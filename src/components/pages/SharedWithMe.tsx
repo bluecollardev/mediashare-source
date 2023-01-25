@@ -48,7 +48,7 @@ export const SharedBlock = ({ globalState }) => {
     <List.Section>
       {list.map((item) => {
         // @ts-ignore
-        const { _id, title, description, authorProfile = {} as AuthorProfileDto, imageSrc, category, shareCount, viewCount, likesCount } = item;
+        const { _id, title, description, authorProfile = {} as AuthorProfileDto, imageSrc, visibility, shareCount, viewCount, likesCount } = item;
         const tagKeys = (item?.tags || []).map(({ key }) => key);
         const mappedTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isPlaylistTag), []);
         return (
@@ -60,7 +60,7 @@ export const SharedBlock = ({ globalState }) => {
               description={shortenText(description, 200)}
               thumbnail={imageSrc}
               showThumbnail={true}
-              category={category}
+              visibility={visibility}
               availableTags={mappedTags}
               tags={tagKeys}
               showSocial={true}

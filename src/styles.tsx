@@ -109,7 +109,7 @@ const styles: any = StyleSheet.create({
   textField: {
     marginBottom: 10,
     backgroundColor: theme.colors.surface,
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: theme.fonts.thin.fontFamily,
   },
   changeImageButton: {
@@ -120,7 +120,7 @@ const styles: any = StyleSheet.create({
   changeImageButtonLabel: {
     textTransform: 'none',
     fontWeight: '300',
-    fontSize: 15,
+    fontSize: 13,
   },
   deleteItemButton: {
     borderWidth: 1,
@@ -139,8 +139,15 @@ const styles: any = StyleSheet.create({
   },
 } as any);
 
-const components = {
+const components: any = StyleSheet.create({
+  fab: {
+    // position: 'absolute',
+    // margin: 16,
+    // right: 0,
+    // bottom: 0,
+  },
   multiSelect: {
+    // @ts-ignore
     colors: {
       primary: theme.colors.primary,
       text: theme.colors.text,
@@ -172,7 +179,7 @@ const components = {
         backgroundColor: theme.colors.surface,
       },
       selectToggleText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
         color: theme.colors.text,
       },
@@ -180,11 +187,11 @@ const components = {
         marginTop: 10,
       },
       parentChipText: {
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       chipText: {
-        fontSize: 13,
+        fontSize: 12,
         fontFamily: theme.fonts.thin.fontFamily,
         color: theme.colors.text,
       },
@@ -197,11 +204,11 @@ const components = {
         fontFamily: theme.fonts.thin.fontFamily,
       },
       selectedSubItemText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       subItemText: {
-        fontSize: 15,
+        fontSize: 13,
         fontFamily: theme.fonts.thin.fontFamily,
       },
       confirmText: {
@@ -221,7 +228,7 @@ const components = {
       },
     },
   },
-};
+});
 
 export default styles;
 

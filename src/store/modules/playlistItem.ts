@@ -3,7 +3,7 @@ import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
 import { CreatePlaylistItemDto, UpdatePlaylistItemDto, PlaylistItemResponseDto } from 'mediashare/rxjs-api';
-import { deleteStorage, getStorage } from 'mediashare/core/aws/storage';
+import { deleteFromStorage, getFromStorage } from 'mediashare/core/aws/storage';
 import { forkJoin } from 'rxjs';
 
 const mediaPlaceholder = 'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/temp/background-comp.jpg';
@@ -19,7 +19,7 @@ export const getPlaylistItemById = createAsyncThunk(
     const { api } = extra as { api: ApiService };
     const result = await forkJoin({
       playlistItem: api.playlistItems.playlistItemControllerFindOne({ playlistItemId }).toPromise(),
-      src: getStorage(uri),
+      src: getFromStorage(uri),
     }).toPromise();
     // TODO: Update views, we don't have anything that handles playlist items
     // api.views.viewsControllerCreateMediaView({ playlistItemId }).pipe(take(1)).subscribe();
@@ -58,7 +58,7 @@ export const sharePlaylistItem = createAsyncThunk(playlistItemActions.sharePlayl
 export const deletePlaylistItem = createAsyncThunk(playlistItemActions.removePlaylistItem.type, async (args: { id: string; key: string }, { extra }) => {
   const { api } = extra as { api: ApiService };
   const { id, key } = args;
-  await deleteStorage(key);
+  await deleteFromStorage(key);
   return await api.playlistItems.playlistItemControllerRemove({ playlistItemId: id }).toPromise();
 });
 
