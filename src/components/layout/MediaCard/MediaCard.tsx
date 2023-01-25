@@ -22,9 +22,9 @@ export interface MediaCardProps {
   showActions?: boolean;
   showDescription?: boolean;
   showAvatar?: boolean;
-  showThumbnail?: boolean;
-  thumbnail?: string;
-  thumbnailStyle?: any;
+  showImage?: boolean;
+  image?: string;
+  imageStyle?: any;
   mediaSrc?: string | null;
   visibility?: string;
   // TODO: Fix Tag type
@@ -60,9 +60,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   showActions = false,
   showDescription = true,
   showAvatar = false,
-  showThumbnail = true,
-  thumbnail = null,
-  thumbnailStyle,
+  showImage = true,
+  image = null,
+  imageStyle,
   onActionsClicked = () => {},
   children,
   topDrawer = undefined,
@@ -109,7 +109,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
 
   const TopDrawer = topDrawer;
 
-  const showMediaPreview = showThumbnail && (!!thumbnail || !!mediaSrc);
+  const showMediaPreview = showImage && (!!image || !!mediaSrc);
   
   // TODO: Use consts or something instead of strings!
   const visibilityOptions = [
@@ -132,9 +132,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                 key={mediaSrc}
                 mediaSrc={mediaSrc}
                 isPlayable={isPlayable}
-                showThumbnail={showThumbnail}
-                thumbnail={thumbnail}
-                style={thumbnailStyle}
+                showImage={showImage}
+                image={image}
+                style={imageStyle}
               />
             ) : null}
             {topDrawer ? <TopDrawer /> : null}
@@ -153,9 +153,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
                   key={mediaSrc}
                   mediaSrc={mediaSrc}
                   isPlayable={isPlayable}
-                  showThumbnail={showThumbnail}
-                  thumbnail={thumbnail}
-                  style={thumbnailStyle}
+                  showImage={showImage}
+                  image={image}
+                  style={imageStyle}
                 />
               ) : null}
               {topDrawer ? <TopDrawer /> : null}
@@ -193,9 +193,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             key={mediaSrc}
             mediaSrc={mediaSrc}
             isPlayable={isPlayable}
-            showThumbnail={showThumbnail}
-            thumbnail={thumbnail}
-            style={thumbnailStyle}
+            showImage={showImage}
+            image={image}
+            style={imageStyle}
           />
         ) : null}
         {/* Had to use actual text spaces to space this out for some reason not going to look into it now... */}
@@ -203,7 +203,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           title={title}
           authorProfile={authorProfile}
           visibility={visibility}
-          showThumbnail={showAvatar}
+          showImage={showAvatar}
           showActions={showActions}
           showSocial={showSocial}
           likes={likes}

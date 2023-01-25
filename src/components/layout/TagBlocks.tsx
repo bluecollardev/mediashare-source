@@ -46,7 +46,7 @@ export const TagBlocks = ({ list = [], onViewDetailClicked = () => undefined }: 
           title={value}
           titleStyle={styles.titleText}
           // description={`0 playlists`}
-          showThumbnail={true}
+          showImage={true}
           image={imageSrc}
           showPlayableIcon={false}
           showActions={false}

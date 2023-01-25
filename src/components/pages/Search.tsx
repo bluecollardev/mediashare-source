@@ -2,15 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { searchPlaylists, selectPlaylist } from 'mediashare/store/modules/search';
+import { search as searchContent, selectPlaylist } from 'mediashare/store/modules/search';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
-import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
 import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
@@ -47,7 +47,7 @@ export const SearchComponent = withSearchComponent(
             title={title}
             titleStyle={styles.titleText}
             description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
-            showThumbnail={true}
+            showImage={true}
             image={imageSrc}
             showPlayableIcon={false}
             showActions={showActions}
@@ -88,7 +88,7 @@ export const Search = ({ globalState }: PageProps & any) => {
 
   const [fabState, setFabState] = useState({ open: false });
   const fabActions =
-    searchResults.length > 0
+    searchResults?.length > 0
       ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
       : [];
   
@@ -99,7 +99,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           globalState={globalState}
           loaded={loaded}
           loadData={loadData}
-          searchTarget="playlists"
+          defaultSearchTarget="playlists"
           forcedSearchMode={true}
           key={clearSelectionKey}
           list={searchResults}
@@ -118,7 +118,6 @@ export const Search = ({ globalState }: PageProps & any) => {
                   const searchValue = { text: '', tags: [item.key] };
                   globalState?.updateSearchFilters(searchKey, searchValue);
                   await loadData();
-                  
                 }}
               />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
@@ -126,7 +125,7 @@ export const Search = ({ globalState }: PageProps & any) => {
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyPlayed list={searchResults} />
             </ScrollView>
-          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults.length === 0 ? (
+          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults?.length === 0 ? (
             <>
               <NoContent messageButtonText="No results were found." icon="info" />
             </>
@@ -138,7 +137,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
       ) : null}
-      {!isSelectable && searchResults.length > 0 ? (
+      {!isSelectable && searchResults?.length > 0 ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -157,10 +156,11 @@ export const Search = ({ globalState }: PageProps & any) => {
   async function loadData() {
     const search = globalState?.getSearchFilters(searchKey);
     const args = {
+      target: search?.target ? search.target : '',
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
     };
-    await dispatch(searchPlaylists(args));
+    await dispatch(searchContent(args));
   }
 
   async function refresh() {

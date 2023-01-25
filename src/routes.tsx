@@ -25,14 +25,14 @@ const routeConfig = {
     name: 'search',
     options: {
       title: 'Search',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="playlists" showAccount={true} />,
     },
   },
   playlists: {
     name: 'playlists',
     options: {
       title: 'My Playlists',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="playlists" showAccount={true} />,
     },
   },
   playlistAdd: {
@@ -59,7 +59,7 @@ const routeConfig = {
     name: 'media',
     options: {
       title: 'Media Library',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="media" showAccount={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="media" showAccount={true} />,
     },
   },
   mediaItemAdd: {
@@ -82,7 +82,7 @@ const routeConfig = {
     name: 'addSelectedToPlaylist',
     options: {
       title: 'Add Items To Playlist',
-      header: (props) => <AppHeader {...props} searchable={true} searchTarget="playlists" showAccount={true} />,
+      header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="playlists" showAccount={true} />,
     },
   },
   shareWith: {

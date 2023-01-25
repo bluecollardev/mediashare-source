@@ -70,7 +70,7 @@ export interface UpdatePlaylistItemDto {
      * @type {string}
      * @memberof UpdatePlaylistItemDto
      */
-    thumbnail?: string;
+    imageSrc?: string;
     /**
      * @type {boolean}
      * @memberof UpdatePlaylistItemDto

@@ -4,7 +4,7 @@ import { Button } from 'react-native-paper';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 
 export interface MediaPreviewProps {
-  thumbnail?: string;
+  image?: string;
   showPlayableIcon?: boolean;
   imageStyle?: any;
   buttonStyle?: any;
@@ -14,7 +14,7 @@ export interface MediaPreviewProps {
 }
 
 export const MediaPreview = ({
-  thumbnail,
+  image,
   onPress = () => {},
   imageStyle = styles.defaultImageStyle,
   buttonStyle = styles.defaultButtonStyle,
@@ -23,7 +23,7 @@ export const MediaPreview = ({
   height = 100,
   ...rest
 }: MediaPreviewProps & any) => {
-  const { imageSrc, isDefaultImage } = usePreviewImage(thumbnail);
+  const { imageSrc, isDefaultImage } = usePreviewImage(image);
   return (
     <View {...rest}>
       <ImageBackground source={{ uri: imageSrc }} resizeMode={isDefaultImage ? 'contain' : 'cover'} style={imageStyle}>

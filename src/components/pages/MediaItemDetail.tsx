@@ -17,7 +17,7 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
     authorProfile = {} as AuthorProfileDto,
     createdBy,
     description = '',
-    thumbnail,
+    image,
     uri,
     visibility,
     shareCount = 0,
@@ -39,9 +39,9 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
             authorProfile={authorProfile}
             description={description}
             mediaSrc={uri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
+            showImage={true}
+            image={image}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}

@@ -7,7 +7,7 @@ import { KeyFactory, KeyFactoryProps, mediaRoot, uploadRoot, videoRoot } from '.
 export const validVideoFormats = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm', 'mkv'];
 export const validImageFormats = ['jpg', 'jpeg', 'png', 'gif', 'tiff', 'bmp'];
 
-export const videoThumbnailDefaultOptions = {
+export const videoImageDefaultOptions = {
   quality: 0.6,
   width: 720,
 };
@@ -74,7 +74,7 @@ export function titleFromKey(key: string) {
  *
  * Scenario:
  * When importing files from a user's 'upload' bucket to the 'videos'
- * we generate a thumbnail preview for the source file in the 'thumbnails' bucket and
+ * we generate a image preview for the source file in the 'thumbnails' bucket and
  * copy the source file to the 'videos' bucket.
  *
  * When a user (likely the admin) uploads a file like 'My Sample Video.mp4'
@@ -91,7 +91,7 @@ export function titleFromKey(key: string) {
  * encoded as %2B...
  *
  * As S3 object keys are used in our application for a variety of purposes
- * including generating fileNames, titles, video URLs, and thumbnail URLs, it
+ * including generating fileNames, titles, video URLs, and image URLs, it
  * is is critical that we sanitize our object keys before we use them.
  *
  * This simple tool removes non-alphanumeric characters from our S3 keys,
@@ -199,14 +199,14 @@ export async function fetchAndPutToS3({
   }
 }
 
-async function getVideoThumbnailFromUri(fileUri) {
+async function getVideoImageFromUri(fileUri) {
   let item;
   try {
-    item = await VideoThumbnails.getThumbnailAsync(fileUri, videoThumbnailDefaultOptions);
+    item = await VideoThumbnails.getThumbnailAsync(fileUri, videoImageDefaultOptions);
   } catch (err) {
-    console.log('[getVideoThumbnailFromUri] Error getting thumbnail, getThumbnailAsync failed');
-    console.log('[getVideoThumbnailFromUri] Make sure the file at [$fileUri] exists');
-    console.log('[getVideoThumbnailFromUri] You may need to manually link the expo modules');
+    console.log('[getVideoImageFromUri] Error getting image, getImageAsync failed');
+    console.log('[getVideoImageFromUri] Make sure the file at [$fileUri] exists');
+    console.log('[getVideoImageFromUri] You may need to manually link the expo modules');
     console.log(err);
   }
   return item;
@@ -217,26 +217,26 @@ async function getVideoThumbnailFromUri(fileUri) {
  * @param key The ID key
  * @return string URL for uploaded AWS file
  */
-export async function uploadThumbnailToS3({ fileUri, key }): Promise<string> {
-  const { uri: thumbnailUri } = await getVideoThumbnailFromUri(fileUri);
-  const { thumbnailKey } = KeyFactory(key);
+export async function uploadImageToS3({ fileUri, key }): Promise<string> {
+  const { uri: imageUri } = await getVideoImageFromUri(fileUri);
+  const { imageKey } = KeyFactory(key);
   const payload = {
-    key: thumbnailKey,
-    fileUri: thumbnailUri,
+    key: imageKey,
+    fileUri: imageUri,
     options: { contentType: 'image/jpeg' },
   };
-  console.log(`[uploadThumbnailToS3] ${JSON.stringify(payload, null, 2)}`);
+  console.log(`[uploadImageToS3] ${JSON.stringify(payload, null, 2)}`);
   const uploadResponse = await fetchAndPutToS3(payload);
-  console.log(`[uploadThumbnailToS3] uploadResponse: ${JSON.stringify(uploadResponse, null, 2)}`);
+  console.log(`[uploadImageToS3] uploadResponse: ${JSON.stringify(uploadResponse, null, 2)}`);
   const storageKey = await getFromStorage(uploadResponse.key);
-  console.log(`[uploadThumbnailToS3] storageKey: ${storageKey}`);
+  console.log(`[uploadImageToS3] storageKey: ${storageKey}`);
   return storageKey;
 }
 
-// TODO: The thumbnail response returns a string and video response returns an object like { key: my-key }
+// TODO: The image response returns a string and video response returns an object like { key: my-key }
 //  Standardize the returns!
 export async function uploadMediaToS3({ fileUri, key, options }: { fileUri: string; key: string; options: StorageOptions }) {
-  const thumbnailResponse = await uploadThumbnailToS3({ fileUri, key });
+  const imageResponse = await uploadImageToS3({ fileUri, key });
   const videoResponse = await fetchAndPutToS3({ fileUri, key, options });
-  return { thumbnail: thumbnailResponse, video: videoResponse };
+  return { image: imageResponse, video: videoResponse };
 }

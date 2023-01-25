@@ -15,7 +15,7 @@ export interface MediaCardTitleProps {
   // TODO: Use an enum
   visibility?: string;
   authorProfile?: AuthorProfileDto;
-  showThumbnail?: boolean;
+  showImage?: boolean;
   showActions?: boolean;
   showSocial?: boolean;
   likes?: number;
@@ -29,7 +29,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
   title = '',
   visibility,
   authorProfile = {} as AuthorProfileDto,
-  showThumbnail = true,
+  showImage = true,
   showActions = false,
   showSocial = false,
   likes = undefined,
@@ -75,13 +75,13 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
       subtitleStyle={defaultStyles.subtitle}
       right={(buttonProps: any) => {
         // showActions ? <IconButton {...buttonProps} icon="more-vert" onPress={onActionsClicked} /> : null
-        return showThumbnail && authorProfile?.authorImage ? (
+        return showImage && authorProfile?.authorImage ? (
           <View style={defaultStyles.avatar}>
             <Avatar.Image source={{ uri: authorProfile?.authorImage || DEFAULT_AVATAR }} size={defaultStyles.avatar.width} />
           </View>
         ) : null;
       }}
-      rightStyle={showThumbnail ? defaultStyles.avatarWrapper : undefined}
+      rightStyle={showImage ? defaultStyles.avatarWrapper : undefined}
     />
   ) : null;
 };

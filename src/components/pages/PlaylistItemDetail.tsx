@@ -44,7 +44,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
     authorProfile = {} as AuthorProfileDto,
     createdBy,
     description = '',
-    thumbnail,
+    image,
     uri,
     visibility,
     shareCount = 0,
@@ -75,9 +75,9 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
             authorProfile={authorProfile}
             description={description}
             mediaSrc={uri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
+            showImage={true}
+            image={image}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
@@ -95,7 +95,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
               <MediaList
                 key={playlistId}
                 list={playlistMediaItems}
-                showThumbnail={true}
+                showImage={true}
                 selectable={false}
                 showActions={true}
                 onViewDetail={activatePlaylistDetail}

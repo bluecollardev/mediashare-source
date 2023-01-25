@@ -57,7 +57,7 @@ const MediaItemEdit = ({
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialMediaItemTags);
 
   const [documentUri] = useState(mediaItem?.uri);
-  const [thumbnail, setThumbnail] = useState(mediaItem?.thumbnail);
+  const [image, setImage] = useState(mediaItem?.image);
   const viewMediaItems = useMediaItems();
 
   useEffect(() => {
@@ -94,9 +94,9 @@ const MediaItemEdit = ({
             title={title}
             description={description}
             mediaSrc={documentUri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
+            showImage={true}
+            image={image}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
@@ -135,7 +135,7 @@ const MediaItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <ExpoUploader uploadMode="photo" onUploadComplete={setThumbnail}>
+                  <ExpoUploader uploadMode="photo" onUploadComplete={setImage}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -182,7 +182,7 @@ const MediaItemEdit = ({
       _id: mediaId,
       title,
       description,
-      thumbnail,
+      image,
       isPlayable: true,
       visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],

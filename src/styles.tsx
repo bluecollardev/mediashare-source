@@ -63,7 +63,7 @@ const styles: any = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  mediaListItemThumbnail: {
+  mediaListItemImage: {
     marginLeft: 5,
     marginRight: 10,
   },

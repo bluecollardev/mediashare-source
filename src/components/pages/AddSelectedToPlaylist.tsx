@@ -29,7 +29,7 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
   return <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, thumbnail = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, imageSrc = '' } = item;
     return (
       <>
         <MediaListItem
@@ -37,10 +37,10 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
           title={title}
           titleStyle={styles.titleText}
           description={<MediaListItem.Description data={{ authorProfile }} />}
-          showThumbnail={true}
+          showImage={true}
           showPlayableIcon={false}
           showActions={true}
-          image={thumbnail}
+          image={imageSrc}
           selectable={true}
           onViewDetail={() => {
             viewMediaItem({ mediaId: item._id, uri :item.uri }).then();
@@ -82,7 +82,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
-          searchTarget="media"
+          defaultSearchTarget="media"
           entities={entities}
           viewMediaItem={viewMediaItem}
           addItem={addItem}

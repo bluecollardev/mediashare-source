@@ -14,7 +14,7 @@ export interface AppHeaderProps {
   back?: any;
   navigation?: NavigationScreenProp<any, any>;
   searchable?: boolean;
-  searchTarget?: 'playlists' | 'media' | undefined;
+  defaultSearchTarget?: 'playlists' | 'media' | undefined;
   showLogout?: boolean;
   showAccount?: boolean;
   showNotifications?: boolean;

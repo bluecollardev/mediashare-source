@@ -59,7 +59,7 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
               showItemCount={true}
             />
           }
-          showThumbnail={true}
+          showImage={true}
           image={imageSrc}
           showPlayableIcon={false}
           showActions={showActions}
@@ -133,7 +133,7 @@ export const Playlists = ({ globalState }: PageProps) => {
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
-          searchTarget="playlists"
+          defaultSearchTarget="playlists"
           key={clearSelectionKey}
           list={entities}
           onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}

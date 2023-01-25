@@ -7,16 +7,16 @@ import { PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { mediaItemsActions } from 'mediashare/store/modules/mediaItems';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const searchActionNames = ['search_playlists', 'select_playlist', 'clear_playlists'] as const;
+const searchActionNames = ['search', 'select_playlist', 'clear_playlists'] as const;
 
 export const searchActions = makeActions(searchActionNames);
 
-export const searchPlaylists = createAsyncThunk(searchActions.searchPlaylists.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
+export const search = createAsyncThunk(searchActions.search.type, async (args: { target?: string; text?: string; tags?: string[] }, { extra }) => {
   const { api } = extra as { api: ApiService };
-  const { text, tags = [] } = args;
+  const { target, text, tags = [] } = args;
   // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
-  return await api.search.searchControllerFindAll({ text, tags }).toPromise();
+  return await api.search.searchControllerFindAll({ target, text, tags }).toPromise();
 });
 
 export const selectPlaylist = createAction<{ isChecked: boolean; plist: PlaylistResponseDto }, typeof searchActions.selectPlaylist.type>(
@@ -47,10 +47,10 @@ const searchSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(searchPlaylists.pending, reducePendingState())
-      .addCase(searchPlaylists.rejected, reduceRejectedState())
+      .addCase(search.pending, reducePendingState())
+      .addCase(search.rejected, reduceRejectedState())
       .addCase(
-        searchPlaylists.fulfilled,
+        search.fulfilled,
         reduceFulfilledState((state, action) => ({
           ...state,
           entities: action.payload,

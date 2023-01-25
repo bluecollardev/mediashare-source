@@ -1,4 +1,5 @@
 import { ActionButtons } from 'mediashare/components/layout';
+import { makeEnum } from 'mediashare/core/utils/factory'
 import { useIsMounted } from 'mediashare/hooks/useIsMounted'
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native'
@@ -8,13 +9,18 @@ import { GlobalStateProps } from 'mediashare/core/globalState';
 import { Divider, Searchbar, Switch } from 'react-native-paper'
 import { components, theme } from 'mediashare/styles';
 
+const supportedContentTypes = ['playlists', 'media', 'all'] as const;
+export const SupportedContentTypes = makeEnum(supportedContentTypes);
+
 export interface PlaylistSearchProps {
   globalState?: GlobalStateProps;
   loaded: boolean;
   loadData: () => Promise<void>;
-  searchTarget: 'playlists' | 'media';
   forcedSearchMode?: boolean;
+  defaultSearchTarget: typeof SupportedContentTypes;
+  showSearchTargetField?: boolean;
   networkContent?: boolean;
+  showNetworkContentSwitch?: boolean;
 }
 
 export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
@@ -27,8 +33,10 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     },
     loaded,
     loadData = () => undefined,
-    searchTarget,
     forcedSearchMode,
+    defaultSearchTarget,
+    // TODO: Set this to false!
+    showSearchTargetField = true,
     showNetworkContentSwitch = false,
     ...rest
   }: PlaylistSearchProps & any) {
@@ -40,18 +48,22 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
     const [isLoaded, setIsLoaded] = useState(true);
     const displaySearch = searchIsActive(searchKey);
+    const [searchTarget, setSearchTarget] = useState(defaultSearchTarget);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(false);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
-      if (searchTarget === 'playlists') return availableTags.filter((tag) => tag.isPlaylistTag);
-      if (searchTarget === 'media') return availableTags.filter((tag) => tag.isMediaTag);
+      if (searchTarget === SupportedContentTypes.playlists) return availableTags.filter((tag) => tag.isPlaylistTag);
+      if (searchTarget === SupportedContentTypes.media) return availableTags.filter((tag) => tag.isMediaTag);
       return availableTags;
     }, []);
     
     const shouldShowApplyButton = () => {
-      return (searchFilters?.text != searchText)
-      || (JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags));
+      return true;
+      const textChanged = searchFilters?.text != searchText;
+      const tagsChanged = JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags);
+      const targetChanged = searchFilters?.target !== searchTarget;
+      return textChanged || tagsChanged || targetChanged;
     }
     
     useEffect(() => {
@@ -88,6 +100,17 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
         updateSearchTags(searchFilters.tags);
       }
     }, [searchFilters]);
+    
+    const onSelectedSearchTargetChange = (searchTarget) => {
+      setSearchTarget(searchTarget);
+    };
+    
+    const searchTargetOptions = [
+      { key: SupportedContentTypes.playlists, value: `Playlists` },
+      { key: SupportedContentTypes.media, value: `Media Items` },
+      { key: SupportedContentTypes.all, value: `All Types` },
+    ];
+    
     return (
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
@@ -101,6 +124,32 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               clearIcon="clear"
               autoCapitalize="none"
             />
+            {showSearchTargetField ? (
+              <SectionedMultiSelect
+                colors={components.multiSelect.colors}
+                styles={components.multiSelect.styles}
+                items={searchTargetOptions}
+                IconRenderer={MultiSelectIcon as any}
+                uniqueKey="key"
+                displayKey="value"
+                subKey="children"
+                searchPlaceholderText="Enter Text"
+                selectText={searchTargetOptions.find((target) => target.key === searchTarget)?.value || 'Content Types'}
+                confirmText="Done"
+                onSelectedItemsChange={onSelectedSearchTargetChange}
+                selectedItems={searchTarget}
+                single={true}
+                hideSearch={true}
+                expandDropDowns={false}
+                readOnlyHeadings={false}
+                showDropDowns={false}
+                showChips={false}
+                parentChipsRemoveChildren={false}
+                showCancelButton={true}
+                modalWithTouchable={false}
+                modalWithSafeAreaView={true}
+              />
+            ) : null}
             <SectionedMultiSelect
               colors={components.multiSelect.colors}
               styles={components.multiSelect.styles}
@@ -179,7 +228,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
 
     function submitSearch() {
       // Update global search filters
-      const searchValue = { text: searchText, tags: [...searchTags] };
+      const searchValue = { target: searchTarget, text: searchText, tags: [...searchTags] };
       updateSearchFilters(searchKey, searchValue);
       setIsLoaded(false);
     }

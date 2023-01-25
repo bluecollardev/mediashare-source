@@ -9,23 +9,23 @@ type MediaDisplayMode = 'image' | 'video';
 export interface DisplayPreviewOrVideoProps {
   mediaSrc?: string | null;
   isPlayable?: boolean;
-  showThumbnail?: boolean;
-  thumbnail?: string;
+  showImage?: boolean;
+  image?: string;
   style?: any;
 }
 
 export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   mediaSrc,
   isPlayable = false,
-  showThumbnail = true,
-  thumbnail = null,
+  showImage = true,
+  image = null,
   style = {},
 }) => {
-  const getMediaDisplayMode = () => (showThumbnail && thumbnail ? 'image' : 'video');
+  const getMediaDisplayMode = () => (showImage && image ? 'image' : 'video');
   const initialMediaDisplayMode = isPlayable ? (getMediaDisplayMode() as MediaDisplayMode) : 'image';
   const [mediaDisplayMode, setMediaDisplayMode] = useState(initialMediaDisplayMode);
   
-  const { imageSrc, isDefaultImage } = usePreviewImage(thumbnail);
+  const { imageSrc, isDefaultImage } = usePreviewImage(image);
   
   const video = React.useRef(null);
   const [status, setStatus] = React.useState({});

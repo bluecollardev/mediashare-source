@@ -29,7 +29,7 @@ export function ShareItemCard({ date, title, authorProfile, mediaIds, mediaItems
         title={title}
         titleStyle={styles.titleText}
         description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
-        showThumbnail={true}
+        showImage={true}
         image={image}
         showPlayableIcon={false}
         showActions={showActions ? showActions : false}

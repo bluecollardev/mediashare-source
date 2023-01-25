@@ -120,9 +120,9 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
           <MediaCard
             title={title}
             description={description}
-            showThumbnail={true}
-            thumbnail={imageSrc}
-            thumbnailStyle={{
+            showImage={true}
+            image={imageSrc}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 16 / 9,
             }}
@@ -205,7 +205,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             <MediaList
               key={clearSelectionKey}
               list={playlistMediaItems}
-              showThumbnail={true}
+              showImage={true}
               selectable={isSelectable}
               showActions={!isSelectable}
               onViewDetail={(item) => viewMediaItem({ mediaId: item._id, uri: item.uri })}

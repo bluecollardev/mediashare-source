@@ -70,7 +70,7 @@ export interface PlaylistItem {
      * @type {string}
      * @memberof PlaylistItem
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof PlaylistItem

@@ -70,7 +70,7 @@ export interface UpdateMediaItemDto {
      * @type {string}
      * @memberof UpdateMediaItemDto
      */
-    thumbnail?: string;
+    imageSrc?: string;
     /**
      * @type {boolean}
      * @memberof UpdateMediaItemDto

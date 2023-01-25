@@ -44,7 +44,7 @@ export const RecentlyPlayed = ({ list = [], displayNoContent = false }: Recently
       h: Dimensions.get('window').width / 2 + 100
     };
 
-    console.log(`[DisplayPreviewOrVideo] thumbnail: ${imageSrc}`);
+    console.log(`[DisplayPreviewOrVideo] image: ${imageSrc}`);
     const mediaPreview = usePreviewImage(imageSrc);
 
     return (
@@ -59,9 +59,9 @@ export const RecentlyPlayed = ({ list = [], displayNoContent = false }: Recently
             key={`playlist_${_id}`}
             title={title}
             // description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
-            showThumbnail={true}
-            thumbnail={mediaPreview.imageSrc}
-            thumbnailStyle={{
+            showImage={true}
+            image={mediaPreview.imageSrc}
+            imageStyle={{
               aspectRatio: 16 / 9,
               padding: 10
             }}

@@ -4,7 +4,7 @@ import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'm
 import { ApiService } from 'mediashare/store/apis';
 import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'mediashare/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
-import { getVideoPath, getThumbnailPath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
+import { getVideoPath, getImagePath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
 import {
   copyStorage,
   deleteFromStorage,
@@ -15,7 +15,7 @@ import {
   sanitizeKey,
   titleFromKey,
   uploadMediaToS3,
-  uploadThumbnailToS3,
+  uploadImageToS3,
 } from 'mediashare/core/aws/storage';
 
 import { take } from 'rxjs/operators';
@@ -26,15 +26,15 @@ import Config from 'mediashare/config';
 const s3Url = Config.AwsUrl;
 const mediaPlaceholder = 'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/temp/background-comp.jpg';
 
-const createFeedItemThumbnail = async (key) => {
+const createFeedItemImage = async (key) => {
   try {
     // AWS will replace spaces with a '+' in the actual Object URL
     const fileUri = s3Url + getUploadPath(key.replace(/\s/g, '+'));
-    console.log(`[createFeedItemThumbnail] Creating thumbnail for file at ${fileUri}`);
+    console.log(`[createFeedItemImage] Creating image for file at ${fileUri}`);
     const sanitizedKey = sanitizeKey(key);
-    return await uploadThumbnailToS3({ fileUri, key: sanitizedKey });
+    return await uploadImageToS3({ fileUri, key: sanitizedKey });
   } catch (err) {
-    console.log('[createFeedItemThumbnail] createFeedItemThumbnail failed');
+    console.log('[createFeedItemImage] createFeedItemImage failed');
     console.log(err);
   }
 };
@@ -42,7 +42,7 @@ const createFeedItemThumbnail = async (key) => {
 // Define these in snake case or our converter won't work... we need to fix that
 const mediaItemActionNames = [
   'get_media_item',
-  'create_media_item_thumbnail',
+  'create_media_item_image',
   'add_media_item',
   'update_media_item',
   'share_media_item',
@@ -64,8 +64,8 @@ export const getMediaItemById = createAsyncThunk(mediaItemActions.getMediaItem.t
   return { mediaItem: result.mediaItem as MediaItemResponseDto, src: result.src };
 });
 
-export const createThumbnail = createAsyncThunk(mediaItemActions.createMediaItemThumbnail.type, async ({ fileUri, key }: { fileUri: string; key: string }) => {
-  return await uploadThumbnailToS3({ fileUri, key });
+export const createImage = createAsyncThunk(mediaItemActions.createMediaItemImage.type, async ({ fileUri, key }: { fileUri: string; key: string }) => {
+  return await uploadImageToS3({ fileUri, key });
 });
 
 export const addMediaItem = createAsyncThunk(
@@ -76,12 +76,12 @@ export const addMediaItem = createAsyncThunk(
     try {
       const options = { description: dto.description, summary: dto.summary, contentType: 'video/mp4' };
       const sanitizedKey = sanitizeKey(`${title}.${getFileExtension(fileUri)}`);
-      const { video, thumbnail } = await uploadMediaToS3({ fileUri, key: sanitizedKey, options });
+      const { video, image } = await uploadMediaToS3({ fileUri, key: sanitizedKey, options });
       if (!video) {
         throw new Error('[addMediaItem] video upload to S3 failed');
       }
-      if (!thumbnail) {
-        console.warn('[addMediaItem] thumbnail generation failed');
+      if (!image) {
+        console.warn('[addMediaItem] image generation failed');
       }
 
       const { videoKey } = KeyFactory(sanitizedKey);
@@ -92,7 +92,7 @@ export const addMediaItem = createAsyncThunk(
         summary,
         visibility: visibility || MediaVisibilityType.Private,
         tags: tags || [],
-        thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
+        image: awsUrl + getImagePath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),
         uri: awsUrl + getVideoPath(sanitizedKey),
         isPlayable: true,
@@ -160,9 +160,9 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
       const sanitizedKey = sanitizeKey(item.key);
       // TODO: Is there a better way to set the title?
       const automaticTitle = titleFromKey(item.key);
-      // TODO: Fix the thumbnail? We're doing this two ways...
-      // const thumbnailUrl = await createFeedItemThumbnail(item.key);
-      await createFeedItemThumbnail(item.key);
+      // TODO: Fix the image? We're doing this two ways...
+      // const imageUrl = await createFeedItemImage(item.key);
+      await createFeedItemImage(item.key);
       const { videoKey } = KeyFactory(sanitizedKey);
       const createMediaItemDto: CreateMediaItemDto = {
         key: videoKey,
@@ -171,7 +171,7 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
         summary: '',
         visibility: MediaVisibilityType.Private,
         tags: [],
-        thumbnail: awsUrl + getThumbnailPath(sanitizedKey) + '.jpeg',
+        image: awsUrl + getImagePath(sanitizedKey) + '.jpeg',
         // video: awsUrl + getVideoPath(sanitizedKey),
         uri: awsUrl + getVideoPath(sanitizedKey),
         isPlayable: true,
@@ -231,7 +231,7 @@ const mediaItemSlice = createSlice({
         loading: false,
         loaded: true,
       }))
-      .addCase(createThumbnail.fulfilled, (state, action) => ({
+      .addCase(createImage.fulfilled, (state, action) => ({
         ...state,
         mediaSrc: action.payload as string,
       }))

@@ -71,7 +71,7 @@ export interface MediaShareItemResponseDto {
      * @type {string}
      * @memberof MediaShareItemResponseDto
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof MediaShareItemResponseDto

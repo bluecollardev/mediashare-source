@@ -180,9 +180,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             title={title}
             authorProfile={authorProfile}
             description={description}
-            showThumbnail={true}
-            thumbnail={imageSrc}
-            thumbnailStyle={{
+            showImage={true}
+            image={imageSrc}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 16 / 9,
             }}
@@ -223,7 +223,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             <MediaList
               key={clearSelectionKey}
               list={playlistMediaItems}
-              showThumbnail={true}
+              showImage={true}
               selectable={isSelectable}
               showActions={!isSelectable && !disableControls}
               onViewDetail={!disableControls ? activatePlaylistDetail : undefined}

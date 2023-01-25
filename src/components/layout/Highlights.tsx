@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import LabelledAvatar from './LabelledAvatar';
 
 interface HighlightsProps {
-  highlights: { title: string; thumbnail: string }[];
+  highlights: { title: string; image: string }[];
 }
 
 function Highlights({ highlights }: HighlightsProps) {
@@ -11,7 +11,7 @@ function Highlights({ highlights }: HighlightsProps) {
     <View style={styles.container}>
       <View style={styles.highlight}>
         {highlights.map((highlight) => {
-          return <LabelledAvatar label={highlight.title} uri={highlight.thumbnail} />;
+          return <LabelledAvatar label={highlight.title} uri={highlight.image} />;
         })}
       </View>
     </View>

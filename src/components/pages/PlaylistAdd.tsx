@@ -64,8 +64,8 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
           <MediaCard
             title={title}
             description={description}
-            showThumbnail={!!imageSrc}
-            thumbnail={imageSrc}
+            showImage={!!imageSrc}
+            image={imageSrc}
             visibility={visibility}
             visibilityOptions={options}
             onVisibilityChange={setVisibility as any}
