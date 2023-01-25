@@ -201,7 +201,11 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 showSecondary={false}
                 showPrimary={true}
                 onPrimaryClicked={async () => {
-                  await playFromBeginning ({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
+                  await playFromBeginning ({
+                    playlistItemId: playlistMediaItems[0].playlistItemId,
+                    mediaId: playlistMediaItems[0].mediaItemId,
+                    uri: playlistMediaItems[0].uri
+                  });
                 }}
                 primaryLabel="Play from Beginning"
                 primaryIcon="live-tv"
