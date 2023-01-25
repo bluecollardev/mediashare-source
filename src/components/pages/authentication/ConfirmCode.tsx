@@ -90,7 +90,7 @@ const ConfirmComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
@@ -103,7 +103,7 @@ const ConfirmComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoCapitalize="none" label="Code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.code?.message}</HelperText>
                 </>
               )}

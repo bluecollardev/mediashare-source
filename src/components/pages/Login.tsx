@@ -69,15 +69,15 @@ const LoginComponent = ({}: PageProps) => {
           contentContainerStyle={{
             flexGrow: 1,
             height: '100%',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
           }}
         >
-          <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{ flex: 1, justifyContent: 'flex-start' }}>
             <Card elevation={0}>
               <Card.Cover
                 resizeMode="contain"
                 source={require('mediashare/assets/splash.png')}
-                style={{ backgroundColor: theme.colors.background }}
+                style={{ height: 300, width: '100%', marginHorizontal: 'auto', marginVertical: 15, marginBottom: 50, backgroundColor: theme.colors.background }}
               />
             </Card>
             <View style={{ paddingVertical: 10 }}>
@@ -94,7 +94,7 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" label="username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
@@ -111,7 +111,7 @@ const LoginComponent = ({}: PageProps) => {
                 <>
                   <TextInput
                     autoCapitalize="none"
-                    label="password"
+                    label="Password"
                     secureTextEntry
                     textContentType="password"
                     value={value}
