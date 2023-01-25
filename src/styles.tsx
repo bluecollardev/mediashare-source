@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native'
 import { MD2DarkTheme as DarkTheme } from 'react-native-paper';
 
 const theme = {
@@ -39,11 +39,18 @@ const theme = {
 const styles: any = StyleSheet.create({
   pageContainer: {
     height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: theme.colors.background,
   },
   pageContent: {
+    width: '100%',
+    maxWidth: Platform.OS === 'web' ? '1200px' : '100%',
+    colorScheme: 'dark',
     height: '100%',
     flex: 1,
+    overflowY: 'auto', // This only works in web
   },
   pageActions: {
     display: 'flex',

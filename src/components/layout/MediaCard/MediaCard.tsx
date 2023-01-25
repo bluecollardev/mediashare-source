@@ -1,12 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { Card, Paragraph } from 'react-native-paper';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { TextField, MultiSelectIcon } from 'mediashare/components/form';
 import { DisplayPreviewOrVideo } from './DisplayPreviewOrVideo';
 import { MediaCardTitle } from './MediaCardTitle';
 import { MediaCardTags } from './MediaCardTags';
-import { MediaCardSocial } from './MediaCardSocial';
 import { mappedKeysToTags } from 'mediashare/core/utils/tags';
 import { titleValidator, descriptionValidator } from 'mediashare/core/utils/validators';
 import { theme, components } from 'mediashare/styles';
@@ -120,21 +119,116 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     { key: 'public', value: `Visible to Public` },
   ];
   
+  const { width, height, scale } = useWindowDimensions();
+  const isPortrait = height > width;
+  
   return isEdit ? (
-    <View>
-      {showMediaPreview ? (
-        <DisplayPreviewOrVideo
-          key={mediaSrc}
-          mediaSrc={mediaSrc}
-          isPlayable={isPlayable}
-          showThumbnail={showThumbnail}
-          thumbnail={thumbnail}
-          style={thumbnailStyle}
+    <>
+      {isPortrait ? (
+        <View>
+          <View style={defaultStyles.container}>
+            {showMediaPreview ? (
+              <DisplayPreviewOrVideo
+                key={mediaSrc}
+                mediaSrc={mediaSrc}
+                isPlayable={isPlayable}
+                showThumbnail={showThumbnail}
+                thumbnail={thumbnail}
+                style={thumbnailStyle}
+              />
+            ) : null}
+            {topDrawer ? <TopDrawer /> : null}
+            {renderForm(true)}
+          </View>
+        </View>
+      ) : (
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={defaultStyles.containerTwoThirds}>
+            {renderForm()}
+          </View>
+          <View style={defaultStyles.containerThird}>
+            <Card style={defaultStyles.card} elevation={elevation as any}>
+              {showMediaPreview ? (
+                <DisplayPreviewOrVideo
+                  key={mediaSrc}
+                  mediaSrc={mediaSrc}
+                  isPlayable={isPlayable}
+                  showThumbnail={showThumbnail}
+                  thumbnail={thumbnail}
+                  style={thumbnailStyle}
+                />
+              ) : null}
+              {topDrawer ? <TopDrawer /> : null}
+              <View style={{ marginTop: 15 }}>{children}</View>
+            </Card>
+          </View>
+        </View>
+      )}
+    </>
+  ) : (
+    <>
+      {isPortrait ? renderCard(true) : (
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={defaultStyles.containerTwoThirds}>
+            {renderCard()}
+          </View>
+          <View style={defaultStyles.containerThird}>
+            <Card style={defaultStyles.card} elevation={elevation as any}>
+              <Card.Content style={{ paddingTop: 0, marginTop: 0, marginBottom: 25 }}>
+                {children}
+              </Card.Content>
+            </Card>
+          </View>
+        </View>
+      )}
+    </>
+  );
+  
+  function renderCard(renderChildren: boolean = false) {
+    // @ts-ignore
+    return (
+      <Card style={defaultStyles.card} elevation={elevation as any}>
+        {showMediaPreview ? (
+          <DisplayPreviewOrVideo
+            key={mediaSrc}
+            mediaSrc={mediaSrc}
+            isPlayable={isPlayable}
+            showThumbnail={showThumbnail}
+            thumbnail={thumbnail}
+            style={thumbnailStyle}
+          />
+        ) : null}
+        {/* Had to use actual text spaces to space this out for some reason not going to look into it now... */}
+        <MediaCardTitle
+          title={title}
+          authorProfile={authorProfile}
+          visibility={visibility}
+          showThumbnail={showAvatar}
+          showActions={showActions}
+          showSocial={showSocial}
+          likes={likes}
+          shares={shares}
+          views={views}
+          onActionsClicked={onActionsClicked}
+          style={!showMediaPreview ? { marginTop: 0, marginBottom: 5 } : { marginBottom: 5 }}
         />
-      ) : null}
-      {topDrawer ? <TopDrawer /> : null}
-      <View style={defaultStyles.container}>
-        <Card elevation={elevation as any} style={{ marginTop: 25, marginBottom: 15 }}>
+        <Card.Content style={{ marginBottom: 15, marginTop: 0, paddingTop: 0 }}>
+          <MediaCardTags tags={mappedSelectedTags} />
+        </Card.Content>
+        <Card.Content style={{ marginTop: 0, marginBottom: 25 }}>
+          {renderChildren ? children : null}
+          {showDescription ? (
+            <Paragraph style={defaultStyles.description}>{description}</Paragraph>
+          ) : null}
+        </Card.Content>
+      </Card>
+    );
+  }
+  
+  function renderForm(renderChildren: boolean = false) {
+    return (
+      <>
+        <View style={{ ...defaultStyles.formField, marginTop: isPortrait ? 25 : 0 }}>
           <TextField
             label="Title"
             value={title}
@@ -143,9 +237,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             onChangeText={(text) => onTitleChange(text)}
             disabled={isReadOnly}
           />
-        </Card>
+        </View>
         {sortIndex !== undefined ? (
-          <Card elevation={elevation as any} style={{ marginBottom: 15 }}>
+          <View style={{ ...defaultStyles.formField }}>
             <TextField
               keyboardType="numeric"
               style={{ backgroundColor: theme.colors.surface, fontSize: 15 }}
@@ -156,9 +250,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
               onChangeText={(textValue) => onSortIndexChange(textValue.replace(/[^0-9]/g, ''))}
               disabled={isReadOnly}
             />
-          </Card>
+          </View>
         ) : null}
-        <Card elevation={elevation as any} style={{ marginBottom: 15 }}>
+        <View style={{ ...defaultStyles.formField }}>
           <SectionedMultiSelect
             colors={components.multiSelect.colors}
             styles={components.multiSelect.styles}
@@ -204,13 +298,12 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             modalWithTouchable={false}
             modalWithSafeAreaView={true}
           />
-          
-        </Card>
-        <View>{children}</View>
+        </View>
+        {renderChildren ? <View>{children}</View> : null}
         {/* Description can be the longest field so we've moved it to last when we're in edit mode */}
-        <Card elevation={elevation as any} style={{ marginTop: 25, marginBottom: 25 }}>
+        <View style={{ ...defaultStyles.formField, marginTop: renderChildren ? 25 : 10 }}>
           <TextField
-            style={{ height: 500, overflow: 'scroll', backgroundColor: theme.colors.surface, fontSize: 15 }}
+            style={{ ...defaultStyles.descriptionField, ...(Platform.OS !== 'web' ? { overflow: 'scroll' } : {}) }}
             multiline={true}
             label="Description"
             value={description}
@@ -219,52 +312,27 @@ export const MediaCard: React.FC<MediaCardProps> = ({
             onChangeText={(text) => onDescriptionChange(text)}
             disabled={isReadOnly}
           />
-        </Card>
-      </View>
-    </View>
-  ) : (
-    <Card style={defaultStyles.card} elevation={elevation as any}>
-      {showMediaPreview ? (
-        <DisplayPreviewOrVideo
-          key={mediaSrc}
-          mediaSrc={mediaSrc}
-          isPlayable={isPlayable}
-          showThumbnail={showThumbnail}
-          thumbnail={thumbnail}
-          style={thumbnailStyle}
-        />
-      ) : null}
-      {/* Had to use actual text spaces to space this out for some reason not going to look into it now... */}
-      <MediaCardTitle
-        title={title}
-        authorProfile={authorProfile}
-        visibility={visibility}
-        showThumbnail={showAvatar}
-        showActions={showActions}
-        showSocial={showSocial}
-        likes={likes}
-        shares={shares}
-        views={views}
-        onActionsClicked={onActionsClicked}
-        style={!showMediaPreview ? { marginTop: 0, marginBottom: 5 } : { marginBottom: 5 }}
-      />
-      <Card.Content style={{ marginBottom: 15, marginTop: 0, paddingTop: 0 }}>
-        <MediaCardTags tags={mappedSelectedTags} />
-      </Card.Content>
-      <Card.Content style={{ marginTop: 0, marginBottom: 30 }}>
-        {children}
-        {showDescription ? <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph> : null}
-      </Card.Content>
-    </Card>
-  );
+        </View>
+      </>
+    );
+  }
 };
 
 const defaultStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
   },
+  containerTwoThirds: {
+    paddingHorizontal: 10,
+    width: '66.666%',
+    flex: 3,
+  },
+  containerThird: {
+    paddingHorizontal: 10,
+    width: '33.333%',
+    flex: 2,
+  },
   card: {
-    paddingTop: 5,
     margin: 0,
   },
   description: {
@@ -273,11 +341,14 @@ const defaultStyles = StyleSheet.create({
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,
   },
-  descriptionWithSocial: {
-    marginTop: 15,
-    marginBottom: 30,
-    fontSize: 13,
-    color: theme.colors.text,
-    fontFamily: theme.fonts.thin.fontFamily,
+  formField: {
+    marginBottom: 5,
+  },
+  descriptionField: {
+    height: 500,
+    backgroundColor: theme.colors.surface,
+    fontSize: 15,
+    paddingTop: 0,
+    paddingHorizontal: 16,
   },
 });

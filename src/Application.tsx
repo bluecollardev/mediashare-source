@@ -3,6 +3,7 @@
 import type {} from 'redux-thunk/extend-redux';
 
 import React, { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { Provider, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -237,6 +238,21 @@ const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 
 Amplify.configure({
   ...awsmobile,
+  ...(Platform.OS === 'web' ? { Auth: {
+    cookieStorage: {
+      // - Cookie domain (only required if cookieStorage is provided)
+      domain: 'localhost',
+      // (optional) - Cookie path
+      path: '/',
+      // (optional) - Cookie expiration in days
+      // expires: 365,
+      // (optional) - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+      sameSite: 'lax',
+      // (optional) - Cookie secure flag
+      // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
+      secure: true
+    },
+  } } : {}),
   // Fix AWS Pinpoint connection issues
   Analytics: {
     disabled: true,
