@@ -122,8 +122,8 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     ];
   } else {
     fabActions = [
+      { icon: 'library-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
       { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'playlist-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
     ];
   }
 

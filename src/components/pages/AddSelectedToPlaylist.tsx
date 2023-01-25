@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
-import { findMediaItems } from 'mediashare/store/modules/mediaItems';
+import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
 import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -21,7 +21,7 @@ import {
   MediaListItem,
   NoContent,
   KeyboardAvoidingPageContent,
-} from 'mediashare/components/layout'
+} from 'mediashare/components/layout';
 
 import { theme } from 'mediashare/styles';
 
@@ -102,15 +102,17 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   async function loadData() {
     const search = globalState?.getSearchFilters('addSelectedToPlaylist');
     const args = {
+      target: search?.target ? search.target : '',
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
     };
 
     await dispatch(getPlaylistById(playlistId));
-    if (args.text || args.tags.length > 0) {
-      await dispatch(findMediaItems(args));
+    const searchArgs = (args.text || args.tags.length > 0) ? args : {};
+    if (search?.networkContent === true) {
+      await dispatch(searchMediaItems(searchArgs));
     } else {
-      await dispatch(findMediaItems({}));
+      await dispatch(findMediaItems(searchArgs));
     }
   }
 

@@ -5,7 +5,7 @@ import { ApiService } from 'mediashare/store/apis';
 import { MediaItemResponseDto } from 'mediashare/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const mediaItemsActionNames = ['find_media_items', 'load_user_media_items', 'select_media_item', 'clear_media_items'] as const;
+const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_user_media_items', 'select_media_item', 'clear_media_items'] as const;
 
 export const mediaItemsActions = makeActions(mediaItemsActionNames);
 
@@ -21,6 +21,16 @@ export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.
   // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   return await api.mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
 });
+
+export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaItems.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
+  const { api } = extra as { api: ApiService };
+  const { text, tags = [] } = args;
+  // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
+  // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
+  // TODO: Use a const!
+  return await api.search.searchControllerFindAll({ target: 'media', text, tags }).toPromise();
+});
+
 
 export const selectMediaItem = createAction<{ isChecked: boolean; item: MediaItemResponseDto }, typeof mediaItemsActions.selectMediaItem.type>(
   mediaItemsActions.selectMediaItem.type
@@ -54,6 +64,17 @@ const mediaItemsSlice = createSlice({
       .addCase(findMediaItems.rejected, reduceRejectedState())
       .addCase(
         findMediaItems.fulfilled,
+        reduceFulfilledState((state, action) => ({
+          ...state,
+          entities: action.payload,
+          loading: false,
+          loaded: true,
+        }))
+      )
+      .addCase(searchMediaItems.pending, reducePendingState())
+      .addCase(searchMediaItems.rejected, reduceRejectedState())
+      .addCase(
+        searchMediaItems.fulfilled,
         reduceFulfilledState((state, action) => ({
           ...state,
           entities: action.payload,

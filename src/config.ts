@@ -42,7 +42,7 @@ const commonConfigs = {
   facebookAppId: '189foo bar884439',
 }
 
-const env = 'default'; // Updates.releaseChannel || 'default';
+const env = 'staging'; // Updates.releaseChannel || 'default';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {

@@ -93,10 +93,17 @@ export const Search = ({ globalState }: PageProps & any) => {
   }, []);
 
   const [fabState, setFabState] = useState({ open: false });
+  const contentType = globalState?.getSearchFilters(searchKey)?.target;
   const fabActions =
-    searchResults?.length > 0
-      ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
-      : [];
+    searchResults?.length > 0 ? [
+      // { icon: 'library-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+      ...(contentType === SupportedContentTypes.playlists
+        ? [{ icon: 'library-add', label: `Add to Library`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.success } }]
+        : contentType === SupportedContentTypes.media
+          ? [{ icon: 'playlist-add', label: `Add to Playlist`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }]
+          : []),
+        { icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      ] : [];
   
   return (
     <PageContainer>
