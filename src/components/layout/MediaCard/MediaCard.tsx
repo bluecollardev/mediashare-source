@@ -185,6 +185,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   );
   
   function renderCard(renderChildren: boolean = false) {
+    // @ts-ignore
     return (
       <Card style={defaultStyles.card} elevation={elevation as any}>
         {showMediaPreview ? (
@@ -216,7 +217,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         </Card.Content>
         <Card.Content style={{ marginTop: 0, marginBottom: 25 }}>
           {renderChildren ? children : null}
-          {showDescription ? <Paragraph style={showSocial ? defaultStyles.descriptionWithSocial : defaultStyles.description}>{description}</Paragraph> : null}
+          {showDescription ? (
+            <Paragraph style={defaultStyles.description}>{description}</Paragraph>
+          ) : null}
         </Card.Content>
       </Card>
     );
@@ -334,13 +337,6 @@ const defaultStyles = StyleSheet.create({
   },
   description: {
     marginBottom: 15,
-    fontSize: 13,
-    color: theme.colors.text,
-    fontFamily: theme.fonts.thin.fontFamily,
-  },
-  descriptionWithSocial: {
-    marginTop: 15,
-    marginBottom: 25,
     fontSize: 13,
     color: theme.colors.text,
     fontFamily: theme.fonts.thin.fontFamily,

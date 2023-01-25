@@ -41,15 +41,13 @@ export function PageContent({ children }: PageContentProps) {
 
 export function KeyboardAvoidingPageContent({ children }: PageContentProps) {
   return (
-    <View style={styles.pageContent}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.pageContent} keyboardVerticalOffset={100}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <Card>
-            <Card.Content>{children}</Card.Content>
-          </Card>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </View>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.pageContent} keyboardVerticalOffset={100}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Card>
+          <Card.Content>{children}</Card.Content>
+        </Card>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 

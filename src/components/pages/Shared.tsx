@@ -13,7 +13,15 @@ import { useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigat
 import { useUser } from 'mediashare/hooks/useUser';
 import { useSnack } from 'mediashare/hooks/useSnack';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
-import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AppDialog } from 'mediashare/components/layout';
+import {
+  PageContainer,
+  PageActions,
+  PageProps,
+  ContactList,
+  ActionButtons,
+  AppDialog,
+  PageContent,
+} from 'mediashare/components/layout'
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
 import InviteModal from '../layout/InviteModal';
@@ -25,7 +33,6 @@ export const Shared = ({ globalState }: PageProps) => {
   
   const editProfile = useRouteWithParams(routeNames.accountEdit);
   const viewProfileById = useViewProfileById();
-  const layout = useWindowDimensions();
   const { element, onToggleSnackBar, setMessage } = useSnack();
   
   const [isLoaded, setIsLoaded] = useState(false);
@@ -72,58 +79,59 @@ export const Shared = ({ globalState }: PageProps) => {
   }
   return (
     <PageContainer>
-      <InviteModal
-        userId={user._id}
-        showDialog={openInvite}
-        // @ts-ignore
-        onSubmit={async (data) => {
-          try {
-            await dispatch(sendEmail({ userId, email: data?.email }));
-            setMessage(`Invitation sent to ${data?.email}`);
-            onToggleSnackBar();
-          } catch (error) {
-            setMessage(error.message);
-            onToggleSnackBar();
-          }
-        }}
-        onDismiss={() => setInvite(false)}
-      />
-      <AppDialog
-        key={`AppDialog-display-${showDeleteDialog as unknown as string}`}
-        leftActionLabel="Cancel"
-        rightActionLabel="Delete Connection"
-        buttonColor={theme.colors.error}
-        leftActionCb={() => closeDeleteDialog}
-        rightActionCb={() => confirmConnectionsToDelete()}
-        onDismiss={closeDeleteDialog}
-        showDialog={showDeleteDialog}
-        title="Delete Connection"
-        subtitle="Are you sure you want to do this? This action is final and cannot be undone."
-      />
-      <Divider />
-      <Card elevation={0} style={styles.sectionHeader}>
-        <Card.Title
-          titleStyle={styles.sectionHeaderTitle}
-          title="Contacts"
-          right={(props) => (
-            <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
-          )}
+      <PageContent>
+        <InviteModal
+          userId={user._id}
+          showDialog={openInvite}
+          // @ts-ignore
+          onSubmit={async (data) => {
+            try {
+              await dispatch(sendEmail({ userId, email: data?.email }));
+              setMessage(`Invitation sent to ${data?.email}`);
+              onToggleSnackBar();
+            } catch (error) {
+              setMessage(error.message);
+              onToggleSnackBar();
+            }
+          }}
+          onDismiss={() => setInvite(false)}
         />
-      </Card>
-      {/* <Highlights highlights={state.highlights} /> */}
-      {!build.forFreeUser ? (
-        <ScrollView style={{ width: layout.width, height: layout.height }}>
-          <ContactList
-            key={clearSelectionKey}
-            contacts={contacts}
-            showGroups={false}
-            showActions={!isSelectable}
-            onViewDetail={viewProfileById}
-            selectable={isSelectable}
-            onChecked={updateSelection}
+        <AppDialog
+          key={`AppDialog-display-${showDeleteDialog as unknown as string}`}
+          leftActionLabel="Cancel"
+          rightActionLabel="Delete Connection"
+          buttonColor={theme.colors.error}
+          leftActionCb={() => closeDeleteDialog}
+          rightActionCb={() => confirmConnectionsToDelete()}
+          onDismiss={closeDeleteDialog}
+          showDialog={showDeleteDialog}
+          title="Delete Connection"
+          subtitle="Are you sure you want to do this? This action is final and cannot be undone."
+        />
+        <Card elevation={0} style={styles.sectionHeader}>
+          <Card.Title
+            titleStyle={styles.sectionHeaderTitle}
+            title="Contacts"
+            right={(props) => (
+              <IconButton iconColor={theme.colors.success} {...props} style={{ marginRight: 15 }} icon="person-add" onPress={() => setInvite(true)} />
+            )}
           />
-        </ScrollView>
-      ) : null}
+        </Card>
+        {/* <Highlights highlights={state.highlights} /> */}
+        {!build.forFreeUser ? (
+          <ScrollView style={{ height: '100%' }}>
+            <ContactList
+              key={clearSelectionKey}
+              contacts={contacts}
+              showGroups={false}
+              showActions={!isSelectable}
+              onViewDetail={viewProfileById}
+              selectable={isSelectable}
+              onChecked={updateSelection}
+            />
+          </ScrollView>
+        ) : null}
+      </PageContent>
       {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
           <ActionButtons
