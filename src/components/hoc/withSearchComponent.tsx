@@ -1,10 +1,10 @@
-import { ActionButtons } from 'mediashare/components/layout';
-import { makeEnum } from 'mediashare/core/utils/factory'
-import { useIsMounted } from 'mediashare/hooks/useIsMounted'
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native'
+import { Text, View } from 'react-native';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
+import { ActionButtons } from 'mediashare/components/layout';
+import { makeEnum } from 'mediashare/core/utils/factory';
+import { useIsMounted } from 'mediashare/hooks/useIsMounted';
 import { GlobalStateProps } from 'mediashare/core/globalState';
 import { Divider, Searchbar, Switch } from 'react-native-paper'
 import { components, theme } from 'mediashare/styles';
@@ -36,7 +36,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     forcedSearchMode,
     defaultSearchTarget,
     // TODO: Set this to false!
-    showSearchTargetField = true,
+    showSearchTargetField = false,
     showNetworkContentSwitch = false,
     ...rest
   }: PlaylistSearchProps & any) {
@@ -59,7 +59,6 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     }, []);
     
     const shouldShowApplyButton = () => {
-      return true;
       const textChanged = searchFilters?.text != searchText;
       const tagsChanged = JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags);
       const targetChanged = searchFilters?.target !== searchTarget;
@@ -115,64 +114,71 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
           <>
-            <Searchbar
-              style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
-              inputStyle={{ fontSize: 15 }}
-              placeholder="Keywords"
-              value={searchText}
-              onChangeText={(text) => updateSearchText(text)}
-              clearIcon="clear"
-              autoCapitalize="none"
-            />
+            <View style={{ marginBottom: 10 }}>
+              <Searchbar
+                style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
+                inputStyle={{ fontSize: 15 }}
+                placeholder="Keywords"
+                value={searchText}
+                onChangeText={(text) => updateSearchText(text)}
+                clearIcon="clear"
+                autoCapitalize="none"
+              />
+            </View>
+            
             {showSearchTargetField ? (
+              <View style={{ marginBottom: 0 }}>
+                <SectionedMultiSelect
+                  colors={components.multiSelect.colors}
+                  styles={components.multiSelect.styles}
+                  items={searchTargetOptions}
+                  IconRenderer={MultiSelectIcon as any}
+                  uniqueKey="key"
+                  displayKey="value"
+                  subKey="children"
+                  searchPlaceholderText="Enter Text"
+                  selectText={searchTargetOptions.find((target) => target.key === searchTarget)?.value || 'Content Types'}
+                  confirmText="Done"
+                  onSelectedItemsChange={onSelectedSearchTargetChange}
+                  selectedItems={searchTarget}
+                  single={true}
+                  hideSearch={true}
+                  expandDropDowns={false}
+                  readOnlyHeadings={false}
+                  showDropDowns={false}
+                  showChips={false}
+                  parentChipsRemoveChildren={false}
+                  showCancelButton={true}
+                  modalWithTouchable={false}
+                  modalWithSafeAreaView={true}
+                />
+              </View>
+            ) : null}
+            <View style={{ marginBottom: 10 }}>
               <SectionedMultiSelect
                 colors={components.multiSelect.colors}
                 styles={components.multiSelect.styles}
-                items={searchTargetOptions}
+                items={mappedTags}
                 IconRenderer={MultiSelectIcon as any}
                 uniqueKey="key"
                 displayKey="value"
                 subKey="children"
                 searchPlaceholderText="Enter Text"
-                selectText={searchTargetOptions.find((target) => target.key === searchTarget)?.value || 'Content Types'}
+                selectText="Select Tags"
                 confirmText="Done"
-                onSelectedItemsChange={onSelectedSearchTargetChange}
-                selectedItems={searchTarget}
-                single={true}
+                onSelectedItemsChange={updateSearchTags}
+                selectedItems={searchTags}
                 hideSearch={true}
+                showRemoveAll={true}
                 expandDropDowns={false}
                 readOnlyHeadings={false}
-                showDropDowns={false}
-                showChips={false}
-                parentChipsRemoveChildren={false}
+                showDropDowns={true}
+                parentChipsRemoveChildren={true}
                 showCancelButton={true}
                 modalWithTouchable={false}
-                modalWithSafeAreaView={true}
+                modalWithSafeAreaView={false}
               />
-            ) : null}
-            <SectionedMultiSelect
-              colors={components.multiSelect.colors}
-              styles={components.multiSelect.styles}
-              items={mappedTags}
-              IconRenderer={MultiSelectIcon as any}
-              uniqueKey="key"
-              displayKey="value"
-              subKey="children"
-              searchPlaceholderText="Enter Text"
-              selectText="Select Tags"
-              confirmText="Done"
-              onSelectedItemsChange={updateSearchTags}
-              selectedItems={searchTags}
-              hideSearch={true}
-              showRemoveAll={true}
-              expandDropDowns={false}
-              readOnlyHeadings={false}
-              showDropDowns={true}
-              parentChipsRemoveChildren={true}
-              showCancelButton={true}
-              modalWithTouchable={false}
-              modalWithSafeAreaView={false}
-            />
+            </View>
             {showNetworkContentSwitch ? (
               <>
                 <Divider style={{ marginBottom: 10 }} />
@@ -192,11 +198,11 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 primaryLabel="Apply"
                 primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
                 showSecondary={false}
-                containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
+                containerStyles={{ marginHorizontal: 0, marginTop: showNetworkContentSwitch ? 15 : 0 }}
                 onPrimaryClicked={() => submitSearch()}
               />
             ) : null}
-            <Divider style={{ marginTop: 15 }} />
+            <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
           </>
         ) : null}
         <WrappedComponent

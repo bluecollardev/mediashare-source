@@ -100,6 +100,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           loaded={loaded}
           loadData={loadData}
           defaultSearchTarget="playlists"
+          showSearchTargetField={true}
           forcedSearchMode={true}
           key={clearSelectionKey}
           list={searchResults}
@@ -120,10 +121,10 @@ export const Search = ({ globalState }: PageProps & any) => {
                   await loadData();
                 }}
               />
-              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              {/*<Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyAdded list={searchResults} />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-              <RecentlyPlayed list={searchResults} />
+              <RecentlyPlayed list={searchResults} />*/}
             </ScrollView>
           ) : globalState?.searchIsFiltering(searchKey) === true && searchResults?.length === 0 ? (
             <>
