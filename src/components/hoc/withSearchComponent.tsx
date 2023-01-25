@@ -62,7 +62,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const shouldShowApplyButton = () => {
       const textChanged = searchFilters?.text != searchText;
       const tagsChanged = JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags);
-      const targetChanged = searchFilters?.target !== searchTarget;
+      const targetChanged = searchFilters?.target !== searchTarget?.[0];
       const networkContentChanged = searchFilters?.networkContent !== includeNetworkContent;
       return textChanged || tagsChanged || targetChanged || networkContentChanged;
     }
@@ -116,7 +116,6 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
           <>
-            
             <View style={{ marginBottom: 10 }}>
               <Searchbar
                 style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
@@ -128,7 +127,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 autoCapitalize="none"
               />
             </View>
-            {shouldShowApplyButton() ? (
+            {shouldShowApplyButton() === true ? (
               <>
                 {showSearchTargetField ? (
                   <View style={{ marginBottom: 0 }}>
