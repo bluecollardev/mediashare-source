@@ -11,7 +11,7 @@ import { FAB, Divider, Card, IconButton } from 'react-native-paper';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { useRouteWithParams, useViewProfileById } from 'mediashare/hooks/navigation';
 import { useUser } from 'mediashare/hooks/useUser';
-import { useSnack } from 'mediashare/hooks/useSnack'
+import { useSnack } from 'mediashare/hooks/useSnack';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageActions, PageProps, ContactList, ActionButtons, AppDialog } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
