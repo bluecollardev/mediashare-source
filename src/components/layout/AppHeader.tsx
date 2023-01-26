@@ -129,7 +129,7 @@ const AppHeaderComponent = ({
   }
   
   function handleBackAction(e) {
-    if (route.name === 'addSelectedToPlaylist') {
+    if (route.name === 'chooseMediaForPlaylist') {
       globalState?.updateSearchFilters (route.name, INITIAL_SEARCH_FILTERS);
       globalState?.setSearchIsActive(route.name, false);
     }

@@ -58,7 +58,7 @@ const PlaylistItemEdit = ({
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialPlaylistItemTags);
 
   const [documentUri] = useState(playlistItem?.uri);
-  const [image, setImage] = useState(playlistItem?.image);
+  const [image, setImage] = useState(playlistItem?.imageSrc);
 
   useEffect(() => {
     if (playlistItem) {
@@ -178,7 +178,7 @@ const PlaylistItemEdit = ({
       _id: playlistItemId,
       title,
       description,
-      image,
+      imageSrc: image,
       isPlayable: true,
       visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],

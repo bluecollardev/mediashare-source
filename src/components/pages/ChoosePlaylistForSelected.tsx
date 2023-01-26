@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
+import { findUserPlaylists, getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
 import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
 import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
@@ -15,7 +16,6 @@ import {
   PageContainer,
   PageActions,
   PageProps,
-  PageContent,
   ActionButtons,
   MediaListType,
   MediaListItem,
@@ -25,7 +25,7 @@ import {
 
 import { theme } from 'mediashare/styles';
 
-export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, removeItem }) => {
+export const ChoosePlaylistForSelectedComponent = ({ entities, viewMediaItem, addItem, removeItem }) => {
   return <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
 
   function renderVirtualizedListItem(item) {
@@ -53,23 +53,17 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
   }
 };
 
-const AddToPlaylistComponentWithSearch = withSearchComponent(AddToPlaylistComponent, 'addSelectedToPlaylist');
+const ChoosePlaylistForSelectedWithSearch = withSearchComponent(ChoosePlaylistForSelectedComponent, 'choosePlaylistForSelected');
 
-export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
-  const { playlistId } = route.params;
-
+export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => {
   const dispatch = useDispatch();
   const viewMediaItem = useViewMediaItemById();
   const goBack = useGoBack();
-
-  const playlist = useAppSelector((state) => state?.playlist?.selected);
   
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(refresh, [dispatch]);
-  // @ts-ignore
-  const [mediaItems, setMediaItems] = useState((playlist?.mediaItems as MediaListType[]) || []);
-
-  const { loading, loaded, entities = [] as any[] } = useAppSelector((state) => state?.mediaItems);
+  
+  const { entities = [] as any[], selected = [] as any[], loaded, loading } = useAppSelector((state) => state?.userPlaylists);
 
   useEffect(() => {
     loadData().then();
@@ -78,7 +72,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        <AddToPlaylistComponentWithSearch
+        <ChoosePlaylistForSelectedWithSearch
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
@@ -87,32 +81,29 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
           viewMediaItem={viewMediaItem}
           addItem={addItem}
           removeItem={removeItem}
-          showNetworkContentSwitch={true}
         />
+        {/* TODO: Add to NEW playlist */}
         {loaded && entities.length === 0 ? (
-          <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
+          <NoContent onPress={() => undefined} messageButtonText="There are no playlists to add to." icon="info" />
         ) : null}
       </KeyboardAvoidingPageContent>
       <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Save" onSecondaryClicked={cancel} />
+        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} />
       </PageActions>
     </PageContainer>
   );
 
   async function loadData() {
-    const search = globalState?.getSearchFilters('addSelectedToPlaylist');
+    const search = globalState?.getSearchFilters('playlists');
     const args = {
-      target: search?.target ? search.target : '',
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
     };
-
-    await dispatch(getPlaylistById(playlistId));
-    const searchArgs = (args.text || args.tags.length > 0) ? args : {};
-    if (search?.networkContent === true) {
-      await dispatch(searchMediaItems(searchArgs));
+  
+    if (args.text || args.tags.length > 0) {
+      await dispatch(findUserPlaylists(args));
     } else {
-      await dispatch(findMediaItems(searchArgs));
+      await dispatch(getUserPlaylists());
     }
   }
 
@@ -125,12 +116,12 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   }
 
   function updateMediaItemsList(bool: boolean, mediaItem: MediaListType) {
-    const filtered = bool ? mediaItems.concat([mediaItem]) : mediaItems.filter((item) => item._id !== mediaItem._id);
-    setMediaItems(filtered);
+    // const filtered = bool ? mediaItems.concat([mediaItem]) : mediaItems.filter((item) => item._id !== mediaItem._id);
+    // setMediaItems(filtered);
   }
 
   async function saveItems() {
-    const { visibility, tags } = playlist as any;
+    /* const { visibility, tags } = playlist as any;
     const dto: UpdatePlaylistDto = {
       mediaIds: mediaItems.map((item) => item._id),
       description: playlist.description,
@@ -143,7 +134,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
     };
     await dispatch(updateUserPlaylist(dto));
     await dispatch(getPlaylistById(playlistId));
-    goBack();
+    goBack(); */
   }
   
   async function refresh() {
@@ -166,4 +157,4 @@ const styles = StyleSheet.create({
 
 export default withLoadingSpinner((state) => {
   return !!state?.mediaItems?.loading || false;
-})(withGlobalStateConsumer(AddSelectedToPlaylist));
+})(withGlobalStateConsumer(ChoosePlaylistForSelected));

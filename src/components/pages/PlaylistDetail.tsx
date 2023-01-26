@@ -52,11 +52,11 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const { playlistId = '', disableEdit = false, disableControls = false } = route?.params || {};
 
   const edit = useRouteWithParams(routeNames.playlistEdit);
-  const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
+  const addToPlaylist = useRouteWithParams(routeNames.chooseMediaForPlaylist);
   const viewMediaItemById = useViewMediaItemById();
   const viewPlaylistItemById = useViewPlaylistItemById();
   const editPlaylistItemById = useEditPlaylistItemById();
-  const goToShareWith = useRouteName(routeNames.shareWith);
+  const goToSharePlaylistsWith = useRouteName(routeNames.sharePlaylistsWith);
   const goToPlaylists = usePlaylists();
   const playFromBeginning = useViewPlaylistItemById();
   const { element, onToggleSnackBar, setMessage } = useSnack();
@@ -219,7 +219,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
                 secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
                 disablePrimary={actionMode === actionModes.delete}
-                primaryLabel="Add Items To Playlist"
+                primaryLabel="Add Playlist Items"
                 primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
                 onPrimaryClicked={() => addToPlaylist({ playlistId })}
               />
@@ -276,7 +276,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
 
   async function sharePlaylist() {
     await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistResponseDto }));
-    goToShareWith();
+    goToSharePlaylistsWith();
   }
   
   async function clonePlaylist() {

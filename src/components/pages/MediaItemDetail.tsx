@@ -17,7 +17,7 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
     authorProfile = {} as AuthorProfileDto,
     createdBy,
     description = '',
-    image,
+    imageSrc,
     uri,
     visibility,
     shareCount = 0,
@@ -40,7 +40,7 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
             description={description}
             mediaSrc={uri}
             showImage={true}
-            image={image}
+            image={imageSrc}
             imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,

@@ -39,7 +39,7 @@ const actionModes = { delete: 'delete', default: 'default' };
 const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PageProps) => {
   const dispatch = useDispatch();
 
-  const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
+  const addToPlaylist = useRouteWithParams(routeNames.chooseMediaForPlaylist);
   const viewMediaItem = useViewMediaItemById();
   const goToPlaylists = usePlaylists();
 
@@ -198,7 +198,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
               onSecondaryClicked={() => (!isSelectable ? activateDeleteMode() : cancelDeletePlaylistItems())}
               secondaryIconColor={isSelectable ? theme.colors.primary : theme.colors.disabled}
               disablePrimary={actionMode === actionModes.delete}
-              primaryLabel="Add Items To Playlist"
+              primaryLabel="Add Playlist Items"
               primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
               onPrimaryClicked={() => addToPlaylist({ playlistId })}
             />

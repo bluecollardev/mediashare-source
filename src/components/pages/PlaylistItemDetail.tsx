@@ -26,11 +26,11 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
   
   const { disableEdit = false } = route?.params || {};
   
-  // const addToPlaylist = useRouteWithParams(routeNames.addSelectedToPlaylist);
+  // const addToPlaylist = useRouteWithParams(routeNames.chooseMediaForPlaylist);
   const viewMediaItemById = useViewMediaItemById();
   const viewPlaylistItemById = useViewPlaylistItemById();
   const editPlaylistItemById = useEditPlaylistItemById();
-  // const goToShareWith = useRouteName(routeNames.shareWith);
+  // const goToSharePlaylistsWith = useRouteName(routeNames.sharePlaylistsWith);
   // const goToPlaylists = usePlaylists();
   // const playFromBeginning = useViewPlaylistItemById();
   

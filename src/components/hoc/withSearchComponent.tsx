@@ -48,7 +48,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
     const [isLoaded, setIsLoaded] = useState(true);
-    const displaySearch = searchIsActive(searchKey);
+    const searchActive = searchIsActive(searchKey);
     const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
 
@@ -75,14 +75,14 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     
     useEffect(() => {
       // Only update state if component is mounted
-      if (displaySearch === false) {
+      if (searchActive === false) {
         loadData().then(() => {
           if (!isMountedRef.current) return;
           updateSearchText('');
           updateSearchTags([]);
         });
       }
-    }, [displaySearch])
+    }, [searchActive])
   
     useEffect(() => {
       if (!loaded || !isLoaded) {
@@ -114,8 +114,8 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     
     return (
       <>
-        {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
-          <>
+        <>
+          {(forcedSearchMode ? forcedSearchMode : searchActive) ? (
             <View style={{ marginBottom: 10 }}>
               <Searchbar
                 style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
@@ -127,87 +127,92 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 autoCapitalize="none"
               />
             </View>
-            {shouldShowApplyButton() === true ? (
-              <>
-                {showSearchTargetField ? (
-                  <View style={{ marginBottom: 0 }}>
-                    <SectionedMultiSelect
-                      colors={components.multiSelect.colors}
-                      styles={components.multiSelect.styles}
-                      items={searchTargetOptions}
-                      IconRenderer={MultiSelectIcon as any}
-                      uniqueKey="key"
-                      displayKey="value"
-                      subKey="children"
-                      searchPlaceholderText="Enter Text"
-                      selectText={searchTargetOptions.find((target) => target.key === searchTarget?.[0])?.value || 'Content Types'}
-                      confirmText="Done"
-                      onSelectedItemsChange={onSelectedSearchTargetChange}
-                      selectedItems={searchTarget}
-                      single={true}
-                      hideSearch={true}
-                      expandDropDowns={false}
-                      readOnlyHeadings={false}
-                      showDropDowns={false}
-                      showChips={false}
-                      parentChipsRemoveChildren={false}
-                      showCancelButton={true}
-                      modalWithTouchable={false}
-                      modalWithSafeAreaView={true}
-                    />
-                  </View>
-                ) : null}
-                <View style={{ marginBottom: 10 }}>
+          ) : null}
+          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+            <>
+              {showSearchTargetField ? (
+                <View style={{ marginBottom: 0 }}>
                   <SectionedMultiSelect
                     colors={components.multiSelect.colors}
                     styles={components.multiSelect.styles}
-                    items={mappedTags}
+                    items={searchTargetOptions}
                     IconRenderer={MultiSelectIcon as any}
                     uniqueKey="key"
                     displayKey="value"
                     subKey="children"
                     searchPlaceholderText="Enter Text"
-                    selectText="Select Tags"
+                    selectText={searchTargetOptions.find((target) => target.key === searchTarget?.[0])?.value || 'Content Types'}
                     confirmText="Done"
-                    onSelectedItemsChange={updateSearchTags}
-                    selectedItems={searchTags}
+                    onSelectedItemsChange={onSelectedSearchTargetChange}
+                    selectedItems={searchTarget}
+                    single={true}
                     hideSearch={true}
-                    showRemoveAll={true}
                     expandDropDowns={false}
                     readOnlyHeadings={false}
-                    showDropDowns={true}
-                    parentChipsRemoveChildren={true}
+                    showDropDowns={false}
+                    showChips={false}
+                    parentChipsRemoveChildren={false}
                     showCancelButton={true}
                     modalWithTouchable={false}
-                    modalWithSafeAreaView={false}
+                    modalWithSafeAreaView={true}
                   />
                 </View>
-                {showNetworkContentSwitch ? (
-                  <>
-                    <Divider style={{ marginBottom: 10 }} />
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                      <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
-                        <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
-                      </View>
-                      <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
-                        <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
-                      </View>
-                    </View>
-                  </>
-                ) : null}
-                <ActionButtons
-                  loading={!isLoaded}
-                  primaryLabel="Apply"
-                  primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
-                  showSecondary={false}
-                  containerStyles={{ marginHorizontal: 0, marginTop: showNetworkContentSwitch ? 15 : 0 }}
-                  onPrimaryClicked={() => submitSearch()}
-                />
-                <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
-              </>
               ) : null}
-          </>
-        ) : null}
+              <View style={{ marginBottom: 10 }}>
+                <SectionedMultiSelect
+                  colors={components.multiSelect.colors}
+                  styles={components.multiSelect.styles}
+                  items={mappedTags}
+                  IconRenderer={MultiSelectIcon as any}
+                  uniqueKey="key"
+                  displayKey="value"
+                  subKey="children"
+                  searchPlaceholderText="Enter Text"
+                  selectText="Select Tags"
+                  confirmText="Done"
+                  onSelectedItemsChange={updateSearchTags}
+                  selectedItems={searchTags}
+                  hideSearch={true}
+                  showRemoveAll={true}
+                  expandDropDowns={false}
+                  readOnlyHeadings={false}
+                  showDropDowns={true}
+                  parentChipsRemoveChildren={true}
+                  showCancelButton={true}
+                  modalWithTouchable={false}
+                  modalWithSafeAreaView={false}
+                />
+              </View>
+              {showNetworkContentSwitch ? (
+                <>
+                  <Divider style={{ marginBottom: 10 }} />
+                  <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
+                      <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+                    </View>
+                    <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+                      <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+                    </View>
+                  </View>
+                </>
+              ) : null}
+              
+            </>
+            ) : null}
+          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+            <>
+              <ActionButtons
+                loading={!isLoaded}
+                primaryLabel="Apply"
+                primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
+                showSecondary={false}
+                containerStyles={{ marginHorizontal: 0, marginTop: showNetworkContentSwitch ? 15 : 0 }}
+                onPrimaryClicked={() => submitSearch()}
+              />
+              <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
+            </>
+          ) : null}
+        </>
         <WrappedComponent
           globalState={globalState}
           {...rest}
