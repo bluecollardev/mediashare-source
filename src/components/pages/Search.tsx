@@ -6,7 +6,7 @@ import { makeEnum } from 'mediashare/core/utils/factory';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { addUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
-import { clear, search as searchContent, select } from 'mediashare/store/modules/search'
+import { search as searchContent, select } from 'mediashare/store/modules/search';
 import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -299,7 +299,6 @@ export const Search = ({ globalState }: PageProps & any) => {
   }
 
   function clearCheckboxSelection() {
-    dispatch(clear());
     const randomKey = createRandomRenderKey();
     setClearSelectionKey(randomKey);
   }

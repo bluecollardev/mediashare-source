@@ -4,8 +4,8 @@ import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { findUserPlaylists, getUserPlaylists } from 'mediashare/store/modules/playlists';
-import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
-import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
+import { updateUserPlaylist } from 'mediashare/store/modules/playlist';
+import { clear } from 'mediashare/store/modules/search';
 import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -135,20 +135,17 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
         tags: selectedPlaylist.tags,
         title: selectedPlaylist.title,
         _id: selectedPlaylist._id,
-        mediaIds: [...selectedMediaIds]
+        mediaIds: [...(selectedPlaylist.mediaItems || []).map((item) => item._id), ...selectedMediaIds]
       };
-      console.log('dto');
-      console.log(dto);
-      await dispatch(updateUserPlaylist(dto));
+      return dispatch(updateUserPlaylist(dto));
     }
     
-    const updatePlaylists = selectedPlaylists.map(async (selectedPlaylist) => {
-      console.log('selectedPlaylist');
-      console.log(selectedPlaylist);
-      await updatePlaylist(selectedPlaylist);
+    const addSelectedItemsToPlaylists = selectedPlaylists.map(async (selectedPlaylist) => {
+      return await updatePlaylist(selectedPlaylist);
     });
-    
-    await Promise.all(updatePlaylists);
+  
+    await Promise.all(addSelectedItemsToPlaylists);
+    await dispatch(clear());
     await refresh();
     goBack();
   }
