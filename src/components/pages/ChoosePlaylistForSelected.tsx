@@ -64,7 +64,8 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
   const onRefresh = useCallback(refresh, [dispatch]);
   
   const { entities = [] as any[], loaded, loading } = useAppSelector((state) => state?.userPlaylists);
-  const { selected = [] as any[] } = useAppSelector((state) => state?.search);
+  const selectedMediaItems = useAppSelector((state) => state?.search)?.selected;
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   useEffect(() => {
     loadData().then();
@@ -89,7 +90,7 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
         ) : null}
       </KeyboardAvoidingPageContent>
       <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} />
+        <ActionButtons onPrimaryClicked={updatePlaylists} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} />
       </PageActions>
     </PageContainer>
   );
@@ -109,33 +110,47 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
   }
 
   function addItem(e) {
-    return updatePlaylistList(true, e);
+    return updateSelectedPlaylists(true, e);
   }
 
   function removeItem(e) {
-    return updatePlaylistList(false, e);
+    return updateSelectedPlaylists(false, e);
   }
 
-  function updatePlaylistList(bool: boolean, mediaItem: MediaListType) {
-    // const filtered = bool ? mediaItems.concat([mediaItem]) : mediaItems.filter((item) => item._id !== mediaItem._id);
-    // setMediaItems(filtered);
+  function updateSelectedPlaylists(bool: boolean, playlist: any) {
+    const filtered = bool ? selectedPlaylists.concat([playlist]) : selectedPlaylists.filter((item) => item._id !== playlist._id);
+    setSelectedPlaylists(filtered);
   }
 
-  async function saveItems() {
-    /* const { visibility, tags } = playlist as any;
-    const dto: UpdatePlaylistDto = {
-      mediaIds: mediaItems.map((item) => item._id),
-      description: playlist.description,
-      title: playlist.title,
-      visibility: visibility,
-      tags: tags,
-      _id: playlistId,
-      // @ts-ignore
-      imageSrc: playlist?.imageSrc,
-    };
-    await dispatch(updateUserPlaylist(dto));
-    await dispatch(getPlaylistById(playlistId));
-    goBack(); */
+  async function updatePlaylists() {
+    const selectedMediaIds = selectedMediaItems.map((item) => item._id);
+  
+    const updatePlaylist = async (selectedPlaylist) => {
+      const dto: UpdatePlaylistDto = {
+        // TODO: Get rid of everthing other than _id and mediaIds
+        //  To do that we need to make API update smarter...
+        // description: '', imageSrc: '', tags: undefined, title: '',
+        description: selectedPlaylist.description,
+        imageSrc: selectedPlaylist.imageSrc,
+        tags: selectedPlaylist.tags,
+        title: selectedPlaylist.title,
+        _id: selectedPlaylist._id,
+        mediaIds: [...selectedMediaIds]
+      };
+      console.log('dto');
+      console.log(dto);
+      await dispatch(updateUserPlaylist(dto));
+    }
+    
+    const updatePlaylists = selectedPlaylists.map(async (selectedPlaylist) => {
+      console.log('selectedPlaylist');
+      console.log(selectedPlaylist);
+      await updatePlaylist(selectedPlaylist);
+    });
+    
+    await Promise.all(updatePlaylists);
+    await refresh();
+    goBack();
   }
   
   async function refresh() {
