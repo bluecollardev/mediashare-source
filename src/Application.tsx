@@ -43,11 +43,12 @@ import PlaylistEdit from './components/pages/PlaylistEdit';
 import PlaylistDetail from './components/pages/PlaylistDetail';
 import PlaylistItemDetail from './components/pages/PlaylistItemDetail';
 import PlaylistItemEdit from './components/pages/PlaylistItemEdit';
-import AddSelectedToPlaylist from './components/pages/AddSelectedToPlaylist';
+import ChooseMediaForPlaylist from './components/pages/ChooseMediaForPlaylist';
+import ChoosePlaylistForSelected from './components/pages/ChoosePlaylistForSelected';
 import Media from './components/pages/Media';
 import MediaItemDetail from './components/pages/MediaItemDetail';
 import MediaItemEdit from './components/pages/MediaItemEdit';
-import ShareWith from './components/pages/ShareWith';
+import SharePlaylistsWith from './components/pages/SharePlaylistsWith';
 import Shared from './components/pages/Shared';
 import AccountEdit from './components/pages/AccountEdit';
 import Contact from './components/pages/Contact';
@@ -59,7 +60,7 @@ import { Auth } from 'aws-amplify';
 // Map route names to icons
 export const tabNavigationIconsMap = {
   Search: 'search',
-  Shared: 'share',
+  Network: 'share',
   Library: 'subscriptions',
 };
 
@@ -72,7 +73,7 @@ const FeedNavigation = () => {
       <FeedStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
       <FeedStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
       <FeedStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
-      <FeedStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
+      <FeedStackNavigator.Screen {...routeConfig.sharePlaylistsWith} component={SharePlaylistsWith} />
     </FeedStackNavigator.Navigator>
   );
 };
@@ -86,7 +87,9 @@ const SearchNavigation = () => {
       <SearchStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
       <SearchStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
       <SearchStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
-      <SearchStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
+      <SearchStackNavigator.Screen {...routeConfig.chooseMediaForPlaylist} component={ChooseMediaForPlaylist} />
+      <SearchStackNavigator.Screen {...routeConfig.choosePlaylistForSelected} component={ChoosePlaylistForSelected} />
+      <SearchStackNavigator.Screen {...routeConfig.sharePlaylistsWith} component={SharePlaylistsWith} />
     </SearchStackNavigator.Navigator>
   );
 };
@@ -95,13 +98,13 @@ const LibraryStackNavigator = createStackNavigator();
 const LibraryNavigation = () => {
   return (
     <LibraryStackNavigator.Navigator initialRouteName={'playlists'}>
-      <LibraryStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
+      <LibraryStackNavigator.Screen {...routeConfig.sharePlaylistsWith} component={SharePlaylistsWith} />
       <LibraryStackNavigator.Screen {...routeConfig.playlists} component={Playlists} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistAdd} component={PlaylistAdd} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistEdit} component={PlaylistEdit} />
       <LibraryStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
-      <LibraryStackNavigator.Screen {...routeConfig.addSelectedToPlaylist} component={AddSelectedToPlaylist} />
+      <LibraryStackNavigator.Screen {...routeConfig.chooseMediaForPlaylist} component={ChooseMediaForPlaylist} />
       <LibraryStackNavigator.Screen {...routeConfig.media} component={Media} />
       <LibraryStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
       <LibraryStackNavigator.Screen {...routeConfig.mediaItemEdit} component={MediaItemEdit} />
@@ -165,7 +168,7 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
   }
   return (
     <PrivateNavigator.Navigator
-      initialRouteName="Playlists"
+      initialRouteName="Search"
       activeColor={theme.colors.text}
       inactiveColor={theme.colors.primary}
       barStyle={{ backgroundColor: theme.colors.background }}
@@ -186,10 +189,10 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
         {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
         ) : null}
-        <PrivateNavigator.Screen name="Shared" component={NetworkNavigation} listeners={navigationTabListeners} />
         {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         ) : null}
+        <PrivateNavigator.Screen name="Network" component={NetworkNavigation} listeners={navigationTabListeners} />
       </>
     </PrivateNavigator.Navigator>
   );

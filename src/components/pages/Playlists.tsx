@@ -11,7 +11,7 @@ import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, StyleSheet } from 'react-native'
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
   PageContainer,
@@ -80,7 +80,7 @@ const PlaylistsComponentWithSearch = withSearchComponent(PlaylistsComponent, 'pl
 export const Playlists = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
 
-  const shareWith = useRouteName(routeNames.shareWith);
+  const sharePlaylistsWith = useRouteName(routeNames.sharePlaylistsWith);
   const createPlaylist = useRouteName(routeNames.playlistAdd);
   const viewMedia = useRouteName(routeNames.media);
   const viewPlaylist = useViewPlaylistById();
@@ -222,7 +222,7 @@ export const Playlists = ({ globalState }: PageProps) => {
     setActionMode(actionModes.default);
     clearCheckboxSelection();
     setIsSelectable(false);
-    shareWith();
+    sharePlaylistsWith();
   }
 
   function cancelPlaylistsToShare() {

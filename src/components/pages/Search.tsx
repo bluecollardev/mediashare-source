@@ -2,18 +2,22 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { search as searchContent, selectPlaylist } from 'mediashare/store/modules/search';
-import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { makeEnum } from 'mediashare/core/utils/factory';
+import { useSnack } from 'mediashare/hooks/useSnack';
+import { addUserPlaylist } from 'mediashare/store/modules/playlist';
+import { getUserPlaylists } from 'mediashare/store/modules/playlists';
+import { search as searchContent, select } from 'mediashare/store/modules/search';
+import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation'
-import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
+import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation';
+import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
-import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
-import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
+// import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
+// import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
 import { TagBlocks } from 'mediashare/components/layout/TagBlocks';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
@@ -67,7 +71,8 @@ export const SearchComponent = withSearchComponent(
   }
 , searchKey);
 
-const actionModes = { share: 'share', delete: 'delete', default: 'default' };
+const searchActionModes = ['add_to_playlist', 'add_to_library', 'share', 'delete', 'default'] as const;
+export const SearchActionModes = makeEnum(searchActionModes);
 
 // TODO: Add updateSearchText / updateSearchTags to some interface for withSearchComponent
 export const Search = ({ globalState }: PageProps & any) => {
@@ -75,17 +80,22 @@ export const Search = ({ globalState }: PageProps & any) => {
   
   const dispatch = useDispatch();
 
-  const shareWith = useRouteName(routeNames.shareWith);
+  const sharePlaylistsWith = useRouteName(routeNames.sharePlaylistsWith);
+  const choosePlaylist = useRouteName(routeNames.choosePlaylistForSelected);
   const viewPlaylist = useViewPlaylistById();
   const viewMediaItemById = useViewMediaItemById();
+  const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const [isSelectable, setIsSelectable] = useState(false);
-  const [actionMode, setActionMode] = useState(actionModes.default);
+  const [actionMode, setActionMode] = useState(SearchActionModes.default as string);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
   const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
+  
+  // const searchFilters = globalState?.getSearchFilters(searchKey);
+  const selectedItems = useAppSelector((state) => state?.search)?.selected;
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -96,11 +106,10 @@ export const Search = ({ globalState }: PageProps & any) => {
   const contentType = globalState?.getSearchFilters(searchKey)?.target;
   const fabActions =
     searchResults?.length > 0 ? [
-      // { icon: 'library-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
       ...(contentType === SupportedContentTypes.playlists
-        ? [{ icon: 'library-add', label: `Add to Library`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.success } }]
+        ? [{ icon: 'library-add', label: `Add to Library`, onPress: () => activateAddToLibraryMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }]
         : contentType === SupportedContentTypes.media
-          ? [{ icon: 'playlist-add', label: `Add to Playlist`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }]
+          ? [{ icon: 'playlist-add', label: `Add to Playlist`, onPress: () => activateAddToPlaylistMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }]
           : []),
         { icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
       ] : [];
@@ -118,6 +127,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           key={clearSelectionKey}
           list={searchResults}
           onViewDetailClicked={async (item) => {
+            // TODO: This naming is weird.... we should just use SupportedContentTypes
             if (item?.contentType === 'playlist') {
               await viewPlaylist({ playlistId: item._id });
             }
@@ -128,6 +138,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           }}
           selectable={isSelectable}
           showActions={!isSelectable}
+          // TODO: Need separate update methods for media items and playlists
           onChecked={updateSelection}
         />
         {!globalState.searchIsFiltering(searchKey) && searchResults.length === 0
@@ -154,11 +165,22 @@ export const Search = ({ globalState }: PageProps & any) => {
           ) : null
         }
       </KeyboardAvoidingPageContent>
-      {isSelectable && actionMode === actionModes.share ? (
+      {isSelectable && actionMode === SearchActionModes.share ? (
         <PageActions>
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
       ) : null}
+      {isSelectable && actionMode === SearchActionModes.addToPlaylist ? (
+        <PageActions>
+          <ActionButtons onPrimaryClicked={confirmAddToPlaylist} onSecondaryClicked={cancelAddToPlaylist} primaryLabel="Choose Playlist" primaryIcon="library-books" />
+        </PageActions>
+      ) : null}
+      {isSelectable && actionMode === SearchActionModes.addToLibrary ? (
+        <PageActions>
+          <ActionButtons onPrimaryClicked={confirmAddToLibrary} onSecondaryClicked={cancelAddToLibrary} primaryLabel="Add to Library" primaryIcon="video-library" />
+        </PageActions>
+      ) : null}
+      {element}
       {!isSelectable && searchResults?.length > 0 ? (
         <FAB.Group
           visible={true}
@@ -190,27 +212,90 @@ export const Search = ({ globalState }: PageProps & any) => {
     await loadData();
     setRefreshing(false);
   }
+  
+  function activateAddToPlaylistMode() {
+    setActionMode(SearchActionModes.addToPlaylist);
+    setIsSelectable(true);
+  }
+  
+  function confirmAddToPlaylist() {
+    setActionMode(SearchActionModes.default);
+    clearCheckboxSelection();
+    setIsSelectable(false);
+    choosePlaylist();
+  }
+  
+  function cancelAddToPlaylist() {
+    setActionMode(SearchActionModes.default);
+    clearCheckboxSelection();
+    setIsSelectable(false);
+  }
+  
+  function activateAddToLibraryMode() {
+    setActionMode(SearchActionModes.addToLibrary);
+    setIsSelectable(true);
+  }
+  
+  async function confirmAddToLibrary() {
+    await clonePlaylists(selectedItems);
+    setActionMode(SearchActionModes.default);
+    clearCheckboxSelection();
+    setIsSelectable(false);
+  }
+  
+  async function clonePlaylists(selectedItems: any[] = []) {
+    try {
+      const requests = selectedItems.map(async (selectedItem) => {
+        return clonePlaylist(selectedItem);
+      });
+      await Promise.all(requests);
+      setMessage(`Playlists added to library`);
+      onToggleSnackBar(true);
+      await dispatch(getUserPlaylists());
+      await loadData();
+    } catch (error) {
+      setMessage(error.message);
+      onToggleSnackBar(false);
+    }
+  }
+  
+  async function clonePlaylist(playlist) {
+    const dto: CreatePlaylistDto = {
+      ...playlist as CreatePlaylistDto,
+      _id: undefined,
+      cloneOf: playlist._id,
+      mediaIds: playlist.mediaItems.map(item => item._id),
+    } as CreatePlaylistDto;
+    
+    await dispatch(addUserPlaylist(dto));
+  }
+  
+  function cancelAddToLibrary() {
+    setActionMode(SearchActionModes.default);
+    clearCheckboxSelection();
+    setIsSelectable(false);
+  }
 
   function activateShareMode() {
-    setActionMode(actionModes.share);
+    setActionMode(SearchActionModes.share);
     setIsSelectable(true);
   }
 
   function confirmPlaylistsToShare() {
-    setActionMode(actionModes.default);
+    setActionMode(SearchActionModes.default);
     clearCheckboxSelection();
     setIsSelectable(false);
-    shareWith();
+    sharePlaylistsWith();
   }
 
   function cancelPlaylistsToShare() {
-    setActionMode(actionModes.default);
+    setActionMode(SearchActionModes.default);
     clearCheckboxSelection();
     setIsSelectable(false);
   }
 
   function updateSelection(bool, item) {
-    dispatch(selectPlaylist({ isChecked: bool, plist: item }));
+    dispatch(select({ isChecked: bool, plist: item }));
   }
 
   function clearCheckboxSelection() {
@@ -219,10 +304,13 @@ export const Search = ({ globalState }: PageProps & any) => {
   }
 };
 
+
+// @ts-ignore
 export default withLoadingSpinner((state) => {
   return !!state?.search?.loading || false;
 })(withGlobalStateConsumer(Search));
 
+// @ts-ignore
 const styles = StyleSheet.create({
   titleText: {
     marginBottom: 4,

@@ -78,15 +78,22 @@ const routeConfig = {
     name: 'addFromFeed',
     options: { title: 'Import From S3 Bucket', header: (props) => <AppHeader {...props} showAccount={true} /> },
   },
-  addSelectedToPlaylist: {
-    name: 'addSelectedToPlaylist',
+  chooseMediaForPlaylist: {
+    name: 'chooseMediaForPlaylist',
     options: {
-      title: 'Add Items To Playlist',
+      title: 'Add Playlist Items',
       header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="playlists" showAccount={true} />,
     },
   },
-  shareWith: {
-    name: 'shareWith',
+  choosePlaylistForSelected: {
+    name: 'choosePlaylistForSelected',
+    options: {
+      title: 'Choose Playlist',
+      header: (props) => <AppHeader {...props} searchable={true} defaultSearchTarget="playlists" showAccount={true} />,
+    },
+  },
+  sharePlaylistsWith: {
+    name: 'sharePlaylistsWith',
     options: {
       title: 'Share With',
       header: (props) => <AppHeader {...props} searchable={true} showAccount={true} />,

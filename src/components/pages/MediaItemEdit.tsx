@@ -57,7 +57,7 @@ const MediaItemEdit = ({
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialMediaItemTags);
 
   const [documentUri] = useState(mediaItem?.uri);
-  const [image, setImage] = useState(mediaItem?.image);
+  const [image, setImage] = useState(mediaItem?.imageSrc);
   const viewMediaItems = useMediaItems();
 
   useEffect(() => {
@@ -182,7 +182,7 @@ const MediaItemEdit = ({
       _id: mediaId,
       title,
       description,
-      image,
+      imageSrc: image,
       isPlayable: true,
       visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],
