@@ -63,7 +63,8 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(refresh, [dispatch]);
   
-  const { entities = [] as any[], selected = [] as any[], loaded, loading } = useAppSelector((state) => state?.userPlaylists);
+  const { entities = [] as any[], loaded, loading } = useAppSelector((state) => state?.userPlaylists);
+  const { selected = [] as any[] } = useAppSelector((state) => state?.search);
 
   useEffect(() => {
     loadData().then();
@@ -94,7 +95,7 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
   );
 
   async function loadData() {
-    const search = globalState?.getSearchFilters('playlists');
+    const search = globalState?.getSearchFilters('choosePlaylistForSelected');
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
@@ -108,14 +109,14 @@ export const ChoosePlaylistForSelected = ({ route, globalState }: PageProps) => 
   }
 
   function addItem(e) {
-    return updateMediaItemsList(true, e);
+    return updatePlaylistList(true, e);
   }
 
   function removeItem(e) {
-    return updateMediaItemsList(false, e);
+    return updatePlaylistList(false, e);
   }
 
-  function updateMediaItemsList(bool: boolean, mediaItem: MediaListType) {
+  function updatePlaylistList(bool: boolean, mediaItem: MediaListType) {
     // const filtered = bool ? mediaItems.concat([mediaItem]) : mediaItems.filter((item) => item._id !== mediaItem._id);
     // setMediaItems(filtered);
   }
