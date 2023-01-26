@@ -84,6 +84,8 @@ const SearchNavigation = () => {
       <SearchStackNavigator.Screen {...routeConfig.search} component={Search} />
       <SearchStackNavigator.Screen {...routeConfig.playlistDetail} component={PlaylistDetail} />
       <SearchStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
+      <SearchStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
+      <SearchStackNavigator.Screen {...routeConfig.playlistItemEdit} component={PlaylistItemEdit} />
       <SearchStackNavigator.Screen {...routeConfig.shareWith} component={ShareWith} />
     </SearchStackNavigator.Navigator>
   );

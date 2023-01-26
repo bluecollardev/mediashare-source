@@ -54,7 +54,7 @@ export const Feed = ({
               globalState={globalState}
               loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
               loadData={loadData}
-              searchTarget="playlists"
+              defaultSearchTarget="playlists"
               list={list}
               tags={tags}
             />

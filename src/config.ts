@@ -9,7 +9,7 @@ const environments = {
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
-    ThumbnailRoot: 'thumbnails/',
+    ImageRoot: 'thumbnails/',
     AwsUrl: Constants.expoConfig.extra?.awsUrl,
     MaxUpload: 104857600,
   },
@@ -20,7 +20,7 @@ const environments = {
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
-    ThumbnailRoot: 'thumbnails/',
+    ImageRoot: 'thumbnails/',
     AwsUrl: Constants.expoConfig.extra?.awsUrl,
     MaxUpload: 104857600,
   },
@@ -31,7 +31,7 @@ const environments = {
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
-    ThumbnailRoot: 'thumbnails/',
+    ImageRoot: 'thumbnails/',
     AwsUrl: Constants.expoConfig.extra?.awsUrl,
     MaxUpload: 104857600,
   }
@@ -42,7 +42,7 @@ const commonConfigs = {
   facebookAppId: '189foo bar884439',
 }
 
-const env = 'default'; // Updates.releaseChannel || 'default';
+const env = 'staging'; // Updates.releaseChannel || 'default';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {

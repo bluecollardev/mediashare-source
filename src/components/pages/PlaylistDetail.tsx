@@ -122,8 +122,8 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     ];
   } else {
     fabActions = [
+      { icon: 'library-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
       { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
-      { icon: 'playlist-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } }
     ];
   }
 
@@ -180,9 +180,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             title={title}
             authorProfile={authorProfile}
             description={description}
-            showThumbnail={true}
-            thumbnail={imageSrc}
-            thumbnailStyle={{
+            showImage={true}
+            image={imageSrc}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 16 / 9,
             }}
@@ -201,7 +201,11 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 showSecondary={false}
                 showPrimary={true}
                 onPrimaryClicked={async () => {
-                  await playFromBeginning ({ mediaId: playlistMediaItems[0]._id, uri: playlistMediaItems[0].uri });
+                  await playFromBeginning ({
+                    playlistItemId: playlistMediaItems[0].playlistItemId,
+                    mediaId: playlistMediaItems[0].mediaItemId,
+                    uri: playlistMediaItems[0].uri
+                  });
                 }}
                 primaryLabel="Play from Beginning"
                 primaryIcon="live-tv"
@@ -223,7 +227,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
             <MediaList
               key={clearSelectionKey}
               list={playlistMediaItems}
-              showThumbnail={true}
+              showImage={true}
               selectable={isSelectable}
               showActions={!isSelectable && !disableControls}
               onViewDetail={!disableControls ? activatePlaylistDetail : undefined}

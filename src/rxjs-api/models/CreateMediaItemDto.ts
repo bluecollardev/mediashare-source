@@ -45,7 +45,7 @@ export interface CreateMediaItemDto {
      * @type {string}
      * @memberof CreateMediaItemDto
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof CreateMediaItemDto

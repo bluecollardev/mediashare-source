@@ -44,7 +44,7 @@ function apiFactory() {
           COOKIE = cookie ? cookie : COOKIE;
           TOKEN = token ? token : TOKEN;
           ID_TOKEN = idToken ? idToken : ID_TOKEN;
-          console.log(TOKEN);
+          // console.log(TOKEN);
         } catch (err) {
           console.log(`[cookieMiddleware.post] Middleware error`);
           console.log(err);

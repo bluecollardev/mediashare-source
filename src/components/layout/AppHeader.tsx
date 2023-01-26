@@ -1,20 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { NavigationScreenProp } from 'react-navigation';
 import { useRoute } from '@react-navigation/native';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
-import { withGlobalStateConsumer, GlobalStateProps, INITIAL_SEARCH_FILTERS } from 'mediashare/core/globalState'
+import { withGlobalStateConsumer, GlobalStateProps, INITIAL_SEARCH_FILTERS } from 'mediashare/core/globalState';
 import { useGoToAccount } from 'mediashare/hooks/navigation';
-import { logout } from 'mediashare/store/modules/user'
+import { logout } from 'mediashare/store/modules/user';
 import { theme } from 'mediashare/styles';
+import { SupportedContentTypes } from 'mediashare/components/hoc/withSearchComponent';
 
 export interface AppHeaderProps {
   options?: any;
   back?: any;
   navigation?: NavigationScreenProp<any, any>;
   searchable?: boolean;
-  searchTarget?: 'playlists' | 'media' | undefined;
+  defaultSearchTarget?: typeof SupportedContentTypes;
   showLogout?: boolean;
   showAccount?: boolean;
   showNotifications?: boolean;
@@ -72,7 +73,6 @@ const AppHeaderComponent = ({
       setUnreadNofifications(false);
     }
   };
-
   
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>

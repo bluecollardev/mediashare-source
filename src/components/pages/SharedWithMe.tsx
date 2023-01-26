@@ -58,8 +58,8 @@ export const SharedBlock = ({ globalState }) => {
               title={title}
               authorProfile={authorProfile}
               description={shortenText(description, 200)}
-              thumbnail={imageSrc}
-              showThumbnail={true}
+              image={imageSrc}
+              showImage={true}
               visibility={visibility}
               availableTags={mappedTags}
               tags={tagKeys}

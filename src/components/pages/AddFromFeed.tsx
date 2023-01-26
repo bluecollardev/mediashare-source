@@ -88,7 +88,7 @@ export const AddFromFeed = ({ navigation, globalState }: PageProps) => {
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
-          searchTarget="media"
+          defaultSearchTarget="media"
           // key={clearSelectionKey}
           navigation={navigation}
           list={entities}

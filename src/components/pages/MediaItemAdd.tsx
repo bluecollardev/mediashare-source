@@ -38,7 +38,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialTagKeys);
 
   const [mediaUri, setMediaUri] = useState('');
-  const [thumbnail, setThumbnail] = useState(null);
+  const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   // const mediaSrc = useAppSelector((state) => state?.mediaItem?.mediaSrc);
   const isValid = function () {
@@ -60,8 +60,8 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
             title={title}
             description={description}
             mediaSrc={mediaUri}
-            showThumbnail={!!mediaUri}
-            thumbnail={thumbnail}
+            showImage={!!mediaUri}
+            image={image}
             visibility={visibility}
             visibilityOptions={options}
             onVisibilityChange={(e: any) => {
@@ -120,7 +120,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
       title,
       description,
       summary: '',
-      thumbnail: thumbnail,
+      image: image,
       isPlayable: true,
       uri: mediaUri,
       visibility: MediaVisibilityType[visibility],
@@ -133,7 +133,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
     setVisibility(MediaVisibilityType.Private);
     setSelectedTagKeys([]);
     setDescription('');
-    setThumbnail('');
+    setImage('');
     setIsSaved(false);
     goToMediaItems();
   }
@@ -143,7 +143,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
     setVisibility(MediaVisibilityType.Private);
     setSelectedTagKeys([] as any[]);
     setDescription('');
-    setThumbnail('');
+    setImage('');
   }
 
   function clearAndGoBack() {

@@ -13,7 +13,7 @@ import { theme } from 'mediashare/styles';
 interface MediaListProps {
   list: MediaListType[];
   showActions?: boolean;
-  showThumbnail?: boolean;
+  showImage?: boolean;
   addItem?: (item?: MediaListType) => void;
   removeItem?: (item?: MediaListType) => void;
   onViewDetail?: (item: MediaListType) => void;
@@ -23,7 +23,7 @@ interface MediaListProps {
 
 export const MediaList = ({
   list,
-  showThumbnail,
+  showImage,
   showActions = true,
   addItem = () => {},
   removeItem = () => {},
@@ -34,8 +34,8 @@ export const MediaList = ({
   return (
     <View style={{ marginBottom: 25 }}>
       {list.map((item, idx, arr) => {
-        // const { _id, title, description, thumbnail } = item;
-        const { _id, title, thumbnail } = item;
+        // const { _id, title, description, image } = item;
+        const { _id, title, imageSrc } = item;
         return (
           <View key={`item_${_id}`}>
             <MediaListItem
@@ -46,9 +46,9 @@ export const MediaList = ({
                   <Text style={defaultStyles.description}>{shortenText(description || '', 80)}</Text>
                 </>
               } */
-              image={thumbnail}
+              image={imageSrc}
               selectable={selectable}
-              showThumbnail={showThumbnail}
+              showImage={showImage}
               showPlayableIcon={false}
               showActions={showActions}
               onChecked={(v) => (v ? addItem(item) : removeItem(item))}

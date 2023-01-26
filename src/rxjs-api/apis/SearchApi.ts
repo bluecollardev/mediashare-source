@@ -12,12 +12,13 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, HttpQuery, OperationOpts, RawAjaxResponse } from '../runtime';
+import { BaseAPI, HttpHeaders, HttpQuery, throwIfNullOrUndefined, OperationOpts, RawAjaxResponse } from '../runtime';
 import {
     PlaylistResponseDto,
 } from '../models';
 
 export interface SearchControllerFindAllRequest {
+    target: string;
     text?: string;
     tags?: Array<string>;
 }
@@ -29,15 +30,18 @@ export class SearchApi extends BaseAPI {
 
     /**
      */
-    searchControllerFindAll({ text, tags }: SearchControllerFindAllRequest): Observable<Array<PlaylistResponseDto>>
-    searchControllerFindAll({ text, tags }: SearchControllerFindAllRequest, opts?: OperationOpts): Observable<RawAjaxResponse<Array<PlaylistResponseDto>>>
-    searchControllerFindAll({ text, tags }: SearchControllerFindAllRequest, opts?: OperationOpts): Observable<Array<PlaylistResponseDto> | RawAjaxResponse<Array<PlaylistResponseDto>>> {
+    searchControllerFindAll({ target, text, tags }: SearchControllerFindAllRequest): Observable<Array<PlaylistResponseDto>>
+    searchControllerFindAll({ target, text, tags }: SearchControllerFindAllRequest, opts?: OperationOpts): Observable<RawAjaxResponse<Array<PlaylistResponseDto>>>
+    searchControllerFindAll({ target, text, tags }: SearchControllerFindAllRequest, opts?: OperationOpts): Observable<Array<PlaylistResponseDto> | RawAjaxResponse<Array<PlaylistResponseDto>>> {
+        throwIfNullOrUndefined(target, 'target', 'searchControllerFindAll');
 
         const headers: HttpHeaders = {
             ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {};
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'target': target,
+        };
 
         if (text != null) { query['text'] = text; }
         if (tags != null) { query['tags'] = tags; }

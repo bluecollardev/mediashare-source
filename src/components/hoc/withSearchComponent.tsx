@@ -1,20 +1,26 @@
-import { ActionButtons } from 'mediashare/components/layout';
-import { useIsMounted } from 'mediashare/hooks/useIsMounted'
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Text, View } from 'react-native';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
+import { ActionButtons } from 'mediashare/components/layout';
+import { makeEnum } from 'mediashare/core/utils/factory';
+import { useIsMounted } from 'mediashare/hooks/useIsMounted';
 import { GlobalStateProps } from 'mediashare/core/globalState';
 import { Divider, Searchbar, Switch } from 'react-native-paper'
 import { components, theme } from 'mediashare/styles';
+
+const supportedContentTypes = ['playlists', 'media', 'all'] as const;
+export const SupportedContentTypes = makeEnum(supportedContentTypes);
 
 export interface PlaylistSearchProps {
   globalState?: GlobalStateProps;
   loaded: boolean;
   loadData: () => Promise<void>;
-  searchTarget: 'playlists' | 'media';
   forcedSearchMode?: boolean;
+  defaultSearchTarget: typeof SupportedContentTypes;
+  showSearchTargetField?: boolean;
   networkContent?: boolean;
+  showNetworkContentSwitch?: boolean;
 }
 
 export const withSearchComponent = (WrappedComponent: any, searchKey: string) => {
@@ -27,8 +33,11 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     },
     loaded,
     loadData = () => undefined,
-    searchTarget,
     forcedSearchMode,
+    defaultSearchTarget,
+    // TODO: Set this to false!
+    showSearchTargetField = false,
+    networkContent = false,
     showNetworkContentSwitch = false,
     ...rest
   }: PlaylistSearchProps & any) {
@@ -40,18 +49,22 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
     const [isLoaded, setIsLoaded] = useState(true);
     const displaySearch = searchIsActive(searchKey);
-    const [includeNetworkContent, setIncludeNetworkContent] = useState(false);
+    const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
+    const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
-      if (searchTarget === 'playlists') return availableTags.filter((tag) => tag.isPlaylistTag);
-      if (searchTarget === 'media') return availableTags.filter((tag) => tag.isMediaTag);
+      if (searchTarget?.[0] === SupportedContentTypes.playlists) return availableTags.filter((tag) => tag.isPlaylistTag);
+      if (searchTarget?.[0] === SupportedContentTypes.media) return availableTags.filter((tag) => tag.isMediaTag);
       return availableTags;
     }, []);
-    
+    ``
     const shouldShowApplyButton = () => {
-      return (searchFilters?.text != searchText)
-      || (JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags));
+      const textChanged = searchFilters?.text != searchText;
+      const tagsChanged = JSON.stringify(searchFilters?.tags) !== JSON.stringify(searchTags);
+      const targetChanged = searchFilters?.target !== searchTarget?.[0];
+      const networkContentChanged = searchFilters?.networkContent !== includeNetworkContent;
+      return textChanged || tagsChanged || targetChanged || networkContentChanged;
     }
     
     useEffect(() => {
@@ -88,66 +101,111 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
         updateSearchTags(searchFilters.tags);
       }
     }, [searchFilters]);
+    
+    const onSelectedSearchTargetChange = (searchTarget) => {
+      setSearchTarget(searchTarget);
+    };
+    
+    const searchTargetOptions = [
+      { key: SupportedContentTypes.playlists, value: `Playlists` },
+      { key: SupportedContentTypes.media, value: `Media Items` },
+      { key: SupportedContentTypes.all, value: `All Types` },
+    ];
+    
     return (
       <>
         {(forcedSearchMode ? forcedSearchMode : displaySearch) ? (
           <>
-            <Searchbar
-              style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
-              inputStyle={{ fontSize: 15 }}
-              placeholder="Keywords"
-              value={searchText}
-              onChangeText={(text) => updateSearchText(text)}
-              clearIcon="clear"
-              autoCapitalize="none"
-            />
-            <SectionedMultiSelect
-              colors={components.multiSelect.colors}
-              styles={components.multiSelect.styles}
-              items={mappedTags}
-              IconRenderer={MultiSelectIcon as any}
-              uniqueKey="key"
-              displayKey="value"
-              subKey="children"
-              searchPlaceholderText="Enter Text"
-              selectText="Select Tags"
-              confirmText="Done"
-              onSelectedItemsChange={updateSearchTags}
-              selectedItems={searchTags}
-              hideSearch={true}
-              showRemoveAll={true}
-              expandDropDowns={false}
-              readOnlyHeadings={false}
-              showDropDowns={true}
-              parentChipsRemoveChildren={true}
-              showCancelButton={true}
-              modalWithTouchable={false}
-              modalWithSafeAreaView={false}
-            />
-            {showNetworkContentSwitch ? (
-              <>
-                <Divider style={{ marginBottom: 10 }} />
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
-                    <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
-                  </View>
-                  <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
-                    <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
-                  </View>
-                </View>
-              </>
-            ) : null}
-            {shouldShowApplyButton() ? (
-              <ActionButtons
-                loading={!isLoaded}
-                primaryLabel="Apply"
-                primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
-                showSecondary={false}
-                containerStyles={{ marginHorizontal: 0, marginTop: 15 }}
-                onPrimaryClicked={() => submitSearch()}
+            <View style={{ marginBottom: 10 }}>
+              <Searchbar
+                style={{ width: '100%', marginTop: 15, backgroundColor: theme.colors.surface }}
+                inputStyle={{ fontSize: 15 }}
+                placeholder="Keywords"
+                value={searchText}
+                onChangeText={(text) => updateSearchText(text)}
+                clearIcon="clear"
+                autoCapitalize="none"
               />
-            ) : null}
-            <Divider style={{ marginTop: 15 }} />
+            </View>
+            {shouldShowApplyButton() === true ? (
+              <>
+                {showSearchTargetField ? (
+                  <View style={{ marginBottom: 0 }}>
+                    <SectionedMultiSelect
+                      colors={components.multiSelect.colors}
+                      styles={components.multiSelect.styles}
+                      items={searchTargetOptions}
+                      IconRenderer={MultiSelectIcon as any}
+                      uniqueKey="key"
+                      displayKey="value"
+                      subKey="children"
+                      searchPlaceholderText="Enter Text"
+                      selectText={searchTargetOptions.find((target) => target.key === searchTarget?.[0])?.value || 'Content Types'}
+                      confirmText="Done"
+                      onSelectedItemsChange={onSelectedSearchTargetChange}
+                      selectedItems={searchTarget}
+                      single={true}
+                      hideSearch={true}
+                      expandDropDowns={false}
+                      readOnlyHeadings={false}
+                      showDropDowns={false}
+                      showChips={false}
+                      parentChipsRemoveChildren={false}
+                      showCancelButton={true}
+                      modalWithTouchable={false}
+                      modalWithSafeAreaView={true}
+                    />
+                  </View>
+                ) : null}
+                <View style={{ marginBottom: 10 }}>
+                  <SectionedMultiSelect
+                    colors={components.multiSelect.colors}
+                    styles={components.multiSelect.styles}
+                    items={mappedTags}
+                    IconRenderer={MultiSelectIcon as any}
+                    uniqueKey="key"
+                    displayKey="value"
+                    subKey="children"
+                    searchPlaceholderText="Enter Text"
+                    selectText="Select Tags"
+                    confirmText="Done"
+                    onSelectedItemsChange={updateSearchTags}
+                    selectedItems={searchTags}
+                    hideSearch={true}
+                    showRemoveAll={true}
+                    expandDropDowns={false}
+                    readOnlyHeadings={false}
+                    showDropDowns={true}
+                    parentChipsRemoveChildren={true}
+                    showCancelButton={true}
+                    modalWithTouchable={false}
+                    modalWithSafeAreaView={false}
+                  />
+                </View>
+                {showNetworkContentSwitch ? (
+                  <>
+                    <Divider style={{ marginBottom: 10 }} />
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
+                        <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+                      </View>
+                      <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
+                        <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
+                      </View>
+                    </View>
+                  </>
+                ) : null}
+                <ActionButtons
+                  loading={!isLoaded}
+                  primaryLabel="Apply"
+                  primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
+                  showSecondary={false}
+                  containerStyles={{ marginHorizontal: 0, marginTop: showNetworkContentSwitch ? 15 : 0 }}
+                  onPrimaryClicked={() => submitSearch()}
+                />
+                <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
+              </>
+              ) : null}
           </>
         ) : null}
         <WrappedComponent
@@ -179,7 +237,13 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
 
     function submitSearch() {
       // Update global search filters
-      const searchValue = { text: searchText, tags: [...searchTags] };
+      const searchValue = {
+        target: searchTarget?.[0] || '',
+        networkContent: includeNetworkContent,
+        text: searchText,
+        tags: [...searchTags]
+      };
+      console.log(`searching [${searchKey}] for ${JSON.stringify(searchValue, null, 2)}`);
       updateSearchFilters(searchKey, searchValue);
       setIsLoaded(false);
     }

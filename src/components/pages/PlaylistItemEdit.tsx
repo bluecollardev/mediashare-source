@@ -58,7 +58,7 @@ const PlaylistItemEdit = ({
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialPlaylistItemTags);
 
   const [documentUri] = useState(playlistItem?.uri);
-  const [thumbnail, setThumbnail] = useState(playlistItem?.thumbnail);
+  const [image, setImage] = useState(playlistItem?.image);
 
   useEffect(() => {
     if (playlistItem) {
@@ -95,9 +95,9 @@ const PlaylistItemEdit = ({
             description={description}
             sortIndex={String(sortIndex)}
             mediaSrc={documentUri}
-            showThumbnail={true}
-            thumbnail={thumbnail}
-            thumbnailStyle={{
+            showImage={true}
+            image={image}
+            imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 1 / 1,
             }}
@@ -133,7 +133,7 @@ const PlaylistItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <ExpoUploader uploadMode="photo" onUploadComplete={setThumbnail}>
+                  <ExpoUploader uploadMode="photo" onUploadComplete={setImage}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -178,7 +178,7 @@ const PlaylistItemEdit = ({
       _id: playlistItemId,
       title,
       description,
-      thumbnail,
+      image,
       isPlayable: true,
       visibility: MediaVisibilityType[visibility as any],
       tags: selectedTags || [],

@@ -70,7 +70,7 @@ export interface MediaItem {
      * @type {string}
      * @memberof MediaItem
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof MediaItem

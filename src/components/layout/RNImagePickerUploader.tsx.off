@@ -2,9 +2,9 @@
 import { useDispatch } from 'react-redux';
 import Config from 'mediashare/config';
 
-import { thumbnailRoot, awsUrl } from 'mediashare/core/aws/key-factory';
+import { imageRoot, awsUrl } from 'mediashare/core/aws/key-factory';
 import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
-import { createThumbnail } from 'mediashare/store/modules/mediaItem';
+import { createImage } from 'mediashare/store/modules/mediaItem';
 import { setError } from 'mediashare/store/modules/appState';
 
 import * as DocumentPicker from 'expo-document-picker';
@@ -68,9 +68,9 @@ export function RNImagePickerUploader({
     onUploadStart();
 
     try {
-      await dispatch(createThumbnail({ key: video.name, fileUri: video.uri }));
+      await dispatch(createImage({ key: video.name, fileUri: video.uri }));
     } catch (err) {
-      console.log('Dispatching createThumbnail action failed');
+      console.log('Dispatching createImage action failed');
       onUploadComplete('');
       console.log(err);
     }
@@ -87,8 +87,8 @@ export function RNImagePickerUploader({
         return;
       }
       const image = res.assets[0];
-      const thumbnailKey = thumbnailRoot + image.fileName;
-      fetchAndPutToS3({ key: thumbnailKey, fileUri: image.uri, options: { contentType: image.type } })
+      const imageKey = imageRoot + image.fileName;
+      fetchAndPutToS3({ key: imageKey, fileUri: image.uri, options: { contentType: image.type } })
         .then((res) => {
           // eslint-disable-next-line no-shadow
           if (!res) {

@@ -51,7 +51,7 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', thumbnail, visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', image, visibility } = item;
     return (
       <>
         <MediaListItem
@@ -59,8 +59,8 @@ export const MediaComponent = ({
           title={title}
           titleStyle={styles.titleText}
           description={<MediaListItem.Description data={{ authorProfile, description, visibility }} />}
-          showThumbnail={true}
-          image={thumbnail}
+          showImage={true}
+          image={image}
           showPlayableIcon={false}
           showActions={showActions}
           iconRight="edit"
@@ -128,7 +128,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
-          searchTarget="media"
+          defaultSearchTarget="media"
           key={clearSelectionKey}
           navigation={navigation}
           list={entities}

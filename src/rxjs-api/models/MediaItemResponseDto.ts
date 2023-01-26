@@ -71,7 +71,7 @@ export interface MediaItemResponseDto {
      * @type {string}
      * @memberof MediaItemResponseDto
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof MediaItemResponseDto

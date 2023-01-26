@@ -71,7 +71,7 @@ export interface PlaylistItemResponseDto {
      * @type {string}
      * @memberof PlaylistItemResponseDto
      */
-    thumbnail: string;
+    imageSrc: string;
     /**
      * @type {boolean}
      * @memberof PlaylistItemResponseDto

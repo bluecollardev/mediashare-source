@@ -4,10 +4,10 @@ import * as DocumentPicker from 'expo-document-picker';
 import { ImagePickerResult, MediaTypeOptions } from 'expo-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import Config from 'mediashare/config';
-import { awsUrl, thumbnailRoot } from 'mediashare/core/aws/key-factory';
+import { awsUrl, imageRoot } from 'mediashare/core/aws/key-factory';
 import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
 import { setError } from 'mediashare/store/modules/appState';
-import { createThumbnail } from 'mediashare/store/modules/mediaItem';
+import { createImage } from 'mediashare/store/modules/mediaItem';
 
 const maxUpload = parseInt(Config.MaxUpload, 10) || 104857600;
 
@@ -99,10 +99,10 @@ export function useUploader({
       setPercentage(0);
       
       const image = pickerResult.assets[0];
-      const thumbnailKey = thumbnailRoot + image.fileName;
+      const imageKey = imageRoot + image.fileName;
       
       return await fetchAndPutToS3({
-        key: thumbnailKey,
+        key: imageKey,
         fileUri: image.uri,
         options: {
           contentType: image.type,
@@ -129,9 +129,9 @@ export function useUploader({
     onUploadStart();
     
     try {
-      await dispatch(createThumbnail({ key: video.name, fileUri: video.uri }));
+      await dispatch(createImage({ key: video.name, fileUri: video.uri }));
     } catch (err) {
-      console.log('Dispatching createThumbnail action failed');
+      console.log('Dispatching createImage action failed');
       onUploadComplete('');
       console.log(err);
     }

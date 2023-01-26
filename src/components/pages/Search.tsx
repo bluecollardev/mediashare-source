@@ -2,15 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { searchPlaylists, selectPlaylist } from 'mediashare/store/modules/search';
+import { search as searchContent, selectPlaylist } from 'mediashare/store/modules/search';
 import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
-import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation'
+import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
 import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
@@ -39,15 +39,20 @@ export const SearchComponent = withSearchComponent(
 
     function renderVirtualizedListItem(item) {
       // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-      const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
+      const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, mediaIds = [], mediaItems = [], imageSrc = '', contentType = 'media' } = item;
+      const renderKey = `${contentType}_${_id}`;
       return (
         <>
           <MediaListItem
-            key={`playlist_${_id}`}
+            key={renderKey}
             title={title}
             titleStyle={styles.titleText}
-            description={<MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />}
-            showThumbnail={true}
+            description={
+              contentType === 'playlist'
+                ? <MediaListItem.Description data={{ authorProfile, itemCount: mediaIds?.length || mediaItems?.length || 0 }} showItemCount={true} />
+                : contentType === 'mediaItem' ? <MediaListItem.Description data={{ authorProfile }} showItemCount={false} /> : ''
+            }
+            showImage={true}
             image={imageSrc}
             showPlayableIcon={false}
             showActions={showActions}
@@ -55,7 +60,7 @@ export const SearchComponent = withSearchComponent(
             onViewDetail={() => onViewDetailClicked(item)}
             onChecked={(checked) => onChecked(checked, item)}
           />
-          <Divider key={`playlist_divider_${item._id}`} />
+          <Divider key={`${renderKey}_divider_${item._id}`} />
         </>
       );
     }
@@ -72,6 +77,7 @@ export const Search = ({ globalState }: PageProps & any) => {
 
   const shareWith = useRouteName(routeNames.shareWith);
   const viewPlaylist = useViewPlaylistById();
+  const viewMediaItemById = useViewMediaItemById();
 
   const [isSelectable, setIsSelectable] = useState(false);
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -87,10 +93,17 @@ export const Search = ({ globalState }: PageProps & any) => {
   }, []);
 
   const [fabState, setFabState] = useState({ open: false });
+  const contentType = globalState?.getSearchFilters(searchKey)?.target;
   const fabActions =
-    searchResults.length > 0
-      ? [{ icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } }]
-      : [];
+    searchResults?.length > 0 ? [
+      // { icon: 'library-add', label: `Add to Library`, onPress: () => setShowAddToLibraryDialog(true), color: theme.colors.text, style: { backgroundColor: theme.colors.success } },
+      ...(contentType === SupportedContentTypes.playlists
+        ? [{ icon: 'library-add', label: `Add to Library`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.success } }]
+        : contentType === SupportedContentTypes.media
+          ? [{ icon: 'playlist-add', label: `Add to Playlist`, onPress: () => undefined, color: theme.colors.text, style: { backgroundColor: theme.colors.accent } }]
+          : []),
+        { icon: 'share', label: `Share`, onPress: () => activateShareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
+      ] : [];
   
   return (
     <PageContainer>
@@ -99,11 +112,20 @@ export const Search = ({ globalState }: PageProps & any) => {
           globalState={globalState}
           loaded={loaded}
           loadData={loadData}
-          searchTarget="playlists"
+          defaultSearchTarget={SupportedContentTypes.playlists}
+          showSearchTargetField={true}
           forcedSearchMode={true}
           key={clearSelectionKey}
           list={searchResults}
-          onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
+          onViewDetailClicked={async (item) => {
+            if (item?.contentType === 'playlist') {
+              await viewPlaylist({ playlistId: item._id });
+            }
+            if (item?.contentType === 'mediaItem') {
+              await viewMediaItemById({ mediaId: item._id, uri: item.uri });
+            }
+            
+          }}
           selectable={isSelectable}
           showActions={!isSelectable}
           onChecked={updateSelection}
@@ -118,15 +140,14 @@ export const Search = ({ globalState }: PageProps & any) => {
                   const searchValue = { text: '', tags: [item.key] };
                   globalState?.updateSearchFilters(searchKey, searchValue);
                   await loadData();
-                  
                 }}
               />
-              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+              {/*<Divider style={{ marginTop: 10, marginBottom: 20 }} />
               <RecentlyAdded list={searchResults} />
               <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-              <RecentlyPlayed list={searchResults} />
+              <RecentlyPlayed list={searchResults} />*/}
             </ScrollView>
-          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults.length === 0 ? (
+          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults?.length === 0 ? (
             <>
               <NoContent messageButtonText="No results were found." icon="info" />
             </>
@@ -138,7 +159,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           <ActionButtons onPrimaryClicked={confirmPlaylistsToShare} onSecondaryClicked={cancelPlaylistsToShare} primaryLabel="Share With" primaryIcon="group" />
         </PageActions>
       ) : null}
-      {!isSelectable && searchResults.length > 0 ? (
+      {!isSelectable && searchResults?.length > 0 ? (
         <FAB.Group
           visible={true}
           open={fabState.open}
@@ -157,10 +178,11 @@ export const Search = ({ globalState }: PageProps & any) => {
   async function loadData() {
     const search = globalState?.getSearchFilters(searchKey);
     const args = {
+      target: search?.target ? search.target : '',
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
     };
-    await dispatch(searchPlaylists(args));
+    await dispatch(searchContent(args));
   }
 
   async function refresh() {

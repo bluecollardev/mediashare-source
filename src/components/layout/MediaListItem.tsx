@@ -13,7 +13,7 @@ export interface MediaListItemProps {
   author?: string;
   description?: any;
   image?: string;
-  showThumbnail?: boolean;
+  showImage?: boolean;
   showPlayableIcon?: boolean;
   selectable?: boolean;
   checked?: boolean;
@@ -39,7 +39,7 @@ const MediaListItem = ({
   onChecked = (b: boolean) => {},
   selectable = true,
   showActions = true,
-  showThumbnail = false,
+  showImage = false,
   showPlayableIcon = false,
   iconLeft = '',
   iconLeftColor = theme.colors.default,
@@ -50,7 +50,7 @@ const MediaListItem = ({
 }: MediaListItemProps & any) => {
   const [isChecked, setIsChecked] = useState(checked);
   const mediaPreviewConfig = {
-    thumbnail: image,
+    image: image,
     width: 64,
     height: 64,
     onPress,
@@ -75,7 +75,7 @@ const MediaListItem = ({
         selectable ? (
           <View style={defaultStyles.mediaListItem}>
             <Checkbox status={isChecked ? 'checked' : 'indeterminate'} color={isChecked ? theme.colors.success : theme.colors.disabled} />
-            {showThumbnail ? (
+            {showImage ? (
               image ? (
                 <MediaPreview {...mediaPreviewConfig} showPlayableIcon={showPlayableIcon} />
               ) : (
@@ -83,7 +83,7 @@ const MediaListItem = ({
               )
             ) : null}
           </View>
-        ) : showThumbnail ? (
+        ) : showImage ? (
           image ? (
             <View style={defaultStyles.mediaListItem}>
               {showActions === 'left' ? <IconButton icon={iconLeft} iconColor={iconLeftColor} onPress={onViewDetail} /> : null}
@@ -131,7 +131,7 @@ const defaultStyles: any = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  mediaListItemThumbnail: {
+  mediaListItemImage: {
     marginLeft: 5,
     marginRight: 10,
   },

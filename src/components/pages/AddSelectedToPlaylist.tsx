@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
-import { findMediaItems } from 'mediashare/store/modules/mediaItems';
+import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
 import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -21,7 +21,7 @@ import {
   MediaListItem,
   NoContent,
   KeyboardAvoidingPageContent,
-} from 'mediashare/components/layout'
+} from 'mediashare/components/layout';
 
 import { theme } from 'mediashare/styles';
 
@@ -29,7 +29,7 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
   return <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, thumbnail = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, imageSrc = '' } = item;
     return (
       <>
         <MediaListItem
@@ -37,10 +37,10 @@ export const AddToPlaylistComponent = ({ entities, viewMediaItem, addItem, remov
           title={title}
           titleStyle={styles.titleText}
           description={<MediaListItem.Description data={{ authorProfile }} />}
-          showThumbnail={true}
+          showImage={true}
           showPlayableIcon={false}
           showActions={true}
-          image={thumbnail}
+          image={imageSrc}
           selectable={true}
           onViewDetail={() => {
             viewMediaItem({ mediaId: item._id, uri :item.uri }).then();
@@ -82,7 +82,7 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
           globalState={globalState}
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
-          searchTarget="media"
+          defaultSearchTarget="media"
           entities={entities}
           viewMediaItem={viewMediaItem}
           addItem={addItem}
@@ -102,15 +102,17 @@ export const AddSelectedToPlaylist = ({ route, globalState }: PageProps) => {
   async function loadData() {
     const search = globalState?.getSearchFilters('addSelectedToPlaylist');
     const args = {
+      target: search?.target ? search.target : '',
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
     };
 
     await dispatch(getPlaylistById(playlistId));
-    if (args.text || args.tags.length > 0) {
-      await dispatch(findMediaItems(args));
+    const searchArgs = (args.text || args.tags.length > 0) ? args : {};
+    if (search?.networkContent === true) {
+      await dispatch(searchMediaItems(searchArgs));
     } else {
-      await dispatch(findMediaItems({}));
+      await dispatch(findMediaItems(searchArgs));
     }
   }
 
