@@ -17,11 +17,11 @@ export const search = createAsyncThunk(searchActions.search.type, async (args: {
   return await api.search.searchControllerFindAll({ target, text, tags }).toPromise();
 });
 
-export const selectPlaylist = createAction<{ isChecked: boolean; plist: PlaylistResponseDto }, typeof searchActions.select.type>(
+export const select = createAction<{ isChecked: boolean; plist: PlaylistResponseDto }, typeof searchActions.select.type>(
   searchActions.select.type
 );
 
-export const clearPlaylists = createAction(searchActions.clear.type);
+export const clear = createAction(searchActions.clear.type);
 
 // TODO: Update these types, we handle more than just playlists
 export interface SearchState {
@@ -55,7 +55,7 @@ const searchSlice = createSlice({
           loaded: true,
         }))
       )
-      .addCase(selectPlaylist, (state, action) => {
+      .addCase(select, (state, action) => {
         const updateSelection = (bool: boolean, item: PlaylistResponseDto) => {
           const { selected } = state;
           // @ts-ignore
@@ -63,7 +63,7 @@ const searchSlice = createSlice({
         };
         return { ...state, selected: updateSelection(action.payload.isChecked, action.payload.plist), loading: false, loaded: true };
       })
-      .addCase(clearPlaylists, (state) => ({
+      .addCase(clear, (state) => ({
         ...state,
         selected: [],
         loading: false,

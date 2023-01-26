@@ -6,7 +6,7 @@ import { makeEnum } from 'mediashare/core/utils/factory';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { addUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
-import { search as searchContent, selectPlaylist } from 'mediashare/store/modules/search';
+import { clear, search as searchContent, select } from 'mediashare/store/modules/search'
 import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -93,6 +93,9 @@ export const Search = ({ globalState }: PageProps & any) => {
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
   const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
+  
+  // const searchFilters = globalState?.getSearchFilters(searchKey);
+  const selectedItems = useAppSelector((state) => state?.search)?.selected;
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -234,35 +237,37 @@ export const Search = ({ globalState }: PageProps & any) => {
   }
   
   async function confirmAddToLibrary() {
+    await clonePlaylists(selectedItems);
     setActionMode(SearchActionModes.default);
     clearCheckboxSelection();
     setIsSelectable(false);
-    await clonePlaylists();
   }
   
-  async function clonePlaylists() {
-  
+  async function clonePlaylists(selectedItems: any[] = []) {
+    try {
+      const requests = selectedItems.map(async (selectedItem) => {
+        return clonePlaylist(selectedItem);
+      });
+      await Promise.all(requests);
+      setMessage(`Playlists added to library`);
+      onToggleSnackBar(true);
+      await dispatch(getUserPlaylists());
+      await loadData();
+    } catch (error) {
+      setMessage(error.message);
+      onToggleSnackBar(false);
+    }
   }
   
   async function clonePlaylist(playlist) {
-    try {
-      const dto: CreatePlaylistDto = {
-        ...playlist as CreatePlaylistDto,
-        _id: undefined,
-        cloneOf: playlist._id,
-        mediaIds: playlist.mediaItems.map(item => item._id),
-      } as CreatePlaylistDto;
-      
-      // @ts-ignore TODO: Fix types on dispatch?
-      await dispatch(addUserPlaylist(dto));
-      // setMessage(`Playlist added to library`);
-      // onToggleSnackBar(true);
-      // await dispatch(getUserPlaylists());
-      // setIsSaved(false);
-    } catch (error) {
-      // setMessage(error.message);
-      // onToggleSnackBar(false);
-    }
+    const dto: CreatePlaylistDto = {
+      ...playlist as CreatePlaylistDto,
+      _id: undefined,
+      cloneOf: playlist._id,
+      mediaIds: playlist.mediaItems.map(item => item._id),
+    } as CreatePlaylistDto;
+    
+    await dispatch(addUserPlaylist(dto));
   }
   
   function cancelAddToLibrary() {
@@ -290,10 +295,11 @@ export const Search = ({ globalState }: PageProps & any) => {
   }
 
   function updateSelection(bool, item) {
-    dispatch(selectPlaylist({ isChecked: bool, plist: item }));
+    dispatch(select({ isChecked: bool, plist: item }));
   }
 
   function clearCheckboxSelection() {
+    dispatch(clear());
     const randomKey = createRandomRenderKey();
     setClearSelectionKey(randomKey);
   }
