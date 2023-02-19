@@ -51,7 +51,7 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', image, visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', imageSrc, visibility } = item;
     return (
       <>
         <MediaListItem
@@ -60,7 +60,7 @@ export const MediaComponent = ({
           titleStyle={styles.titleText}
           description={<MediaListItem.Description data={{ authorProfile, description, visibility }} />}
           showImage={true}
-          image={image}
+          image={imageSrc}
           showPlayableIcon={false}
           showActions={showActions}
           iconRight="edit"
