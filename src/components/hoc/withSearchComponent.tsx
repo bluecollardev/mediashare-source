@@ -213,12 +213,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             </>
           ) : null}
         </>
-        <WrappedComponent
-          globalState={globalState}
-          {...rest}
-          updateSearchText={updateSearchText}
-          updateSearchTags={updateSearchTags}
-        />
+        {/* Fix spacing when search is being displayed, without this fix you cannot scroll to items at the bottom of the list */}
+        <View style={(forcedSearchMode ? forcedSearchMode : searchActive) ? { marginBottom: 100, height: '60%' } : {} }>
+          <WrappedComponent
+            globalState={globalState}
+            {...rest}
+            updateSearchText={updateSearchText}
+            updateSearchTags={updateSearchTags}
+          />
+        </View>
       </>
     );
     

@@ -89,7 +89,8 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
                     icon="cloud-upload"
                     mode="outlined"
                     dark
-                    color={theme.colors.default}
+                    textColor={theme.colors.white}
+                    buttonColor={theme.colors.surface}
                     compact
                     uppercase={false}
                     style={styles.changeImageButton}

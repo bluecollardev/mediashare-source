@@ -122,10 +122,11 @@ const PlaylistItemEdit = ({
                 <View style={{ flex: 0, width: 54 }}>
                   <Button
                     icon="delete-forever"
-                    mode="text"
+                    mode="outlined"
                     dark
                     compact
-                    color={theme.colors.white}
+                    textColor={theme.colors.white}
+                    buttonColor={theme.colors.error}
                     style={styles.deleteItemButton}
                     onPress={() => setShowDialog(true)}
                   >
@@ -138,7 +139,8 @@ const PlaylistItemEdit = ({
                       icon="cloud-upload"
                       mode="outlined"
                       dark
-                      color={theme.colors.default}
+                      textColor={theme.colors.white}
+                      buttonColor={theme.colors.surface}
                       compact
                       uppercase={false}
                       style={styles.changeImageButton}

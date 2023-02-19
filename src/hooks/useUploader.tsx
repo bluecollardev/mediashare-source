@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import * as DocumentPicker from 'expo-document-picker';
-import { ImagePickerResult, MediaTypeOptions } from 'expo-image-picker';
+import { ImagePickerResult, ImagePickerAsset, MediaTypeOptions } from 'expo-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import Config from 'mediashare/config';
 import { awsUrl, imageRoot } from 'mediashare/core/aws/key-factory';
@@ -9,7 +9,7 @@ import { fetchAndPutToS3 } from 'mediashare/core/aws/storage';
 import { setError } from 'mediashare/store/modules/appState';
 import { createImage } from 'mediashare/store/modules/mediaItem';
 
-const maxUpload = parseInt(Config.MaxUpload, 10) || 104857600;
+const maxUpload = parseInt(String(Config.MaxUpload), 10) || 104857600;
 
 interface UploaderConfig {
   onUploadStart?: () => any;
@@ -41,9 +41,9 @@ export function useUploader({
   }
   
   async function takePhoto(): Promise<void> {
-    let result;
+    let image;
     try {
-      result = await ImagePicker.launchCameraAsync({
+      image = await ImagePicker.launchCameraAsync({
         mediaTypes: MediaTypeOptions.Images,
         aspect: [16, 9],
         quality: 0.5,
@@ -55,7 +55,7 @@ export function useUploader({
     
     try {
       onUploadStart();
-      const { key } = await handleImagePicked(result);
+      const { key } = await handleImagePicked(image);
       onUploadComplete(awsUrl + key);
     } catch (err) {
       console.log('Upload failed');
@@ -64,9 +64,9 @@ export function useUploader({
   }
   
   async function pickImage(): Promise<void> {
-    let result;
+    let image;
     try {
-      result = await ImagePicker.launchImageLibraryAsync({
+      image = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: MediaTypeOptions.Images,
         allowsMultipleSelection: false,
         aspect: [16, 9],
@@ -79,7 +79,7 @@ export function useUploader({
     
     try {
       onUploadStart();
-      const { key } = await handleImagePicked(result);
+      const { key } = await handleImagePicked(image);
       onUploadComplete(awsUrl + key);
     } catch (err) {
       console.log('Upload failed');
@@ -97,15 +97,19 @@ export function useUploader({
       return;
     } else {
       setPercentage(0);
-      
-      const image = pickerResult.assets[0];
-      const imageKey = imageRoot + image.fileName;
+  
+      const {
+        fileName,
+        type,
+        uri
+      } = pickerResult?.assets?.[0] as ImagePickerAsset;
+      const imageKey = imageRoot + fileName;
       
       return await fetchAndPutToS3({
         key: imageKey,
-        fileUri: image.uri,
+        fileUri: uri,
         options: {
-          contentType: image.type,
+          contentType: type,
           progressCallback(progress) {
             setLoading(progress);
           },
@@ -115,13 +119,66 @@ export function useUploader({
   }
   
   async function pickVideo() {
+    let video: ImagePickerResult;
+    try {
+      video = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: MediaTypeOptions.Videos,
+        allowsMultipleSelection: false,
+        // aspect: [16, 9],
+        // TODO: How do we want to set our quality?
+        quality: 0.5,
+      });
+    } catch (err) {
+      console.log('launchImageLibraryAsync failed');
+      console.log(err);
+    }
+  
+    try {
+      const {
+        fileName,
+        fileSize,
+        uri
+      } = video?.assets?.[0] as ImagePickerAsset;
+      
+      if (!video || video.canceled) {
+        return;
+      }
+      if (!video || fileSize > maxUpload) {
+        dispatch(setError({ name: 'File too big', message: `Files must be under ${maxUpload / 1024 / 1024} Mb` }));
+        return;
+      }
+      
+      onUploadStart();
+  
+      try {
+        console.log('Video uploaded');
+        console.log(video);
+        await dispatch(createImage({ key: fileName, fileUri: uri }));
+      } catch (err) {
+        console.log('Dispatching createImage action failed');
+        onUploadComplete('');
+        console.log(err);
+      }
+  
+      await onUploadComplete(video);
+    } catch (err) {
+      console.log('Upload failed');
+      console.log(err);
+    }
+  }
+  
+  async function pickDocument() {
     // TODO: Only MP4 supported right now?
-    const video = (await DocumentPicker.getDocumentAsync({ type: 'video/mp4' })) as any;
-    // TODO: Ideally we don't have to check for the video type cancel here, improve whatever logic is setting the value!
-    if (!video || video.type === 'cancel') {
+    const video: ImagePickerResult = (await DocumentPicker.getDocumentAsync({ type: 'video/mp4' })) as any;
+    const {
+      fileName,
+      fileSize,
+      uri,
+    } = video?.assets?.[0] as ImagePickerAsset;
+    if (!video || video.canceled) {
       return;
     }
-    if (!video || video.size > maxUpload) {
+    if (!video || fileSize > maxUpload) {
       dispatch(setError({ name: 'File too big', message: `Files must be under ${maxUpload / 1024 / 1024} Mb` }));
       return;
     }
@@ -129,7 +186,7 @@ export function useUploader({
     onUploadStart();
     
     try {
-      await dispatch(createImage({ key: video.name, fileUri: video.uri }));
+      await dispatch(createImage({ key: fileName, fileUri: uri }));
     } catch (err) {
       console.log('Dispatching createImage action failed');
       onUploadComplete('');

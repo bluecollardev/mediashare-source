@@ -42,7 +42,7 @@ export const ChooseMediaForPlaylistComponent = ({ entities, viewMediaItem, addIt
           image={imageSrc}
           selectable={true}
           onViewDetail={() => {
-            viewMediaItem({ mediaId: item._id, uri :item.uri }).then();
+            viewMediaItem({ mediaId: item._id, uri: item.uri }).then();
           }}
           onChecked={(v) => (v ? addItem(item) : removeItem(item))}
         />

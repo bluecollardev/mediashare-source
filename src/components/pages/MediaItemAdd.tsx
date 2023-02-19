@@ -1,3 +1,5 @@
+import { ImagePickerAsset } from 'expo-image-picker'
+import { ImagePickerResult } from 'expo-image-picker/src/ImagePicker.types'
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native';
@@ -104,9 +106,10 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
     setMediaUri('');
   }
 
-  async function onUploadComplete(media) {
+  async function onUploadComplete(pickerResult: ImagePickerResult) {
     setUploading(false);
-    setMediaUri(media.uri || '');
+    const { uri } = pickerResult?.assets?.[0] as ImagePickerAsset;
+    setMediaUri(uri || '');
   }
 
   async function saveItem() {
@@ -120,7 +123,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
       title,
       description,
       summary: '',
-      image: image,
+      imageSrc: image,
       isPlayable: true,
       uri: mediaUri,
       visibility: MediaVisibilityType[visibility],
@@ -135,7 +138,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
     setDescription('');
     setImage('');
     setIsSaved(false);
-    goToMediaItems();
+    await goToMediaItems();
   }
 
   function resetData() {
