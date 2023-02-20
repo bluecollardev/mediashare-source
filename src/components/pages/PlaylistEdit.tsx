@@ -13,6 +13,7 @@ import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { usePlaylists, useRouteWithParams, useViewMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
+import { UploadResult } from 'mediashare/hooks/useUploader';
 import { View, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
@@ -53,7 +54,9 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   const [title, setTitle] = useState(selected?.title);
   const [description, setDescription] = useState(selected?.description);
   const [visibility, setVisibility] = useState(selected?.visibility as string);
-  const [imageSrc, setImageSrc] = useState(selected?.imageSrc);
+  
+  const [image, setImage] = useState(selected?.imageSrc || '');
+  const [uploading, setUploading] = useState(false);
 
   const { tags = [] } = globalState;
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isPlaylistTag), []);
@@ -121,7 +124,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             title={title}
             description={description}
             showImage={true}
-            image={imageSrc}
+            image={image}
             imageStyle={{
               // TODO: Can we do this automatically from video metadata?
               aspectRatio: 16 / 9,
@@ -146,7 +149,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
             isEdit={true}
             isReadOnly={selectedItems && selectedItems.length > 0}
             topDrawer={() =>
-              imageSrc ? (
+              image ? (
                 <View style={styles.itemControls}>
                   <View style={{ flex: 0, width: 54 }}>
                     <Button
@@ -163,7 +166,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
                     </Button>
                   </View>
                   <View style={{ flex: 4 }}>
-                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                       <Button
                         icon="cloud-upload"
                         mode="outlined"
@@ -183,7 +186,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
               ) : (
                 <View style={styles.itemControls}>
                   <View style={{ flex: 1 }}>
-                    <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
+                    <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                       <UploadPlaceholder buttonText="Add Cover Photo" />
                     </ExpoUploader>
                   </View>
@@ -229,6 +232,16 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
       </PageActions>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+    // setImage('');
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);
+    setImage(uri);
+  }
 
   function getInitialPlaylistTags() {
     return (
@@ -243,10 +256,6 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   async function loadData() {
     await dispatch(getPlaylistById(playlistId));
     setIsLoaded(true);
-  }
-
-  function onUploadComplete(uri: string) {
-    setImageSrc(uri);
   }
 
   async function savePlaylist() {
@@ -293,7 +302,7 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
         mediaIds,
         visibility: visibility as PlaylistVisibilityType,
         tags: (selectedTags || []) as any[],
-        imageSrc,
+        imageSrc: image,
       })
     );
   }

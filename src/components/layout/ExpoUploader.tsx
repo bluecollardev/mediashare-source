@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from 'react-native-paper';
-import { useUploader } from 'mediashare/hooks/useUploader';
+import { useUploader, UploadResult } from 'mediashare/hooks/useUploader';
 import { theme } from 'mediashare/styles';
 
 interface AppUploadProps {
   onUploadStart?: () => any;
-  onUploadComplete?: (uri) => any;
+  onUploadComplete?: (result: UploadResult) => void;
   uploadMode: 'video' | 'photo';
   label?: string;
   children?: any;
@@ -14,7 +14,7 @@ interface AppUploadProps {
 export function ExpoUploader({
   uploadMode = 'photo',
   onUploadStart = () => undefined,
-  onUploadComplete = (uri) => undefined,
+  onUploadComplete = () => (result: UploadResult) => undefined,
   label = 'Upload Picture',
   children,
 }: AppUploadProps) {

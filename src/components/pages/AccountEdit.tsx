@@ -10,7 +10,7 @@ import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
-import { useUploader } from 'mediashare/hooks/useUploader';
+import { UploadResult, useUploader } from 'mediashare/hooks/useUploader'
 import { TextField } from 'mediashare/components/form/TextField';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
@@ -31,11 +31,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
   const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
   const fullName = state?.firstName || state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
-  
-  const onUploadStart = () => undefined;
-  const onUploadComplete = (uri) => {
-    setState({ ...state, imageSrc: uri });
-  };
+  const [uploading, setUploading] = useState(false);
   
   const { pickImage } = useUploader({
     onUploadStart,
@@ -94,6 +90,15 @@ const AccountEdit = ({ route }: AccountEditProps) => {
       </KeyboardAvoidingPageContent>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);
+    setState({ ...state, imageSrc: uri });
+  }
 
   // eslint-disable-next-line no-shadow
   function onUpdate(user: Partial<UserDto>) {

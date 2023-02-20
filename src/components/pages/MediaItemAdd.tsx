@@ -1,5 +1,3 @@
-import { ImagePickerAsset } from 'expo-image-picker'
-import { ImagePickerResult } from 'expo-image-picker/src/ImagePicker.types'
 import React, { useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native';
@@ -7,10 +5,11 @@ import { Button } from 'react-native-paper';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { addMediaItem } from 'mediashare/store/modules/mediaItem';
 import { CreateMediaItemDto, MediaVisibilityType } from 'mediashare/rxjs-api';
+import { UploadResult } from 'mediashare/hooks/useUploader';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   KeyboardAvoidingPageContent,
   PageActions,
@@ -21,7 +20,7 @@ import {
   ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
-import { minLength, titleValidator, descriptionValidator, visibilityValidator, tagValidator } from 'mediashare/core/utils/validators';
+import { minLength, titleValidator, descriptionValidator, visibilityValidator } from 'mediashare/core/utils/validators';
 import { theme } from 'mediashare/styles';
 
 // @ts-ignore
@@ -42,7 +41,7 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   const [mediaUri, setMediaUri] = useState('');
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
-  // const mediaSrc = useAppSelector((state) => state?.mediaItem?.mediaSrc);
+  
   const isValid = function () {
     return !titleValidator(title) && !descriptionValidator(description) && !visibilityValidator(visibility) && !minLength(1)(mediaUri);
   };
@@ -106,10 +105,10 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
     setMediaUri('');
   }
 
-  async function onUploadComplete(pickerResult: ImagePickerResult) {
+  async function onUploadComplete({ uri, thumbnail }: UploadResult) {
     setUploading(false);
-    const { uri } = pickerResult?.assets?.[0] as ImagePickerAsset;
     setMediaUri(uri || '');
+    setImage(thumbnail);
   }
 
   async function saveItem() {

@@ -1,3 +1,4 @@
+import { UploadResult } from 'mediashare/hooks/useUploader'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -56,9 +57,10 @@ const PlaylistItemEdit = ({
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
   const initialPlaylistItemTags = getInitialPlaylistItemTags();
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialPlaylistItemTags);
-
-  const [documentUri] = useState(playlistItem?.uri);
-  const [image, setImage] = useState(playlistItem?.imageSrc);
+  
+  const [mediaUri, setMediaUri] = useState(playlistItem?.uri || '');
+  const [image, setImage] = useState(playlistItem?.imageSrc || '');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (playlistItem) {
@@ -94,7 +96,7 @@ const PlaylistItemEdit = ({
             title={title}
             description={description}
             sortIndex={String(sortIndex)}
-            mediaSrc={documentUri}
+            mediaSrc={mediaUri}
             showImage={true}
             image={image}
             imageStyle={{
@@ -134,7 +136,7 @@ const PlaylistItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <ExpoUploader uploadMode="photo" onUploadComplete={setImage}>
+                  <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -160,6 +162,16 @@ const PlaylistItemEdit = ({
       </PageActions>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+    // setImage('');
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);
+    setImage(uri);
+  }
 
   function getInitialPlaylistItemTags() {
     return (

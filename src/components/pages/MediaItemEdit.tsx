@@ -4,6 +4,7 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem, updateMediaItem } from 'mediashare/store/modules/mediaItem';
+import { UploadResult } from 'mediashare/hooks/useUploader';
 // TODO: Fix update dto! Not sure why it's not being exported normally...
 import { UpdateMediaItemDto } from 'mediashare/rxjs-api/models/UpdateMediaItemDto';
 import { MediaVisibilityType } from 'mediashare/rxjs-api';
@@ -11,7 +12,7 @@ import { useMediaItems } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
 import { View, ScrollView } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, KeyboardAvoidingPageContent, PageActions, PageProps } from 'mediashare/components/layout/PageContainer';
 import { AppDialog } from 'mediashare/components/layout/AppDialog';
 import { MediaCard } from 'mediashare/components/layout/MediaCard';
@@ -55,9 +56,11 @@ const MediaItemEdit = ({
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
   const initialMediaItemTags = getInitialMediaItemTags();
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialMediaItemTags);
-
-  const [documentUri] = useState(mediaItem?.uri);
-  const [image, setImage] = useState(mediaItem?.imageSrc);
+  
+  const [mediaUri, setMediaUri] = useState(mediaItem?.uri || '');
+  const [image, setImage] = useState(mediaItem?.imageSrc || '');
+  const [uploading, setUploading] = useState(false);
+  
   const viewMediaItems = useMediaItems();
 
   useEffect(() => {
@@ -93,7 +96,7 @@ const MediaItemEdit = ({
             key={mediaId}
             title={title}
             description={description}
-            mediaSrc={documentUri}
+            mediaSrc={mediaUri}
             showImage={true}
             image={image}
             imageStyle={{
@@ -136,7 +139,7 @@ const MediaItemEdit = ({
                   </Button>
                 </View>
                 <View style={{ flex: 4 }}>
-                  <ExpoUploader uploadMode="photo" onUploadComplete={setImage}>
+                  <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
@@ -162,6 +165,17 @@ const MediaItemEdit = ({
       </PageActions>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+    // setImage('');
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    console.log(`[MediaItemEdit.onUploadComplete] set image: ${uri}`);
+    setUploading(false);
+    setImage(uri);
+  }
 
   function getInitialMediaItemTags() {
     return (
