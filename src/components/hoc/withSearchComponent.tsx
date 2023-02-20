@@ -112,6 +112,13 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       { key: SupportedContentTypes.all, value: `All Types` },
     ];
     
+    let wrappedComponentStyle = {};
+    if ((forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton())) {
+      wrappedComponentStyle = { marginBottom: 100, height: showNetworkContentSwitch ? '50%' : '60%' };
+    } else if (searchActive && !shouldShowApplyButton()) {
+      wrappedComponentStyle = { marginBottom: 100, height: '75%' };
+    }
+    
     return (
       <>
         <>
@@ -214,7 +221,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
           ) : null}
         </>
         {/* Fix spacing when search is being displayed, without this fix you cannot scroll to items at the bottom of the list */}
-        <View style={(forcedSearchMode ? forcedSearchMode : searchActive) ? { marginBottom: 100, height: '60%' } : {} }>
+        <View style={wrappedComponentStyle}>
           <WrappedComponent
             globalState={globalState}
             {...rest}
