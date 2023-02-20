@@ -92,9 +92,11 @@ export const ChooseMediaForPlaylist = ({ route, globalState }: PageProps) => {
           <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add. Try enabling the 'Search Network' option." icon="info" />
         ) : null}
       </KeyboardAvoidingPageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} disablePrimary={entities.length === 0} />
-      </PageActions>
+      {entities.length > 0 ? (
+        <PageActions>
+          <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} disablePrimary={entities.length === 0} />
+        </PageActions>
+      ) : null}
     </PageContainer>
   );
 
