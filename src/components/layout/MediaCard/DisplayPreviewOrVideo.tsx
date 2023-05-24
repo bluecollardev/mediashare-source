@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { View, TouchableWithoutFeedback, ImageBackground } from 'react-native';
+import { ResizeMode, Video } from 'expo-av';
+import { ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import Video from 'react-native-video'; // TODO: Not compatible with react-native-web
-// import { Video as ExpoVideo } from 'expo-av';
-// import Video from 'expo-video-player';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 
 type MediaDisplayMode = 'image' | 'video';
@@ -16,7 +14,6 @@ export interface DisplayPreviewOrVideoProps {
   style?: any;
 }
 
-// TODO: Use MediaPreview component!
 export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   mediaSrc,
   isPlayable = false,
@@ -27,10 +24,12 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   const getMediaDisplayMode = () => (showThumbnail && thumbnail ? 'image' : 'video');
   const initialMediaDisplayMode = isPlayable ? (getMediaDisplayMode() as MediaDisplayMode) : 'image';
   const [mediaDisplayMode, setMediaDisplayMode] = useState(initialMediaDisplayMode);
-
-  // console.log(`[DisplayPreviewOrVideo] thumbnail: ${thumbnail}`);
+  
   const { imageSrc, isDefaultImage } = usePreviewImage(thumbnail);
-  // console.log(`imageSrc: ${imageSrc}, isDefaultImage: ${isDefaultImage}`);
+  
+  const video = React.useRef(null);
+  const [status, setStatus] = React.useState({});
+  
   return (
     <View
       style={{
@@ -42,7 +41,6 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
         ...style,
       }}
     >
-      {/* TODO: Use MediaPreview component here! */}
       {mediaDisplayMode === 'image' && !isDefaultImage ? (
         <ImageBackground source={{ uri: imageSrc }} resizeMode="cover" style={{ width: '100%', height: '100%' }}>
           {isPlayable ? (
@@ -56,28 +54,24 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
           ) : null}
         </ImageBackground>
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
-        <>
-          {/* TODO: This react-native-video version doesn't work with web and the lib has over a thousand open issues */}
-          <Video source={{ uri: mediaSrc }} poster={imageSrc} style={{ width: '100%', height: '100%' }} resizeMode="contain" controls={true} paused={false} />
-          {/* Use expo-av + expo-video-player */}
-          {/* <Video
-          styles={{
-            height: 300,
+        <Video
+          ref={video}
+          style={{ width: '100%', height: '100%' }}
+          usePoster={true}
+          posterSource={imageSrc}
+          source={{
+            uri: mediaSrc,
           }}
-          videoProps={{
-            shouldPlay: false, // Pause by default
-            resizeMode: ExpoVideo.RESIZE_MODE_CONTAIN,
-            // ❗ source is required https://docs.expo.io/versions/latest/sdk/video/#props
-            source: {
-              uri: mediaSrc,
-            },
-          }}
-        /> */}
-        </>
+          shouldPlay={true}
+          useNativeControls={true}
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping={true}
+          // onPlaybackStatusUpdate={status => setStatus(() => status)}
+        />
       ) : null}
     </View>
   );
-
+  
   function toggleMediaMode() {
     const current = mediaDisplayMode as MediaDisplayMode;
     if (current === 'video') {
