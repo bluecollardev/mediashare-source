@@ -10,7 +10,10 @@ import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 import PhoneInput from 'react-native-phone-number-input';
 import { theme } from 'mediashare/styles';
-
+import Loader from '../../loader/Loader';
+import { useState } from 'react';
+import Icon from 'react-native-vector-icons/Fontisto';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 interface FormData {
   username: string;
   password: string;
@@ -18,8 +21,11 @@ interface FormData {
   phone: string;
 }
 
-const SignUpComponent = ({}: PageProps) => {
+const SignUpComponent = ({ }: PageProps) => {
   const nav = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const [show, setShow] = useState(false)
 
   const {
     control,
@@ -38,22 +44,29 @@ const SignUpComponent = ({}: PageProps) => {
   const { element, onToggleSnackBar, setMessage } = useSnack();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    try {
-      const { username, password, email, phone } = data;
-      await Auth.signUp({
-        username,
-        password,
-        attributes: {
-          email,
-          phone_number: phone,
-        },
-      });
-      // @ts-ignore
-      nav.navigate(routeConfig.confirm.name, { username });
-    } catch (error) {
-      setMessage(error.message);
+    if (show) {
+      try {
+        const { username, password, email, phone } = data;
+        await Auth.signUp({
+          username,
+          password,
+          attributes: {
+            email,
+            phone_number: phone,
+          },
+        });
+        // @ts-ignore
+
+        nav.navigate(routeConfig.confirm.name, { username });
+      } catch (error) {
+        console.log(error.message, 'error.message');
+        setMessage(error.message);
+        onToggleSnackBar();
+        console.log('sign up error', error);
+      }
+    } else {
+      setMessage('Please select Terms and Conditions');
       onToggleSnackBar();
-      console.log('sign up error', error);
     }
   };
 
@@ -80,7 +93,7 @@ const SignUpComponent = ({}: PageProps) => {
               control={control}
               name="username"
               rules={{
-                required: 'required',
+                required: 'Required',
                 minLength: {
                   value: 4,
                   message: 'Too short!',
@@ -88,7 +101,7 @@ const SignUpComponent = ({}: PageProps) => {
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
                   <HelperText type="error">{errors.username?.message}</HelperText>
                 </>
               )}
@@ -98,7 +111,7 @@ const SignUpComponent = ({}: PageProps) => {
               control={control}
               name="password"
               rules={{
-                required: 'required',
+                required: 'Required',
                 minLength: {
                   value: 8,
                   message: 'Please enter a strong password',
@@ -109,11 +122,12 @@ const SignUpComponent = ({}: PageProps) => {
                   <TextInput
                     autoCapitalize="none"
                     label="Password"
-                    secureTextEntry
                     textContentType="password"
                     value={value}
                     onBlur={onBlur}
                     onChangeText={(value) => onChange(value)}
+                    secureTextEntry={!showPassword}
+                    right={<TextInput.Icon size={20} icon={showPassword ? 'visibility' : 'visibility-off'} onPress={toggleShowPassword} />}
                   />
                   <HelperText type="error">{errors.password?.message}</HelperText>
                 </>
@@ -124,15 +138,15 @@ const SignUpComponent = ({}: PageProps) => {
               control={control}
               name="email"
               rules={{
-                required: 'required',
+                required: 'Required',
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'invalid email address',
+                  message: 'Invalid email address',
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="Email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput autoCapitalize="none" label="Email" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
                   <HelperText type="error">{errors.email?.message}</HelperText>
                 </>
               )}
@@ -140,7 +154,7 @@ const SignUpComponent = ({}: PageProps) => {
             <Controller
               name="phone"
               rules={{
-                required: 'required',
+                required: 'Required',
               }}
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -161,11 +175,24 @@ const SignUpComponent = ({}: PageProps) => {
                 </View>
               )}
             />
-        
+            <View style={{ flexDirection: "row", }}>
+              <View style={{ alignItems: "center" ,padding:1.5}}>
+                <Icon color={'white'} onPress={() => setShow(!show)} size={!show ? 17.5 : 16} name={show ? 'checkbox-active' : 'checkbox-passive'} />
+              </View>
+              <View style={{ marginLeft: 11 }} >
+                <Text variant="displayLarge" style={{ fontSize: 13 }}>
+                  By creating an account, you agree to our
+                </Text>
+                <Button style={{ alignSelf: "flex-start", marginHorizontal: -14 }} labelStyle={{ fontSize: 10, textDecorationLine: "underline", marginTop: 0, paddingRight: 42 }} mode="text" onPress={() => Linking.openURL('https://www.afehrpt.com/app-terms-of-service/')}>
+                  Terms and Conditions
+                </Button>
+              </View>
+            </View>
             <Button
               style={{
                 borderRadius: 10,
                 padding: 5,
+                marginTop: 14
               }}
               mode="contained"
               onPress={handleSubmit(onSubmit)}

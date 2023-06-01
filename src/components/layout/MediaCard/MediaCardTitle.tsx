@@ -1,12 +1,14 @@
 import { MediaCardSocial } from 'mediashare/components/layout/MediaCard/MediaCardSocial'
 import React from 'react';
 import { Avatar, Card, IconButton, Title, Text, Button } from 'react-native-paper'
-import { View, StyleSheet, Platform } from 'react-native';
+import { View, StyleSheet, Platform, Alert } from 'react-native';
 
 import { getAuthorText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
 
 import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { routeConfig } from 'mediashare/routes';
+import { useNavigation } from '@react-navigation/native';
 
 export const DEFAULT_AVATAR = 'https://i.pinimg.com/originals/db/fa/08/dbfa0875b8925919a3f16d53d9989738.png';
 
@@ -38,6 +40,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
   onActionsClicked = () => {},
   style = {},
 }: MediaCardTitleProps) => {
+  const nav = useNavigation();
   return authorProfile ? (
     <Card.Title
       style={{ ...defaultStyles.component, ...style }}
@@ -58,6 +61,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
           <View style={defaultStyles.line2}>
             {visibility ?
               <Button
+              onPress={()=> nav.navigate(routeConfig.subscriptions)}
                 compact
                 mode="contained"
                 style={defaultStyles.visibilityButton}

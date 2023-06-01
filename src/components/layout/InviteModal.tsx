@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Portal, Text, Button, Dialog } from 'react-native-paper';
 import { StyleSheet, TextInput, Platform, KeyboardAvoidingView, SafeAreaView, View } from 'react-native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { theme } from 'mediashare/styles';
+import { loadProfile } from 'mediashare/store/modules/profile';
+import { useDispatch } from 'react-redux';
 
 interface AccountCardProps {
   userId: string;
@@ -54,10 +56,10 @@ export default function ModalSheet({ showDialog, onDismiss, onSubmit = (data) =>
                 <Controller
                   control={control}
                   rules={{
-                    required: 'required',
+                    required: 'Required',
                     pattern: {
                       value: /^[a-zA-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'invalid email address',
+                      message: 'Invalid email address',
                     },
                   }}
                   render={({ field: { onChange, value } }) => (

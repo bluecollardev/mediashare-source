@@ -15,7 +15,7 @@ export const NoContent = ({ onPress, messageButtonText = `Please create a new re
     <TouchableWithoutFeedback onPress={onPress}>
       <View
         style={{
-          height: 450,
+          height: 300,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

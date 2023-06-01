@@ -38,9 +38,16 @@ const ResetPasswordComponent = ({}: PageProps) => {
       const { username } = data;
       await Auth.forgotPassword(username);
       setMessage('Please check your email');
-      onToggleSnackBar();
       setShowCode(true);
     } catch (error) {
+      setMessage(error.message);
+     await onToggleSnackBar();
+      if (error.name === "UserNotFoundException") {
+        console.log("User not found. Please check your username or client id.");
+      } else {
+        console.log(error.message);
+      }
+
       throw error;
     }
   };
@@ -48,8 +55,12 @@ const ResetPasswordComponent = ({}: PageProps) => {
   const newPassword = async (data) => {
     try {
       const { username, code, newPassword } = data;
-      await Auth.forgotPasswordSubmit(username, code, newPassword);
+      const response = await Auth.forgotPasswordSubmit(username, code, newPassword);
+      console.log(response,'response');
     } catch (error) {
+      setMessage(error.message);
+      await onToggleSnackBar();
+      console.log(error, 'error');
       throw error;
     }
   };
@@ -58,13 +69,15 @@ const ResetPasswordComponent = ({}: PageProps) => {
     try {
       if (showCode) {
         newPassword(data);
-        nav.navigate(routeConfig.login.name as never, {} as never);
+        setTimeout(() => {
+          nav.navigate(routeConfig.login.name as never, {} as never);
+        }, 1500);
       } else {
         sendCodePassword(data);
       }
     } catch (error) {
       setMessage(error.message);
-      onToggleSnackBar();
+     await onToggleSnackBar();
       console.log('code error--->', error);
     }
   };
@@ -92,7 +105,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
               control={control}
               name="username"
               rules={{
-                required: 'required',
+                required: 'Required',
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
@@ -108,11 +121,11 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   control={control}
                   name="code"
                   rules={{
-                    required: 'required',
+                    required: 'Required',
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>
-                      <TextInput autoCapitalize="none" label="Code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                      <TextInput keyboardType="numeric" autoCapitalize="none" label="Code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                       <HelperText type="error">{errors.code?.message}</HelperText>
                     </>
                   )}
@@ -121,7 +134,7 @@ const ResetPasswordComponent = ({}: PageProps) => {
                   control={control}
                   name="newPassword"
                   rules={{
-                    required: 'required',
+                    required: 'Required',
                   }}
                   render={({ field: { onChange, onBlur, value } }) => (
                     <>

@@ -42,7 +42,7 @@ export const ChooseMediaForPlaylistComponent = ({ entities, viewMediaItem, addIt
           image={imageSrc}
           selectable={true}
           onViewDetail={() => {
-            viewMediaItem({ mediaId: item._id, uri :item.uri }).then();
+            viewMediaItem({ mediaId: item._id, uri: item.uri }).then();
           }}
           onChecked={(v) => (v ? addItem(item) : removeItem(item))}
         />
@@ -89,12 +89,14 @@ export const ChooseMediaForPlaylist = ({ route, globalState }: PageProps) => {
           showNetworkContentSwitch={true}
         />
         {loaded && entities.length === 0 ? (
-          <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
+          <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add. Try enabling the 'Search Network' option." icon="info" />
         ) : null}
       </KeyboardAvoidingPageContent>
-      <PageActions>
-        <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} />
-      </PageActions>
+      {entities.length > 0 ? (
+        <PageActions>
+          <ActionButtons disablePrimary={ mediaItems?.length==0 } onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel}  />
+        </PageActions>
+      ) : null}
     </PageContainer>
   );
 

@@ -112,6 +112,18 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       { key: SupportedContentTypes.all, value: `All Types` },
     ];
     
+    // TODO: Fix hidden search results that can't be reached by scrolling...
+    let wrappedComponentStyle = {};
+    if ((forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton())) {
+      wrappedComponentStyle = { marginBottom: 100, height: showNetworkContentSwitch ? '50%' : '60%' };
+    } else if (searchActive && !shouldShowApplyButton()) {
+      wrappedComponentStyle = { marginBottom: 100, height: '75%' };
+    } else {
+      wrappedComponentStyle = { height: '100%' };
+    }
+    // console.log('wrapped component style');
+    // console.log(wrappedComponentStyle);
+    
     return (
       <>
         <>
@@ -188,7 +200,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   <Divider style={{ marginBottom: 10 }} />
                   <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <View style={{ display: 'flex', flex: 3, paddingLeft: 15 }}>
-                      <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Include Network Content</Text>
+                      <Text style={{ color: theme.colors.textDarker, fontSize: 13 }}>Search Network</Text>
                     </View>
                     <View style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 15 }}>
                       <Switch color={theme.colors.accent} value={includeNetworkContent} onValueChange={() => toggleNetworkContent()} />
@@ -213,12 +225,17 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             </>
           ) : null}
         </>
-        <WrappedComponent
-          globalState={globalState}
-          {...rest}
-          updateSearchText={updateSearchText}
-          updateSearchTags={updateSearchTags}
-        />
+        {/* Fix spacing when search is being displayed, without this fix you cannot scroll to items at the bottom of the list */}
+        <View >
+          <WrappedComponent
+            style={wrappedComponentStyle}
+            key={searchActive && shouldShowApplyButton()}
+            globalState={globalState}
+            {...rest}
+            updateSearchText={updateSearchText}
+            updateSearchTags={updateSearchTags}
+          />
+        </View>
       </>
     );
     

@@ -37,6 +37,7 @@ export const loadUser = createAsyncThunk(userActions.loadUser.type, async (opts 
 export const updateAccount = createAsyncThunk(
   userActions.updateAccount.type,
   async ({ updateUserDto, userId }: { updateUserDto: UpdateUserDto; userId?: string }, { extra }) => {
+    
     const { api } = extra as { api: ApiService };
     // TODO: If no userId, that means we're updating the account owner's account? Or was that for our previous hardcoded user?
     return userId
@@ -47,7 +48,7 @@ export const updateAccount = createAsyncThunk(
 
 export const defaultUserProfile: Pick<
   ProfileDto,
-  'username' | 'firstName' | 'lastName' | '_id' | 'phoneNumber' | 'imageSrc' | 'email' | 'role' | 'sharedCount' | 'sharesCount' | 'likesCount' | 'sharedItems'
+  'username' | 'firstName' | 'lastName' | '_id' | 'phoneNumber' | 'imageSrc' | 'email' | 'role' | 'sharedCount' | 'sharesCount' | 'likesCount' | 'sharedItems' |'transactionId'|'transactionDate'|'transactionEndDate'
 > = {
   username: '',
   firstName: '',
@@ -61,6 +62,9 @@ export const defaultUserProfile: Pick<
   likesCount: 0,
   sharesCount: 0,
   sharedItems: [],
+  transactionId:0,
+  transactionDate:'',
+  transactionEndDate:''
 };
 
 interface UserState {
@@ -92,6 +96,9 @@ const pickUser = (user: Partial<ProfileDto>) =>
     'likesCount',
     'sharesCount',
     'sharedItems',
+    'transactionId',
+    'transactionDate',
+    'transactionEndDate'
   ]);
 
 const userSlice = createSlice({

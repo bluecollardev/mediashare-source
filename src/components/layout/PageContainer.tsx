@@ -8,6 +8,7 @@ import { clearError } from 'mediashare/store/modules/appState';
 import { LoadingSpinnerProps } from 'mediashare/components/hoc/withLoadingSpinner';
 import { MaterialBottomTabScreenProps } from '@react-navigation/material-bottom-tabs';
 import { GlobalStateProps } from 'mediashare/core/globalState';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 type withProps<T1, T2> = T1 & T2;
 type WithNavProps = withProps<MaterialBottomTabScreenProps<any>, LoadingSpinnerProps>;
 
@@ -73,7 +74,7 @@ export function PageContainer({ children }: PageContainerProps) {
   return (
     <SafeAreaView style={styles.pageContainer}>
       <Portal>
-        <Dialog visible={app.hasError} onDismiss={hideDialog}>
+        {/* <Dialog visible={app.hasError} onDismiss={hideDialog}>
           <Card.Title
             title={app.error.name}
             left={(props) => <Avatar.Icon color={theme.colors.text} style={{ backgroundColor: theme.colors.error }} {...props} icon="error" />}
@@ -87,7 +88,7 @@ export function PageContainer({ children }: PageContainerProps) {
               Dismiss
             </Button>
           </Dialog.Actions>
-        </Dialog>
+        </Dialog> */}
       </Portal>
       {children}
     </SafeAreaView>

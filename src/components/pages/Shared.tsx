@@ -25,7 +25,9 @@ import {
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
 import InviteModal from '../layout/InviteModal';
-
+import { Auth } from 'aws-amplify';
+import { logout } from 'mediashare/store/modules/user';
+import { useFocusEffect } from '@react-navigation/native';
 const actionModes = { delete: 'delete', default: 'default' };
 
 export const Shared = ({ globalState }: PageProps) => {
@@ -54,6 +56,13 @@ export const Shared = ({ globalState }: PageProps) => {
       loadData().then();
     }
   }, [isLoaded]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      checkIfAccountIsDeactivated().then();
+    }, []),
+  );
+
 
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -160,6 +169,30 @@ export const Shared = ({ globalState }: PageProps) => {
     </PageContainer>
   );
 
+  async function checkIfAccountIsDeactivated() {
+    try {
+      const user = await Auth.currentAuthenticatedUser();
+      const attributes = await Auth.userAttributes(user);
+      const isDeactivated = attributes.find(
+        (attribute) => attribute.getName() === 'custom:isDeactivated'
+      ).getValue();
+      if (isDeactivated === 'true') {
+        Alert.alert('Account Deactivated', 'Your account has been deactivated.', [
+          
+          {
+            text: 'OK',
+            onPress: () => {
+              logOut()
+            },
+          },
+        ]);
+      }
+    } catch (error) {
+    }
+  }
+  async function logOut() {
+    await dispatch(logout());
+  }
   async function loadData() {
     await dispatch(loadUserConnections());
     // @ts-ignore

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ResizeMode, Video } from 'expo-av';
+import React, { useEffect, useState ,useRef} from 'react';
+import { Audio, ResizeMode, Video } from 'expo-av';
 import { ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
@@ -24,11 +24,37 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
   const getMediaDisplayMode = () => (showImage && image ? 'image' : 'video');
   const initialMediaDisplayMode = isPlayable ? (getMediaDisplayMode() as MediaDisplayMode) : 'image';
   const [mediaDisplayMode, setMediaDisplayMode] = useState(initialMediaDisplayMode);
-  
+  const [mediaUrl, setMediaUrl] = useState('');
   const { imageSrc, isDefaultImage } = usePreviewImage(image);
   
   const video = React.useRef(null);
+  const ref = useRef(null);
   const [status, setStatus] = React.useState({});
+  
+useEffect(() => {
+  checkUrl()
+}, []);
+
+const checkUrl = () => {
+  const segments = mediaSrc?.split("/");
+  if (segments !==undefined) {
+    if (segments?.length && segments[4]==='videos') {
+      setMediaUrl('https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/videos/'+segments[segments?.length-1])
+    } else if (segments[4]==='temp') {
+        setMediaUrl('https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/'+segments[segments?.length-1])
+      } else {
+        setMediaUrl(mediaSrc)
+      }
+    }
+  };
+
+  const triggerAudio = async (ref) => {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  };
+  
+  useEffect(() => {
+    if (status) triggerAudio(ref);
+  }, [ref, status]);
   
   return (
     <View
@@ -60,12 +86,13 @@ export const DisplayPreviewOrVideo: React.FC<DisplayPreviewOrVideoProps> = ({
           usePoster={true}
           posterSource={imageSrc}
           source={{
-            uri: mediaSrc,
+            uri: mediaUrl,
           }}
           shouldPlay={true}
           useNativeControls={true}
           resizeMode={ResizeMode.CONTAIN}
           isLooping={true}
+          volume={1.0}
           // onPlaybackStatusUpdate={status => setStatus(() => status)}
         />
       ) : null}

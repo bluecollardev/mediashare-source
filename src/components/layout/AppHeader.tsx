@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { NavigationScreenProp } from 'react-navigation';
 import { useRoute } from '@react-navigation/native';
-import { TouchableWithoutFeedback } from 'react-native';
+import { Alert, TouchableWithoutFeedback } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
 import { withGlobalStateConsumer, GlobalStateProps, INITIAL_SEARCH_FILTERS } from 'mediashare/core/globalState';
 import { useGoToAccount } from 'mediashare/hooks/navigation';
@@ -69,9 +69,9 @@ const AppHeaderComponent = ({
   let notificationsIcon = unreadNofifications ? 'notification-important' : 'notifications-off';
   
   const notificationsClickHandler = () => {
-    if (unreadNofifications) {
-      setUnreadNofifications(false);
-    }
+    // if (unreadNofifications) {
+      setUnreadNofifications(!unreadNofifications);
+    // }
   };
   
   return (
@@ -87,17 +87,37 @@ const AppHeaderComponent = ({
       />
       {showDisplayControls ? renderDisplayControls() : null}
       {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.accent : '#ffffff'} onPress={() => toggleSearch()} /> : null}
-      {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null}
+      {/* {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null} */}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
-          <Avatar.Image style={{ marginHorizontal: 16 }} source={avatar ? { uri: avatar } : undefined} size={36}  />
+          {
+            avatar ? <Avatar.Image style={{ marginHorizontal: 16 }} source={ { uri: avatar } } size={36}  />
+            : <Avatar.Icon size={36} icon="person" />
+          }
+    
         </TouchableWithoutFeedback>
-      ) : null}
+      ) : <Avatar.Icon size={36} icon="person" />}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}
     </Appbar.Header>
   );
   
   async function accountLogout() {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          logOut()
+        },
+      },
+    ]);
+
+  }
+  
+  async function logOut() {
     await dispatch(logout());
   }
 

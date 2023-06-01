@@ -1,3 +1,4 @@
+import { UploadResult } from 'mediashare/hooks/useUploader'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -7,7 +8,7 @@ import { deletePlaylistItem, updatePlaylistItem } from 'mediashare/store/modules
 // TODO: Fix update dto! Not sure why it's not being exported normally...
 import { UpdatePlaylistItemDto } from 'mediashare/rxjs-api/models/UpdatePlaylistItemDto';
 import { MediaVisibilityType } from 'mediashare/rxjs-api';
-import { useViewPlaylistById } from 'mediashare/hooks/navigation';
+import { usePlaylists, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
 import { View, ScrollView } from 'react-native';
@@ -18,6 +19,8 @@ import { MediaCard } from 'mediashare/components/layout/MediaCard';
 import { ExpoUploader } from 'mediashare/components/layout/ExpoUploader';
 import { ActionButtons } from 'mediashare/components/layout/ActionButtons';
 import styles, { theme } from 'mediashare/styles';
+import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
+import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 
 export interface PlaylistItemEditContainerProps {
   navigation: any;
@@ -44,7 +47,7 @@ const PlaylistItemEdit = ({
 
   const { playlistItemId } = route?.params || {};
   const playlistItem = useAppSelector((state) => state?.playlistItem?.entity);
-
+  const goToPlaylists = usePlaylists();
   const [showDialog, setShowDialog] = useState(false);
 
   const [title, setTitle] = useState(playlistItem?.title);
@@ -56,9 +59,10 @@ const PlaylistItemEdit = ({
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isMediaTag), []);
   const initialPlaylistItemTags = getInitialPlaylistItemTags();
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialPlaylistItemTags);
-
-  const [documentUri] = useState(playlistItem?.uri);
-  const [image, setImage] = useState(playlistItem?.imageSrc);
+  
+  const [mediaUri, setMediaUri] = useState(playlistItem?.uri || '');
+  const [image, setImage] = useState(playlistItem?.imageSrc || '');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (playlistItem) {
@@ -94,7 +98,7 @@ const PlaylistItemEdit = ({
             title={title}
             description={description}
             sortIndex={String(sortIndex)}
-            mediaSrc={documentUri}
+            mediaSrc={mediaUri}
             showImage={true}
             image={image}
             imageStyle={{
@@ -119,26 +123,28 @@ const PlaylistItemEdit = ({
             isPlayable={true}
             topDrawer={() => (
               <View style={styles.itemControls}>
-                <View style={{ flex: 0, width: 54 }}>
+                {/* <View style={{ flex: 0, width: 54 }}>
                   <Button
                     icon="delete-forever"
-                    mode="text"
+                    mode="outlined"
                     dark
                     compact
-                    color={theme.colors.white}
+                    textColor={theme.colors.white}
+                    buttonColor={theme.colors.error}
                     style={styles.deleteItemButton}
                     onPress={() => setShowDialog(true)}
                   >
                     {' '}
                   </Button>
-                </View>
+                </View> */}
                 <View style={{ flex: 4 }}>
-                  <ExpoUploader uploadMode="photo" onUploadComplete={setImage}>
+                  <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                     <Button
                       icon="cloud-upload"
                       mode="outlined"
                       dark
-                      color={theme.colors.default}
+                      textColor={theme.colors.white}
+                      buttonColor={theme.colors.surface}
                       compact
                       uppercase={false}
                       style={styles.changeImageButton}
@@ -158,6 +164,16 @@ const PlaylistItemEdit = ({
       </PageActions>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+    // setImage('');
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);
+    setImage(uri);
+  }
 
   function getInitialPlaylistItemTags() {
     return (
