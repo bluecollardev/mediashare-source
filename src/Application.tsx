@@ -55,6 +55,7 @@ import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
 import Invitation from 'mediashare/components/pages/Invitation';
+import Subscriptions from './components/pages/Subscriptions';
 import { Auth } from 'aws-amplify';
 
 // Map route names to icons

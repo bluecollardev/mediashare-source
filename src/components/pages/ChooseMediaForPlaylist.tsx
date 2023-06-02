@@ -42,7 +42,7 @@ export const ChooseMediaForPlaylistComponent = ({ entities, viewMediaItem, addIt
           image={imageSrc}
           selectable={true}
           onViewDetail={() => {
-            viewMediaItem({ mediaId: item._id, uri :item.uri }).then();
+            viewMediaItem({ mediaId: item._id, uri: item.uri }).then();
           }}
           onChecked={(v) => (v ? addItem(item) : removeItem(item))}
         />
@@ -92,9 +92,16 @@ export const ChooseMediaForPlaylist = ({ route, globalState }: PageProps) => {
           <NoContent onPress={() => undefined} messageButtonText="There are no items in your media library to add." icon="info" />
         ) : null}
       </KeyboardAvoidingPageContent>
+      {entities.length > 0 ? (
+        <PageActions>
+          <ActionButtons disablePrimary={ mediaItems?.length==0 } onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel}  />
+        </PageActions>
+      ) : null}
+      {/* TODO: Which button set do we want to use?
       <PageActions>
         <ActionButtons onPrimaryClicked={saveItems} primaryLabel="Confirm Selection" onSecondaryClicked={cancel} />
       </PageActions>
+      */}
     </PageContainer>
   );
 

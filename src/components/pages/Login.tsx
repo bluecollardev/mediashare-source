@@ -1,5 +1,5 @@
-import React from 'react';
-import { ScrollView, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, BackHandler, ScrollView, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { loginAction } from 'mediashare/store/modules/user';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
@@ -8,11 +8,12 @@ import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
-
+import { MaterialIcons } from '@expo/vector-icons';
+import Loader from "../loader/Loader";
 interface FormData {
   username: string;
   password: string;
@@ -22,6 +23,7 @@ const LoginComponent = ({}: PageProps) => {
   const dispatch = useDispatch();
   const nav = useNavigation();
   const { element, onToggleSnackBar, setMessage } = useSnack();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     control,
@@ -61,6 +63,32 @@ const LoginComponent = ({}: PageProps) => {
   const onHandleSignUp = () => {
     nav.navigate(routeConfig.signUp.name as never, {} as never);
   };
+  
+  useFocusEffect(() => {
+    const backAction = () => {
+      Alert.alert('Logout', 'Are you sure you want to exit the app?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            BackHandler.exitApp();
+          },
+        },
+      ]);
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  });
+
+
+  const toggleShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <PageContainer>
@@ -83,12 +111,12 @@ const LoginComponent = ({}: PageProps) => {
               control={control}
               name="username"
               rules={{
-                required: 'required',
+                required: 'Required',
               }}
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                    <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
@@ -99,18 +127,19 @@ const LoginComponent = ({}: PageProps) => {
               control={control}
               name="password"
               rules={{
-                required: 'required',
+                required: 'Required',
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
                   <TextInput
                     autoCapitalize="none"
                     label="Password"
-                    secureTextEntry
                     textContentType="password"
                     value={value}
                     onBlur={onBlur}
                     onChangeText={(value) => onChange(value)}
+                    secureTextEntry={!showPassword}
+                    right={<TextInput.Icon  size={20} icon={showPassword ? 'visibility' : 'visibility-off'} onPress={toggleShowPassword} />}
                   />
                   <HelperText type="error">{errors.password?.message}</HelperText>
                 </>

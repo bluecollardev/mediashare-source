@@ -112,6 +112,18 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       { key: SupportedContentTypes.all, value: `All Types` },
     ];
     
+    // TODO: Fix hidden search results that can't be reached by scrolling...
+    /* let wrappedComponentStyle = {};
+    if ((forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton())) {
+      wrappedComponentStyle = { marginBottom: 100, height: showNetworkContentSwitch ? '50%' : '60%' };
+    } else if (searchActive && !shouldShowApplyButton()) {
+      wrappedComponentStyle = { marginBottom: 100, height: '75%' };
+    } else {
+      wrappedComponentStyle = { height: '100%' };
+    }
+    // console.log('wrapped component style');
+    // console.log(wrappedComponentStyle); */
+    
     return (
       <>
         <>

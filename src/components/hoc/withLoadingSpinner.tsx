@@ -43,7 +43,7 @@ export const withLoadingSpinner = (stateSelector = (state: any) => state?.user?.
 
       return (
         <>
-          <LoadingOverlay show={isLoading} />
+          <LoadingOverlay show={loading} />
           <WrappedComponent {...rest} />
         </>
       );

@@ -10,7 +10,8 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { Alert, FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
@@ -24,6 +25,8 @@ import {
 } from 'mediashare/components/layout';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
+import { Auth } from 'aws-amplify';
+import { logout } from 'mediashare/store/modules/user';
 
 export interface PlaylistsProps {
   list: PlaylistResponseDto[];
@@ -97,7 +100,40 @@ export const Playlists = ({ globalState }: PageProps) => {
     clearCheckboxSelection();
     loadData().then();
   }, []);
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      clearCheckboxSelection();
+      checkIfAccountIsDeactivated()
+      loadData().then();
+    }, []),
+  );
 
+
+  async function checkIfAccountIsDeactivated() {
+    try {
+      const user = await Auth.currentAuthenticatedUser();
+      const attributes = await Auth.userAttributes(user);
+      const isDeactivated = attributes.find(
+        (attribute) => attribute.getName() === 'custom:isDeactivated'
+      ).getValue();
+      if (isDeactivated === 'true') {
+        Alert.alert('Account Deactivated', 'Your account has been deactivated.', [
+          
+          {
+            text: 'OK',
+            onPress: () => {
+              logOut()
+            },
+          },
+        ]);
+      }
+    } catch (error) {
+    }
+  }
+  async function logOut() {
+    await dispatch(logout());
+  }
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const [fabState, setFabState] = useState({ open: false });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
@@ -9,6 +9,7 @@ import { Auth } from 'aws-amplify';
 import { useRoute } from '@react-navigation/native';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
+import Loader from '../../loader/Loader';
 
 interface FormData {
   username: string;
@@ -32,17 +33,20 @@ const ConfirmComponent = ({}: PageProps) => {
   });
 
   const { element, onToggleSnackBar, setMessage } = useSnack();
-
+  const [loading, setloading] = useState(false)
   const username = watch('username');
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const { username, code } = data;
+      setloading(true)
       await Auth.confirmSignUp(username, code);
+      setloading(false)
       nav.navigate(routeConfig.login.name as never, {} as never);
     } catch (error) {
+      setloading(false)
       setMessage(error.message);
-      onToggleSnackBar();
+    await  onToggleSnackBar();
       console.log('confirm error ', error);
     }
   };
@@ -54,7 +58,7 @@ const ConfirmComponent = ({}: PageProps) => {
       onToggleSnackBar();
     } catch (error) {
       setMessage(error.message);
-      onToggleSnackBar();
+      await onToggleSnackBar();
       console.log('error resend code ', error);
     }
   };
@@ -67,6 +71,7 @@ const ConfirmComponent = ({}: PageProps) => {
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent>
+      <Loader loading={loading}/>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -82,7 +87,7 @@ const ConfirmComponent = ({}: PageProps) => {
               control={control}
               name="username"
               rules={{
-                required: 'required',
+                required: 'Required',
                 minLength: {
                   value: 4,
                   message: 'Too short!',
@@ -99,11 +104,11 @@ const ConfirmComponent = ({}: PageProps) => {
               control={control}
               name="code"
               rules={{
-                required: 'required',
+                required: 'Required',
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <>
-                  <TextInput autoCapitalize="none" label="Code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
+                  <TextInput    keyboardType="numeric" autoCapitalize="none" label="Code" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value)} />
                   <HelperText type="error">{errors.code?.message}</HelperText>
                 </>
               )}

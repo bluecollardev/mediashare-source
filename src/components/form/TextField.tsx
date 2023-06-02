@@ -7,6 +7,7 @@ import styles, { theme } from 'mediashare/styles';
 export interface TextFieldProps {
   label?: any;
   value?: string;
+  keyboardType?: string;
   validator?: (val: string) => boolean;
   onChangeText: (val: string) => void;
   disabled?: boolean;

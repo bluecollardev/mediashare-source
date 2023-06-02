@@ -10,33 +10,31 @@ import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
-import { useUploader } from 'mediashare/hooks/useUploader';
+import { UploadResult, useUploader } from 'mediashare/hooks/useUploader'
 import { TextField } from 'mediashare/components/form/TextField';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
-
+import { HelperText } from 'react-native-paper';
+import Loader from '../loader/Loader';
+import { theme } from 'mediashare/styles';
+import PhoneInput from 'react-native-phone-number-input';
+import moment from 'moment'
 interface AccountEditProps extends PageProps {}
 
 const AccountEdit = ({ route }: AccountEditProps) => {
   const { userId = null } = route.params;
-
   const dispatch = useDispatch();
-
   const viewAccount = useRouteWithParams(routeNames.account);
-
   const [isLoaded, setIsLoaded] = useState(false);
 
   const profile = useProfile();
   const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
-  const withoutName = () => state?.firstName?.length < 1 || state?.lastName?.length < 1;
-  const fullName = state?.firstName || state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
-  
-  const onUploadStart = () => undefined;
-  const onUploadComplete = (uri) => {
-    setState({ ...state, imageSrc: uri });
-  };
-  
+  const withoutName = () => state?.username?.length<1 || state?.firstName?.length < 1 || state?.lastName?.length < 1 || state?.email?.length < 1 || state?.phoneNumber?.length < 1 ||validEmail   ;
+
+  const fullName = state?.firstName && state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
+  const [uploading, setUploading] = useState(false);
+  const [validEmail, setValidEmail] = useState(false)
   const { pickImage } = useUploader({
     onUploadStart,
     onUploadComplete
@@ -45,7 +43,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   useEffect(() => {
     async function loadData() {
       const profile = (await dispatch(loadProfile(userId))) as any;
-      setState(profile.payload);
+      setState(profile?.payload);
       setIsLoaded(true);
     }
     if (!isLoaded) {
@@ -53,8 +51,26 @@ const AccountEdit = ({ route }: AccountEditProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    checkEmail()
+  }, [state?.email])
+  
+  const checkEmail = () => {
+  
+  var reg =
+  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+  if (reg.test(state?.email) != true) {
+    setValidEmail(true)
+  } else {
+    setValidEmail(false)
+  }
+};
+
+
   return (
     <PageContainer>
+      <Loader loading={uploading}/>
       <KeyboardAvoidingPageContent>
         <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.formContainer}>
           <View>
@@ -69,20 +85,31 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               onUpdateAvatarClicked={() => pickImage()}
             />
           </View>
-      
           <View style={styles.formSection}>
-            <TextField label="Shared Type" value={state?.role} disabled={true} />
-            <TextField onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username} disabled={!isLoaded} />
+            <TextField  label="Shared Type" value={state?.role} disabled={true}   >
+            </TextField>
+            <HelperText style={{top:-11}} type="error">{''}</HelperText>
+          </View>
+          <View style={styles.formSection}>
+            <TextField  onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username?.toLowerCase()} disabled={true} />
+            <HelperText style={{top:-11}} type="error">{state?.username?.length===0? 'Required':''}</HelperText>
           </View>
           <View style={styles.formSection}>
             <TextField onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
-            <TextField onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
+            <HelperText style={{top:-11}} type="error">{state?.firstName?.length===0? 'Required':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email} disabled={!isLoaded} />
-            <TextField onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
+            <TextField onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
+            <HelperText style={{top:-11}} type="error">{state?.lastName?.length===0? 'Required':''}</HelperText>
           </View>
-      
+          <View style={styles.formSection}>
+            <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email?.toLowerCase()} disabled={!isLoaded} />
+            <HelperText style={{top:-11}} type="error">{validEmail || state?.email?.length===0? 'Please enter valid email':''}</HelperText>
+          </View>
+          <View style={styles.formSection}>
+            <TextField  onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
+            <HelperText  type="error">{state?.phoneNumber?.length===0? 'Required':''}</HelperText>
+          </View>
           <ActionButtons
             disablePrimary={withoutName()}
             disableSecondary={withoutName()}
@@ -94,6 +121,15 @@ const AccountEdit = ({ route }: AccountEditProps) => {
       </KeyboardAvoidingPageContent>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);    
+    setState({ ...state, imageSrc: uri });
+  }
 
   // eslint-disable-next-line no-shadow
   function onUpdate(user: Partial<UserDto>) {
@@ -128,7 +164,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   formSection: {
-    marginBottom: 20,
+    // marginBottom: 5,
   },
   title: {
     fontWeight: 'bold',

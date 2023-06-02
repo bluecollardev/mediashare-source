@@ -99,6 +99,13 @@ const routeConfig = {
       header: (props) => <AppHeader {...props} searchable={true} showAccount={true} />,
     },
   },
+  subscriptions: {
+    name: 'subscriptions',
+    options: {
+      title: 'Membership Plan',
+      header: (props) => <AppHeader {...props} searchable={false} showAccount={true} />,
+    },
+  },
   account: {
     name: 'account',
     options: {

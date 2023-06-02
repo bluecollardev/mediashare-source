@@ -4,6 +4,7 @@ import { ScrollView, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
+import { UploadResult } from 'mediashare/hooks/useUploader';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, addUserPlaylist } from 'mediashare/store/modules/playlist';
@@ -34,13 +35,15 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
   const [description, setDescription] = useState();
   const [visibility, setVisibility] = useState(PlaylistVisibilityType.Private);
   const [isSaved, setIsSaved] = useState(false);
-  const [imageSrc, setImageSrc] = useState('');
 
   const { tags = [] } = globalState;
   const availableTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isPlaylistTag), []);
   const initialTagKeys = [];
   const [selectedTagKeys, setSelectedTagKeys] = useState(initialTagKeys);
-
+  
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  
   const edit = useRouteWithParams(routeNames.playlistEdit);
 
   const isValid = function () {
@@ -53,10 +56,6 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
     options.push(value);
   }
 
-  const onUploadComplete = (uri: string) => {
-    setImageSrc(uri);
-  };
-
   return (
     <PageContainer>
       <KeyboardAvoidingPageContent style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -64,8 +63,8 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
           <MediaCard
             title={title}
             description={description}
-            showImage={!!imageSrc}
-            image={imageSrc}
+            showImage={!!image}
+            image={image}
             visibility={visibility}
             visibilityOptions={options}
             onVisibilityChange={setVisibility as any}
@@ -79,17 +78,18 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
             onDescriptionChange={setDescription as any}
             isEdit={true}
             topDrawer={() =>
-              !imageSrc ? (
-                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
-                  <UploadPlaceholder buttonText="Add Cover Photo" />
+              !image ? (
+                <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
+                  <UploadPlaceholder uploading={uploading} uploaded={!!image} buttonText="Add Cover Photo" />
                 </ExpoUploader>
               ) : (
-                <ExpoUploader uploadMode="photo" onUploadComplete={onUploadComplete}>
+                <ExpoUploader uploadMode="photo" onUploadStart={onUploadStart} onUploadComplete={onUploadComplete}>
                   <Button
                     icon="cloud-upload"
                     mode="outlined"
                     dark
-                    color={theme.colors.default}
+                    textColor={theme.colors.white}
+                    buttonColor={theme.colors.surface}
                     compact
                     uppercase={false}
                     style={styles.changeImageButton}
@@ -108,6 +108,16 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
       </PageActions>
     </PageContainer>
   );
+  
+  async function onUploadStart() {
+    setUploading(true);
+    setImage('');
+  }
+  
+  async function onUploadComplete({ uri }: UploadResult) {
+    setUploading(false);
+    setImage(uri);
+  }
 
   async function savePlaylist() {
     setIsSaved(true);
@@ -119,7 +129,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
       cloneOf: undefined,
       title,
       description,
-      imageSrc,
+      imageSrc: image,
       visibility: visibility,
       tags: selectedTags || [],
       mediaIds: [],
@@ -131,7 +141,7 @@ const PlaylistAdd = ({ navigation, globalState = { tags: [] } }: PageProps) => {
     await dispatch(getUserPlaylists());
     await dispatch(getPlaylistById(playlistId));
     setIsSaved(false);
-    editPlaylist(playlistId);
+    await editPlaylist(playlistId);
   }
 
   async function editPlaylist(playlistId) {
