@@ -1,4 +1,3 @@
-import { UploadResult } from 'mediashare/hooks/useUploader'
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -12,15 +11,15 @@ import { usePlaylists, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';
 import { View, ScrollView } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, KeyboardAvoidingPageContent, PageActions, PageProps } from 'mediashare/components/layout/PageContainer';
 import { AppDialog } from 'mediashare/components/layout/AppDialog';
 import { MediaCard } from 'mediashare/components/layout/MediaCard';
 import { ExpoUploader } from 'mediashare/components/layout/ExpoUploader';
 import { ActionButtons } from 'mediashare/components/layout/ActionButtons';
 import styles, { theme } from 'mediashare/styles';
-import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
-import { getUserPlaylists } from 'mediashare/store/modules/playlists';
+// import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
+// import { getUserPlaylists } from 'mediashare/store/modules/playlists';
+import { UploadResult } from 'mediashare/hooks/useUploader';
 
 export interface PlaylistItemEditContainerProps {
   navigation: any;
@@ -143,6 +142,7 @@ const PlaylistItemEdit = ({
                       icon="cloud-upload"
                       mode="outlined"
                       dark
+                      // color={theme.colors.default}
                       textColor={theme.colors.white}
                       buttonColor={theme.colors.surface}
                       compact

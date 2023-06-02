@@ -55,8 +55,8 @@ import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
 import Invitation from 'mediashare/components/pages/Invitation';
-import { Auth } from 'aws-amplify';
 import Subscriptions from './components/pages/Subscriptions';
+import { Auth } from 'aws-amplify';
 
 // Map route names to icons
 export const tabNavigationIconsMap = {
@@ -91,7 +91,6 @@ const SearchNavigation = () => {
       <SearchStackNavigator.Screen {...routeConfig.chooseMediaForPlaylist} component={ChooseMediaForPlaylist} />
       <SearchStackNavigator.Screen {...routeConfig.choosePlaylistForSelected} component={ChoosePlaylistForSelected} />
       <SearchStackNavigator.Screen {...routeConfig.sharePlaylistsWith} component={SharePlaylistsWith} />
-      <SearchStackNavigator.Screen {...routeConfig.subscriptions} component={Subscriptions} />
     </SearchStackNavigator.Navigator>
   );
 };
