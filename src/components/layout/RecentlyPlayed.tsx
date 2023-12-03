@@ -3,7 +3,7 @@ import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 import { Dimensions, FlatList, View, TouchableHighlight } from 'react-native';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
-import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto, PlaylistResponseDto } from 'src/apis/media-svc/rxjs-api';
 
 export interface RecentlyPlayedProps {
   list: PlaylistResponseDto[];

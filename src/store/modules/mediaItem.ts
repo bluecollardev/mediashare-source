@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'src/apis/media-svc/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { getVideoPath, getImagePath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
 import {

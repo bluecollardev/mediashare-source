@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { MediaItemResponseDto } from 'mediashare/rxjs-api';
+import { MediaItemResponseDto } from 'src/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
 const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_user_media_items', 'select_media_item', 'clear_media_items'] as const;

@@ -7,7 +7,7 @@ import { useSnack } from 'mediashare/hooks/useSnack';
 import { addUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { search as searchContent, select } from 'mediashare/store/modules/search';
-import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'src/apis/media-svc/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';

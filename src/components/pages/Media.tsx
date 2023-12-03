@@ -9,7 +9,7 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'src/apis/media-svc/rxjs-api';
 // import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';

@@ -4,7 +4,7 @@ import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
-import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto, PlaylistResponseDto } from 'src/apis/media-svc/rxjs-api';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';

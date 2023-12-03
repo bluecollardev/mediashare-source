@@ -14,7 +14,7 @@ import {
   UsersApi,
   TagsApi,
   ViewsApi,
-} from 'mediashare/rxjs-api';
+} from 'src/apis/media-svc/rxjs-api';
 import Config from 'mediashare/config';
 
 function apiFactory() {

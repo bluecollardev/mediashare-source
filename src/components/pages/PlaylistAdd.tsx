@@ -23,7 +23,7 @@ import {
   ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
-import { CreatePlaylistDto, PlaylistVisibilityType } from 'mediashare/rxjs-api';
+import { CreatePlaylistDto, PlaylistVisibilityType } from 'src/apis/media-svc/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 
 // @ts-ignore

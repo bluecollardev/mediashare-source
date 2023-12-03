@@ -35,7 +35,7 @@ import {
   CreatePlaylistDto,
   MediaVisibilityType,
   PlaylistResponseDto,
-} from 'mediashare/rxjs-api'
+} from 'src/apis/media-svc/rxjs-api'
 import { theme, components } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };

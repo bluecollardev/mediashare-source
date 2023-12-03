@@ -8,7 +8,7 @@ import {
   UpdatePlaylistDto,
   PlaylistResponseDto,
   PlaylistItemResponseDto,
-} from 'mediashare/rxjs-api'
+} from 'src/apis/media-svc/rxjs-api'
 
 import { flattenDeep } from 'remeda';
 import { take } from 'rxjs/operators';

@@ -3,7 +3,7 @@ import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { signOut } from 'mediashare/core/aws/auth';
 import { ApiService } from 'mediashare/store/apis';
-import { AuthorizeDto, ProfileDto, UpdateUserDto, BcRolesType } from 'mediashare/rxjs-api';
+import { AuthorizeDto, ProfileDto, UpdateUserDto, BcRolesType } from 'src/apis/media-svc/rxjs-api';
 // import { setKeyPair } from './keypair-store'; // TODO: Not compatible with react-native-web [https://github.com/expo/expo/issues/7744]
 import { pick, clone } from 'remeda';
 

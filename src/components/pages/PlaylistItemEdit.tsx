@@ -5,8 +5,8 @@ import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/st
 import { useAppSelector } from 'mediashare/store';
 import { deletePlaylistItem, updatePlaylistItem } from 'mediashare/store/modules/playlistItem';
 // TODO: Fix update dto! Not sure why it's not being exported normally...
-import { UpdatePlaylistItemDto } from 'mediashare/rxjs-api/models/UpdatePlaylistItemDto';
-import { MediaVisibilityType } from 'mediashare/rxjs-api';
+import { UpdatePlaylistItemDto } from 'mediashare/apis/media-svc/rxjs-api/models/UpdatePlaylistItemDto';
+import { MediaVisibilityType } from 'src/apis/media-svc/rxjs-api';
 import { usePlaylists, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';

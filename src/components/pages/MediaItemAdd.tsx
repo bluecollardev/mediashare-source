@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { addMediaItem } from 'mediashare/store/modules/mediaItem';
-import { CreateMediaItemDto, MediaVisibilityType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, MediaVisibilityType } from 'src/apis/media-svc/rxjs-api';
 import { UploadResult } from 'mediashare/hooks/useUploader';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';

@@ -14,7 +14,7 @@
 import {
     BcRolesType,
     ProfileShareItem,
-} from './';
+} from './index';
 
 /**
  * @export

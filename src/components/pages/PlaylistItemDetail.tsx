@@ -7,7 +7,7 @@ import { mapAvailableTags } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 // import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard, MediaList } from 'mediashare/components/layout';
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto } from 'src/apis/media-svc/rxjs-api';
 import {
   useEditPlaylistItemById,
   useViewMediaItemById,

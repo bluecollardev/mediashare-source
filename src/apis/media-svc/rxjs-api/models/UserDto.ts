@@ -13,7 +13,7 @@
 
 import {
     BcRolesType,
-} from './';
+} from './index';
 
 /**
  * @export

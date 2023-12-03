@@ -1,7 +1,7 @@
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
 import { MediaComponent } from 'mediashare/components/pages/Media'
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid'
-import { AuthorProfileDto, MediaItemResponseDto } from 'mediashare/rxjs-api'
+import { AuthorProfileDto, MediaItemResponseDto } from 'src/apis/media-svc/rxjs-api'
 import { theme } from 'mediashare/styles'
 import React, { useEffect, useState } from 'react';
 import { Divider } from 'react-native-paper'

@@ -31,7 +31,7 @@ import {
 } from 'mediashare/components/layout';
 import { routeNames } from 'mediashare/routes';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { PlaylistVisibilityType } from 'mediashare/rxjs-api';
+import { PlaylistVisibilityType } from 'src/apis/media-svc/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 import Loader from '../loader/Loader';
 

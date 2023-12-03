@@ -6,7 +6,7 @@ import { useAppSelector } from 'mediashare/store';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard } from 'mediashare/components/layout';
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto } from 'src/apis/media-svc/rxjs-api';
 
 // @ts-ignore
 export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {

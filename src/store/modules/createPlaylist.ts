@@ -1,7 +1,7 @@
 // TODO: Clean this file up, so it looks liek the other ones....
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { CreatePlaylistDto } from 'mediashare/rxjs-api';
+import { CreatePlaylistDto } from 'src/apis/media-svc/rxjs-api';
 
 import { playlists } from 'mediashare/store/apis';
 

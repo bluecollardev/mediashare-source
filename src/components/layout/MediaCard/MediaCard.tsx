@@ -10,7 +10,7 @@ import { mappedKeysToTags } from 'mediashare/core/utils/tags';
 import { titleValidator, descriptionValidator } from 'mediashare/core/utils/validators';
 import { theme, components } from 'mediashare/styles';
 
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto } from 'src/apis/media-svc/rxjs-api';
 
 export interface MediaCardProps {
   id?: string;

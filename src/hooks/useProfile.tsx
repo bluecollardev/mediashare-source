@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from 'mediashare/store';
 import { DEFAULT_USER_ROLE } from 'mediashare/core/globalState/constants';
-import { BcRolesType } from 'mediashare/rxjs-api';
+import { BcRolesType } from 'src/apis/media-svc/rxjs-api';
 
 export function useProfile() {
   const profile = useAppSelector((state) => state?.profile?.entity);

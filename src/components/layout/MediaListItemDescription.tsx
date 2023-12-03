@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper'
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfileDto } from 'src/apis/media-svc/rxjs-api';
 import { shortenText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
 

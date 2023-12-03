@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { Tag } from 'mediashare/rxjs-api';
+import { Tag } from 'src/apis/media-svc/rxjs-api';
 
 // Export tag utils
 export * from '../../core/utils/tags';
