@@ -1,7 +1,7 @@
 import React from 'react';
 import * as R from 'remeda';
 
-import { ProfileShareItem } from 'src/apis/media-svc/rxjs-api';
+import { ProfileShareItem } from 'mediashare/apis/media-svc/rxjs-api';
 
 import { View, StyleSheet, SectionList } from 'react-native';
 import { Card } from 'react-native-paper';

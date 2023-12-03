@@ -4,7 +4,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import * as R from 'remeda';
 import { from } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
-import { UserDto } from 'src/apis/media-svc/rxjs-api';
+import { UserDto } from 'mediashare/apis/user-svc/rxjs-api';
 import { loadUser, updateAccount } from 'mediashare/store/modules/user';
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';

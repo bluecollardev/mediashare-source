@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { UserDto } from 'src/apis/media-svc/rxjs-api';
+import { UserDto } from 'mediashare/apis/user-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
 const usersActionNames = ['load_users'] as const;

@@ -6,7 +6,7 @@ import { View, StyleSheet, Platform, Alert } from 'react-native';
 import { getAuthorText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
 
-import { AuthorProfileDto } from 'src/apis/media-svc/rxjs-api';
+import { AuthorProfileDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { routeConfig } from 'mediashare/routes';
 import { useNavigation } from '@react-navigation/native';
 

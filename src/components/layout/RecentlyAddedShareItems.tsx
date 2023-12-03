@@ -4,11 +4,11 @@ import { useViewPlaylistById, useViewFeedSharedWithMe } from 'mediashare/hooks/n
 import { FlatList, View, Dimensions, TouchableHighlight } from 'react-native';
 import { Button } from 'react-native-paper';
 import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
-import { AuthorProfileDto, PlaylistResponseDto } from 'src/apis/media-svc/rxjs-api';
+import { AuthorProfileDto, PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { theme } from 'mediashare/styles';
 
 export interface RecentlyAddedShareItemsProps {
-  list: PlaylistResponseDto[];
+  list: PlaylistDto[];
   selectable?: boolean;
   clearSelection?: boolean;
   showActions?: boolean;

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { ApiService } from 'mediashare/store/apis';
-import { ProfileDto } from 'src/apis/media-svc/rxjs-api';
+import { ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
 const profileActionNames = [

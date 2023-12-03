@@ -5,7 +5,7 @@ import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
 import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
-import { AuthorProfileDto, UpdatePlaylistDto } from 'src/apis/media-svc/rxjs-api';
+import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';

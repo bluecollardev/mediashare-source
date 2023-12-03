@@ -34,8 +34,8 @@ import {
   AuthorProfileDto,
   CreatePlaylistDto,
   MediaVisibilityType,
-  PlaylistResponseDto,
-} from 'src/apis/media-svc/rxjs-api'
+  PlaylistDto,
+} from 'mediashare/apis/media-svc/rxjs-api'
 import { theme, components } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -275,7 +275,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   }
 
   async function sharePlaylist() {
-    await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistResponseDto }));
+    await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistDto }));
     goToSharePlaylistsWith();
   }
   

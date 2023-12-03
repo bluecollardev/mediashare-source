@@ -4,7 +4,7 @@ import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
-import { AuthorProfileDto, PlaylistResponseDto } from 'src/apis/media-svc/rxjs-api';
+import { AuthorProfileDto, PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -29,7 +29,7 @@ import { Auth } from 'aws-amplify';
 import { logout } from 'mediashare/store/modules/user';
 
 export interface PlaylistsProps {
-  list: PlaylistResponseDto[];
+  list: PlaylistDto[];
   selectable?: boolean;
   clearSelection?: boolean;
   showActions?: boolean;
