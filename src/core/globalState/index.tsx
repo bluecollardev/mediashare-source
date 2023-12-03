@@ -7,7 +7,8 @@ import { useUser } from 'mediashare/hooks/useUser';
 import { INITIAL_DISPLAY_MODE } from 'mediashare/core/globalState/constants';
 import { loadUser, setIsAcceptingInvitationAction } from 'mediashare/store/modules/user'
 import { getTags } from 'mediashare/store/modules/tags';
-import { BcRolesType, ProfileDto, Tag } from 'mediashare/apis/media-svc/rxjs-api';
+import { BcRolesType, ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
+import { Tag } from 'mediashare/apis/tag-svc/rxjs-api';
 
 export interface GlobalStateProps {
   history?: any;
