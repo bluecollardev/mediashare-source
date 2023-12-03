@@ -1,7 +1,7 @@
 // tslint:disable
 /**
- * Media Service
- * Media Service
+ * User Service
+ * User Service
  *
  * The version of the OpenAPI document: 0.0.1
  * 

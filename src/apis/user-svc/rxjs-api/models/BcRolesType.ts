@@ -1,7 +1,7 @@
 // tslint:disable
 /**
- * Media Service
- * Media Service
+ * User Service
+ * User Service
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -16,10 +16,10 @@
  * @export
  * @enum {string}
  */
-export enum MediaVisibilityType {
-    Private = 'private',
-    Shared = 'shared',
-    Subscription = 'subscription',
-    Public = 'public'
+export enum BcRolesType {
+    Guest = 'guest',
+    Free = 'free',
+    Subscriber = 'subscriber',
+    Admin = 'admin'
 }
 

@@ -1,7 +1,7 @@
 // tslint:disable
 /**
- * Media Service
- * Media Service
+ * User Service
+ * User Service
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -11,38 +11,34 @@
  * Do not edit the class manually.
  */
 
-import {
-    PlaylistVisibilityType,
-} from './';
-
 /**
  * @export
- * @interface UpdatePlaylistDto
+ * @interface UserConnectionDto
  */
-export interface UpdatePlaylistDto {
+export interface UserConnectionDto {
     /**
      * @type {string}
-     * @memberof UpdatePlaylistDto
+     * @memberof UserConnectionDto
      */
     _id: string;
     /**
      * @type {string}
-     * @memberof UpdatePlaylistDto
+     * @memberof UserConnectionDto
      */
     readonly createdAt?: string;
     /**
      * @type {string}
-     * @memberof UpdatePlaylistDto
+     * @memberof UserConnectionDto
      */
     readonly updatedDate?: string;
     /**
-     * @type {Array<string>}
-     * @memberof UpdatePlaylistDto
+     * @type {string}
+     * @memberof UserConnectionDto
      */
-    mediaIds?: Array<string>;
+    userId: string;
     /**
-     * @type {PlaylistVisibilityType}
-     * @memberof UpdatePlaylistDto
+     * @type {string}
+     * @memberof UserConnectionDto
      */
-    visibility: PlaylistVisibilityType;
+    connectionId: string;
 }

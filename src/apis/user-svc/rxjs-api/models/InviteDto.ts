@@ -1,7 +1,7 @@
 // tslint:disable
 /**
- * Media Service
- * Media Service
+ * User Service
+ * User Service
  *
  * The version of the OpenAPI document: 0.0.1
  * 
@@ -12,14 +12,18 @@
  */
 
 /**
- * 
  * @export
- * @enum {string}
+ * @interface InviteDto
  */
-export enum MediaVisibilityType {
-    Private = 'private',
-    Shared = 'shared',
-    Subscription = 'subscription',
-    Public = 'public'
+export interface InviteDto {
+    /**
+     * @type {string}
+     * @memberof InviteDto
+     */
+    email: string;
+    /**
+     * @type {string}
+     * @memberof InviteDto
+     */
+    username: string;
 }
-

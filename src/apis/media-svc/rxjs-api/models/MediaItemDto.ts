@@ -13,66 +13,96 @@
 
 /**
  * @export
- * @interface CreateMediaItemDto
+ * @interface MediaItemDto
  */
-export interface CreateMediaItemDto {
+export interface MediaItemDto {
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
+     */
+    _id: string;
+    /**
+     * @type {string}
+     * @memberof MediaItemDto
+     */
+    readonly createdAt?: string;
+    /**
+     * @type {string}
+     * @memberof MediaItemDto
+     */
+    readonly updatedDate?: string;
+    /**
+     * @type {string}
+     * @memberof MediaItemDto
      */
     key: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     userId: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     title: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     summary?: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     description: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     uri: string;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     imageSrc?: string;
     /**
      * @type {boolean}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     isPlayable?: boolean;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
-    visibility: CreateMediaItemDtoVisibilityEnum;
+    visibility: MediaItemDtoVisibilityEnum;
     /**
      * @type {string}
-     * @memberof CreateMediaItemDto
+     * @memberof MediaItemDto
      */
     eTag?: string;
+    /**
+     * @type {number}
+     * @memberof MediaItemDto
+     */
+    shareCount: number;
+    /**
+     * @type {number}
+     * @memberof MediaItemDto
+     */
+    viewCount: number;
+    /**
+     * @type {number}
+     * @memberof MediaItemDto
+     */
+    likesCount: number;
 }
 
 /**
  * @export
  * @enum {string}
  */
-export enum CreateMediaItemDtoVisibilityEnum {
+export enum MediaItemDtoVisibilityEnum {
     Private = 'private',
     Shared = 'shared',
     Subscription = 'subscription',

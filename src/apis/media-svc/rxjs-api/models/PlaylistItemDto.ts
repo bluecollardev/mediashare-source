@@ -17,67 +17,97 @@ import {
 
 /**
  * @export
- * @interface CreatePlaylistItemDto
+ * @interface PlaylistItemDto
  */
-export interface CreatePlaylistItemDto {
+export interface PlaylistItemDto {
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
+     */
+    _id: string;
+    /**
+     * @type {string}
+     * @memberof PlaylistItemDto
+     */
+    readonly createdAt?: string;
+    /**
+     * @type {string}
+     * @memberof PlaylistItemDto
+     */
+    readonly updatedDate?: string;
+    /**
+     * @type {string}
+     * @memberof PlaylistItemDto
      */
     playlistId: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     mediaId: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     userId: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     createdBy: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     title: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     summary?: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     description: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     uri: string;
     /**
      * @type {string}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     imageSrc?: string;
     /**
      * @type {number}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     sortIndex?: number;
     /**
      * @type {boolean}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     isPlayable?: boolean;
     /**
      * @type {MediaVisibilityType}
-     * @memberof CreatePlaylistItemDto
+     * @memberof PlaylistItemDto
      */
     visibility: MediaVisibilityType;
+    /**
+     * @type {number}
+     * @memberof PlaylistItemDto
+     */
+    shareCount: number;
+    /**
+     * @type {number}
+     * @memberof PlaylistItemDto
+     */
+    viewCount: number;
+    /**
+     * @type {number}
+     * @memberof PlaylistItemDto
+     */
+    likesCount: number;
 }
