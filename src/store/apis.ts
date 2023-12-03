@@ -10,11 +10,13 @@ import {
   PlaylistsApi,
   PlaylistItemsApi,
   ShareItemsApi,
+  // TagsApi,
+  // ViewsApi,
+} from 'mediashare/apis/media-svc/rxjs-api';
+import {
   UserApi,
   UsersApi,
-  TagsApi,
-  ViewsApi,
-} from 'mediashare/apis/media-svc/rxjs-api';
+} from 'mediashare/apis/user-svc/rxjs-api';
 import Config from 'mediashare/config';
 
 function apiFactory() {

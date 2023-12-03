@@ -8,7 +8,6 @@ import { useProfile } from 'mediashare/hooks/useProfile';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
   PageContainer,

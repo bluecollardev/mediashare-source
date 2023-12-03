@@ -6,12 +6,12 @@ import { useAppSelector } from 'mediashare/store';
 import { findUserPlaylists, getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { updateUserPlaylist } from 'mediashare/store/modules/playlist';
 import { clear } from 'mediashare/store/modules/search';
-import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { UpdatePlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageActions,
@@ -29,7 +29,7 @@ export const ChoosePlaylistForSelectedComponent = ({ entities, viewMediaItem, ad
   return <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, imageSrc = '' } = item;
     return (
       <>
         <MediaListItem

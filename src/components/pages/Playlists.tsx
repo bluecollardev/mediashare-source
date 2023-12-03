@@ -4,7 +4,8 @@ import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { removeUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists, findUserPlaylists, selectPlaylist } from 'mediashare/store/modules/playlists';
-import { AuthorProfileDto, PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
@@ -12,7 +13,6 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { FAB, Divider } from 'react-native-paper';
 import { Alert, FlatList, RefreshControl, StyleSheet } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageActions,
   PageContainer,
@@ -45,7 +45,7 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '', visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', mediaIds = [], mediaItems = [], imageSrc = '', visibility } = item;
     return (
       <>
         <MediaListItem

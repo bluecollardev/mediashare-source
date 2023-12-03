@@ -10,16 +10,13 @@ import { loadProfile } from 'mediashare/store/modules/profile';
 import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
-import { UploadResult, useUploader } from 'mediashare/hooks/useUploader'
+import { UploadResult, useUploader } from 'mediashare/hooks/useUploader';
 import { TextField } from 'mediashare/components/form/TextField';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
 import { HelperText } from 'react-native-paper';
 import Loader from '../loader/Loader';
-import { theme } from 'mediashare/styles';
-import PhoneInput from 'react-native-phone-number-input';
-import moment from 'moment'
+
 interface AccountEditProps extends PageProps {}
 
 const AccountEdit = ({ route }: AccountEditProps) => {

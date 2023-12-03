@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { loginAction } from 'mediashare/store/modules/user';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Text, Card, TextInput, HelperText, Button } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';

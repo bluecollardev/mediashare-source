@@ -12,7 +12,6 @@ import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { titleValidator, descriptionValidator, visibilityValidator } from 'mediashare/core/utils/validators';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,

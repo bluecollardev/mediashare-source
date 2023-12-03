@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import LabelledAvatar from './LabelledAvatar';
 
 interface HighlightsProps {

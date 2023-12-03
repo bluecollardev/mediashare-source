@@ -6,7 +6,7 @@ import { View, StyleSheet, Platform, Alert } from 'react-native';
 import { getAuthorText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
 
-import { AuthorProfileDto } from 'mediashare/apis/media-svc/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import { routeConfig } from 'mediashare/routes';
 import { useNavigation } from '@react-navigation/native';
 
@@ -16,7 +16,7 @@ export interface MediaCardTitleProps {
   title?: string;
   // TODO: Use an enum
   visibility?: string;
-  authorProfile?: AuthorProfileDto;
+  authorProfile?: AuthorProfile;
   showImage?: boolean;
   showActions?: boolean;
   showSocial?: boolean;
@@ -30,7 +30,7 @@ export interface MediaCardTitleProps {
 export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
   title = '',
   visibility,
-  authorProfile = {} as AuthorProfileDto,
+  authorProfile = {} as AuthorProfile,
   showImage = true,
   showActions = false,
   showSocial = false,

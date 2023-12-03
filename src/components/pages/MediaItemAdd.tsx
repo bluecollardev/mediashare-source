@@ -9,7 +9,6 @@ import { UploadResult } from 'mediashare/hooks/useUploader';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   KeyboardAvoidingPageContent,
   PageActions,

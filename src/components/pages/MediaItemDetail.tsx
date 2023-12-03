@@ -4,9 +4,8 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { mapAvailableTags } from 'mediashare/store/modules/tags';
 import { useAppSelector } from 'mediashare/store';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard } from 'mediashare/components/layout';
-import { AuthorProfileDto } from 'mediashare/apis/media-svc/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 
 // @ts-ignore
 export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
@@ -14,7 +13,7 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
   const {
     _id,
     title = '',
-    authorProfile = {} as AuthorProfileDto,
+    authorProfile = {} as AuthorProfile,
     createdBy,
     description = '',
     imageSrc,

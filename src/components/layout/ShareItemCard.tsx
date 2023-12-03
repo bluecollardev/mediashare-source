@@ -1,5 +1,4 @@
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { View, StyleSheet, Text } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { MediaListItem } from './MediaListItem';

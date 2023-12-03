@@ -28,10 +28,9 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { FAB } from 'react-native-paper';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
 import {
-  AuthorProfileDto,
+  AuthorProfile,
   CreatePlaylistDto,
   MediaVisibilityType,
   PlaylistDto,
@@ -70,7 +69,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const {
     _id,
     title = '',
-    authorProfile = {} as AuthorProfileDto,
+    authorProfile = {} as AuthorProfile,
     createdBy,
     description = '',
     imageSrc,

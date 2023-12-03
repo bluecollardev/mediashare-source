@@ -16,7 +16,6 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { UploadResult } from 'mediashare/hooks/useUploader';
 import { View, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,

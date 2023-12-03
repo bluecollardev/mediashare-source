@@ -1,15 +1,13 @@
 import { mapAvailableTags } from 'mediashare/core/utils/tags';
 import { useAppSelector } from 'mediashare/store';
-import { getUserPlaylists } from 'mediashare/store/modules/playlists';
-import { findItemsSharedByMe, findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
+import { findItemsSharedWithMe } from 'mediashare/store/modules/shareItems';
 import React, { useEffect, useMemo } from 'react';
-import { AuthorProfileDto } from 'mediashare/apis/media-svc/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { ScrollView, View } from 'react-native';
 import { List, Card } from 'react-native-paper';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, MediaCard, ActionButtons, NoContent } from 'mediashare/components/layout';
 import { useDispatch } from 'react-redux';
 import { PlaylistsComponent } from './Playlists';
@@ -48,7 +46,7 @@ export const SharedBlock = ({ globalState }) => {
     <List.Section>
       {list.map((item) => {
         // @ts-ignore
-        const { _id, title, description, authorProfile = {} as AuthorProfileDto, imageSrc, visibility, shareCount, viewCount, likesCount } = item;
+        const { _id, title, description, authorProfile = {} as AuthorProfile, imageSrc, visibility, shareCount, viewCount, likesCount } = item;
         const tagKeys = (item?.tags || []).map(({ key }) => key);
         const mappedTags = useMemo(() => mapAvailableTags(tags).filter((tag) => tag.isPlaylistTag), []);
         return (
