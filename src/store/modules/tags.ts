@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { Tag } from 'mediashare/apis/media-svc/rxjs-api';
+import { TagDto } from 'mediashare/apis/tags-svc/rxjs-api';
 
 // Export tag utils
 export * from '../../core/utils/tags';
@@ -18,7 +18,7 @@ export const getTags = createAsyncThunk(tagsActions.getTags.type, async (opts = 
 });
 
 interface TagsState {
-  entities: Tag[];
+  entities: TagDto[];
   loading: boolean;
   loaded: boolean;
 }

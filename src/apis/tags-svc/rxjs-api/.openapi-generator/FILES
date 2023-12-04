@@ -1,0 +1,11 @@
+.gitignore
+.openapi-generator-ignore
+apis/DefaultApi.ts
+apis/TagsApi.ts
+apis/index.ts
+index.ts
+models/TagDto.ts
+models/index.ts
+runtime.ts
+servers.ts
+tsconfig.json

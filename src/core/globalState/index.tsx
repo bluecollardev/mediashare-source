@@ -8,7 +8,7 @@ import { INITIAL_DISPLAY_MODE } from 'mediashare/core/globalState/constants';
 import { loadUser, setIsAcceptingInvitationAction } from 'mediashare/store/modules/user'
 import { getTags } from 'mediashare/store/modules/tags';
 import { BcRolesType, ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
-import { Tag } from 'mediashare/apis/tag-svc/rxjs-api';
+import { TagDto } from 'mediashare/apis/tags-svc/rxjs-api';
 
 export interface GlobalStateProps {
   history?: any;
@@ -37,7 +37,7 @@ export interface GlobalStateProps {
   setSearchIsActive?: (searchKey: string, value: any) => void;
   forcedSearchMode?: (searchKey: string) => any;
   setForcedSearchMode?: (searchKey: string, value: any) => void;
-  tags?: Tag[];
+  tags?: TagDto[];
   displayMode?: 'list' | 'article';
   setDisplayMode: (value) => void;
 }

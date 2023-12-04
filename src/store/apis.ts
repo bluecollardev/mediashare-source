@@ -10,14 +10,16 @@ import {
   PlaylistsApi,
   PlaylistItemsApi,
   // ShareItemsApi,
-  // TagsApi,
   // ViewsApi,
 } from 'mediashare/apis/media-svc/rxjs-api';
 import {
-  Configuration as  UserApiConfig,
+  Configuration as UserApiConfig,
   UserApi,
-  // UsersApi,
 } from 'mediashare/apis/user-svc/rxjs-api';
+import {
+  Configuration as TagsApiConfig,
+  TagsApi,
+} from 'mediashare/apis/tags-svc/rxjs-api';
 import Config from 'mediashare/config';
 
 function apiFactory() {
@@ -82,6 +84,11 @@ function apiFactory() {
     basePath: servers[Config.ApiServer].getUrl(),
     middleware: middlewareFactory(),
   });
+  
+  const tagsApiConfiguration = new TagsApiConfig({
+    basePath: servers[Config.ApiServer].getUrl(),
+    middleware: middlewareFactory(),
+  });
 
   return {
     default: new DefaultApi(mediaApiConfiguration),
@@ -92,7 +99,7 @@ function apiFactory() {
     shareItems: new ShareItemsApi(mediaApiConfiguration),
     user: new UserApi(userApiConfiguration),
     views: new ViewsApi(configuration),
-    tags: new TagsApi(configuration),
+    tags: new TagsApi(tagsApiConfiguration),
     configuration: mediaApiConfiguration,
     mediaApiConfiguration,
     userApiConfiguration,

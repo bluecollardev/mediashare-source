@@ -1,6 +1,3 @@
-// TODO: Where the f*ck is the _id property on Tag entity? Fix API...
-// import { Tag } from 'mediashare/rxjs-api';
-
 export const mapAvailableTags = (availableTags: any[]) => {
   return [...availableTags]
     .filter((tag) => !!tag)
