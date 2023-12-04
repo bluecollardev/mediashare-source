@@ -12,7 +12,6 @@ import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { titleValidator, descriptionValidator, visibilityValidator } from 'mediashare/core/utils/validators';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -23,7 +22,7 @@ import {
   ExpoUploader,
   UploadPlaceholder,
 } from 'mediashare/components/layout';
-import { CreatePlaylistDto, PlaylistVisibilityType } from 'mediashare/rxjs-api';
+import { CreatePlaylistDto, PlaylistVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 
 // @ts-ignore

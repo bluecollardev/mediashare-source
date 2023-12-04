@@ -1,5 +1,5 @@
 import {
-  Configuration,
+  Configuration as MediaApiConfig,
   Middleware,
   RequestArgs,
   ResponseArgs,
@@ -9,12 +9,15 @@ import {
   MediaItemsApi,
   PlaylistsApi,
   PlaylistItemsApi,
-  ShareItemsApi,
+  // ShareItemsApi,
+  // TagsApi,
+  // ViewsApi,
+} from 'mediashare/apis/media-svc/rxjs-api';
+import {
+  Configuration as  UserApiConfig,
   UserApi,
-  UsersApi,
-  TagsApi,
-  ViewsApi,
-} from 'mediashare/rxjs-api';
+  // UsersApi,
+} from 'mediashare/apis/user-svc/rxjs-api';
 import Config from 'mediashare/config';
 
 function apiFactory() {
@@ -70,29 +73,35 @@ function apiFactory() {
   }
   
   console.log(`Configuration: ${JSON.stringify(Config, null, 2)}`);
-  const configuration = new Configuration({
+  const mediaApiConfiguration = new MediaApiConfig({
+    basePath: servers[Config.ApiServer].getUrl(),
+    middleware: middlewareFactory(),
+  });
+  
+  const userApiConfiguration = new UserApiConfig({
     basePath: servers[Config.ApiServer].getUrl(),
     middleware: middlewareFactory(),
   });
 
   return {
-    default: new DefaultApi(configuration),
-    search: new SearchApi(configuration),
-    mediaItems: new MediaItemsApi(configuration),
-    playlists: new PlaylistsApi(configuration),
-    playlistItems: new PlaylistItemsApi(configuration),
-    shareItems: new ShareItemsApi(configuration),
-    user: new UserApi(configuration),
-    users: new UsersApi(configuration),
+    default: new DefaultApi(mediaApiConfiguration),
+    search: new SearchApi(mediaApiConfiguration),
+    mediaItems: new MediaItemsApi(mediaApiConfiguration),
+    playlists: new PlaylistsApi(mediaApiConfiguration),
+    playlistItems: new PlaylistItemsApi(mediaApiConfiguration),
+    shareItems: new ShareItemsApi(mediaApiConfiguration),
+    user: new UserApi(userApiConfiguration),
     views: new ViewsApi(configuration),
     tags: new TagsApi(configuration),
-    configuration,
+    configuration: mediaApiConfiguration,
+    mediaApiConfiguration,
+    userApiConfiguration,
   };
 }
 
 const apis = apiFactory();
 export type ApiService = typeof apis;
 
-const { search, mediaItems, shareItems, playlists, playlistItems, user, users, views, tags, configuration } = apis;
+const { search, mediaItems, shareItems, playlists, playlistItems, user, views, tags, configuration, mediaApiConfiguration, userApiConfiguration } = apis;
 
-export { apis, search, mediaItems, shareItems, playlists, playlistItems, user, users, views, tags, configuration };
+export { apis, search, mediaItems, shareItems, playlists, playlistItems, user, views, tags, configuration, mediaApiConfiguration, userApiConfiguration };

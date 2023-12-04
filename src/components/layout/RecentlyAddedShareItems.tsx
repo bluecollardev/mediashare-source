@@ -4,11 +4,12 @@ import { useViewPlaylistById, useViewFeedSharedWithMe } from 'mediashare/hooks/n
 import { FlatList, View, Dimensions, TouchableHighlight } from 'react-native';
 import { Button } from 'react-native-paper';
 import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
-import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { theme } from 'mediashare/styles';
 
 export interface RecentlyAddedShareItemsProps {
-  list: PlaylistResponseDto[];
+  list: PlaylistDto[];
   selectable?: boolean;
   clearSelection?: boolean;
   showActions?: boolean;
@@ -56,7 +57,7 @@ export const RecentlyAddedShareItems = ({ list = [], displayNoContent = false }:
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
     const dimensions = {
       w: Dimensions.get('window').width / 2,
       h: Dimensions.get('window').width / 2 + 100

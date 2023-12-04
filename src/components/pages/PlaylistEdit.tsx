@@ -16,7 +16,6 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { UploadResult } from 'mediashare/hooks/useUploader';
 import { View, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   KeyboardAvoidingPageContent,
@@ -31,7 +30,7 @@ import {
 } from 'mediashare/components/layout';
 import { routeNames } from 'mediashare/routes';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
-import { PlaylistVisibilityType } from 'mediashare/rxjs-api';
+import { PlaylistVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import styles, { theme } from 'mediashare/styles';
 import Loader from '../loader/Loader';
 

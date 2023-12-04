@@ -5,12 +5,12 @@ import { Divider } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { getPlaylistById, updateUserPlaylist } from 'mediashare/store/modules/playlist';
 import { findMediaItems, searchMediaItems } from 'mediashare/store/modules/mediaItems';
-import { AuthorProfileDto, UpdatePlaylistDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { UpdatePlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useGoBack, useViewMediaItemById } from 'mediashare/hooks/navigation';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageActions,
@@ -28,7 +28,7 @@ export const ChooseMediaForPlaylistComponent = ({ entities, viewMediaItem, addIt
   return <FlatList data={entities} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, imageSrc = '' } = item;
     return (
       <>
         <MediaListItem

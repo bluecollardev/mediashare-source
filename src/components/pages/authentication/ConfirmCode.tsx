@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';

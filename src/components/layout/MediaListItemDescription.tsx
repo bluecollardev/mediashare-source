@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper'
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import { shortenText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
 
 interface MediaListItemDescriptionData {
-  authorProfile?: AuthorProfileDto;
+  authorProfile?: AuthorProfile;
   description?: string;
   visibility?: string;
   itemCount?: string | number;

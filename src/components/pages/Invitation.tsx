@@ -7,7 +7,6 @@ import { useGoBack } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { PageContainer, PageProps, AccountCard, ActionButtons } from 'mediashare/components/layout';
-//import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 // import { StyleSheet } from 'react-native';
 import { theme } from 'mediashare/styles';
 

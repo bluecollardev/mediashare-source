@@ -6,8 +6,8 @@ import { useAppSelector } from 'mediashare/store';
 import { deleteMediaItem, updateMediaItem } from 'mediashare/store/modules/mediaItem';
 import { UploadResult } from 'mediashare/hooks/useUploader';
 // TODO: Fix update dto! Not sure why it's not being exported normally...
-import { UpdateMediaItemDto } from 'mediashare/rxjs-api/models/UpdateMediaItemDto';
-import { MediaVisibilityType } from 'mediashare/rxjs-api';
+import { UpdateMediaItemDto } from 'mediashare/apis/media-svc/rxjs-api/models/UpdateMediaItemDto';
+import { MediaVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Button, Paragraph } from 'react-native-paper';

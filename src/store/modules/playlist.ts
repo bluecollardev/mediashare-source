@@ -4,11 +4,10 @@ import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'm
 import { ApiService } from 'mediashare/store/apis';
 import {
   CreatePlaylistDto,
-  CreatePlaylistResponseDto,
   UpdatePlaylistDto,
-  PlaylistResponseDto,
-  PlaylistItemResponseDto,
-} from 'mediashare/rxjs-api'
+  PlaylistDto,
+  PlaylistItemDto,
+} from 'mediashare/apis/media-svc/rxjs-api'
 
 import { flattenDeep } from 'remeda';
 import { take } from 'rxjs/operators';
@@ -63,8 +62,8 @@ export const removeUserPlaylist = createAsyncThunk(playlistActions.removeUserPla
 export const clearUserPlaylist = createAction(playlistActions.clearUserPlaylist.type);
 
 export interface PlaylistState {
-  created: CreatePlaylistResponseDto | undefined;
-  selected: PlaylistResponseDto | undefined;
+  created: CreatePlaylistDto | undefined;
+  selected: PlaylistDto | undefined;
   loading: boolean;
   loaded: boolean;
 }
@@ -157,7 +156,7 @@ export const selectPlaylistMediaItems = createSelector(selectActivePlaylistItems
   });
 });
 
-export interface MappedPlaylistMediaItem extends PlaylistItemResponseDto {
+export interface MappedPlaylistMediaItem extends PlaylistItemDto {
   playlistItemId?: string;
   mediaItemId?: string;
   sortIndex: number;

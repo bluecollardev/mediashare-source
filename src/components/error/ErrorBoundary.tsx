@@ -1,5 +1,4 @@
 import { Component } from 'react'
-
 export class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +21,7 @@ export class ErrorBoundary extends Component {
       // You can render any custom fallback UI
       return <h1>Something went wrong.</h1>;
     }
+    // @ts-ignore
     return this.props.children;
   }
 }

@@ -9,10 +9,10 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { AuthorProfileDto, MediaItem, MediaItemResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 // import { RefreshControl } from 'react-native';
 import { FAB, Divider } from 'react-native-paper';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import {
   PageContainer,
   PageProps,
@@ -35,7 +35,7 @@ export const MediaComponent = ({
   onChecked = () => undefined,
 }: {
   navigation: any;
-  list: MediaItemResponseDto[];
+  list: MediaItemDto[];
   onViewDetail: any;
   selectable: boolean;
   showActions?: boolean;
@@ -51,7 +51,7 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', imageSrc, visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', imageSrc, visibility } = item;
     return (
       <>
         <MediaListItem
@@ -203,7 +203,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
     setRefreshing(false);
   }
 
-  async function onEditItem(item: MediaItem) {
+  async function onEditItem(item: MediaItemDto) {
     await editMedia ({ mediaId: item._id, uri: item.uri });
   }
 

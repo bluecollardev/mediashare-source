@@ -5,9 +5,8 @@ import { useAppSelector } from 'mediashare/store';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { mapAvailableTags } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, MediaCard, MediaList } from 'mediashare/components/layout';
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import {
   useEditPlaylistItemById,
   useViewMediaItemById,
@@ -41,7 +40,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
     _id,
     playlistId,
     title = '',
-    authorProfile = {} as AuthorProfileDto,
+    authorProfile = {} as AuthorProfile,
     createdBy,
     description = '',
     imageSrc,

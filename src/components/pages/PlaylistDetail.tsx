@@ -28,14 +28,13 @@ import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { FAB } from 'react-native-paper';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageContainer, PageContent, PageProps, ActionButtons, AppDialog, MediaCard, MediaList, PageActions } from 'mediashare/components/layout';
 import {
-  AuthorProfileDto,
+  AuthorProfile,
   CreatePlaylistDto,
   MediaVisibilityType,
-  PlaylistResponseDto,
-} from 'mediashare/rxjs-api'
+  PlaylistDto,
+} from 'mediashare/apis/media-svc/rxjs-api'
 import { theme, components } from 'mediashare/styles';
 
 const actionModes = { delete: 'delete', default: 'default' };
@@ -70,7 +69,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const {
     _id,
     title = '',
-    authorProfile = {} as AuthorProfileDto,
+    authorProfile = {} as AuthorProfile,
     createdBy,
     description = '',
     imageSrc,
@@ -275,7 +274,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   }
 
   async function sharePlaylist() {
-    await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistResponseDto }));
+    await dispatch(selectPlaylist({ isChecked: true, plist: selected as PlaylistDto }));
     goToSharePlaylistsWith();
   }
   

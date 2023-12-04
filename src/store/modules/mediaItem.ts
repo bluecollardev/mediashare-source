@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemResponseDto, MediaVisibilityType } from 'mediashare/rxjs-api';
+import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemDto, MediaVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { getVideoPath, getImagePath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
 import {
@@ -61,7 +61,7 @@ export const getMediaItemById = createAsyncThunk(mediaItemActions.getMediaItem.t
     src: getFromStorage(uri),
   }).toPromise();
   api.views.viewsControllerCreateMediaView({ mediaId }).pipe(take(1)).subscribe();
-  return { mediaItem: result.mediaItem as MediaItemResponseDto, src: result.src };
+  return { mediaItem: result.mediaItem as MediaItemDto, src: result.src };
 });
 
 export const createImage = createAsyncThunk(mediaItemActions.createMediaItemImage.type, async ({ fileUri, key }: { fileUri: string; key: string }) => {
@@ -184,7 +184,7 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
   return await Promise.all(dtoPromises);
 });
 
-export const setActiveMediaItem = createAction<MediaItemResponseDto, 'setActiveMediaItem'>('setActiveMediaItem');
+export const setActiveMediaItem = createAction<MediaItemDto, 'setActiveMediaItem'>('setActiveMediaItem');
 
 export const clearActiveMediaItem = createAction('clearActiveMediaItem');
 
@@ -192,7 +192,7 @@ export interface MediaItemState {
   getMediaItem: string;
   loading: boolean;
   file: any;
-  entity: MediaItemResponseDto | undefined;
+  entity: MediaItemDto | undefined;
   mediaSrc: string;
   feed: { entities: AwsMediaItem[]; loading: boolean; loaded: boolean };
   loaded: boolean;

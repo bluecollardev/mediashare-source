@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
 const playlistsActionNames = ['find_playlists', 'get_user_playlists', 'select_playlist', 'clear_playlists'] as const;
@@ -22,15 +22,15 @@ export const getUserPlaylists = createAsyncThunk(playlistsActions.getUserPlaylis
   return await api.playlists.playlistControllerFindAll({ text: '', tags: [] }).toPromise();
 });
 
-export const selectPlaylist = createAction<{ isChecked: boolean; plist: PlaylistResponseDto }, typeof playlistsActions.selectPlaylist.type>(
+export const selectPlaylist = createAction<{ isChecked: boolean; plist: PlaylistDto }, typeof playlistsActions.selectPlaylist.type>(
   playlistsActions.selectPlaylist.type
 );
 
 export const clearPlaylists = createAction(playlistsActions.clearPlaylists.type);
 
 export interface PlaylistsState {
-  entities: PlaylistResponseDto[];
-  selected: PlaylistResponseDto[];
+  entities: PlaylistDto[];
+  selected: PlaylistDto[];
   loading: boolean;
   loaded: boolean;
 }
@@ -71,7 +71,7 @@ const playlistsSlice = createSlice({
         }))
       )
       .addCase(selectPlaylist, (state, action) => {
-        const updateSelection = (bool: boolean, item: PlaylistResponseDto) => {
+        const updateSelection = (bool: boolean, item: PlaylistDto) => {
           const { selected } = state;
           // @ts-ignore
           return bool ? selected.concat([item]) : selected.filter((plist) => plist._id !== item._id); // Is it filtered?

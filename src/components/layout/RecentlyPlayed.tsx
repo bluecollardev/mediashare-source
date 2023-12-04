@@ -3,10 +3,11 @@ import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 import { Dimensions, FlatList, View, TouchableHighlight } from 'react-native';
 import { useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { MediaCard, NoContent, SectionHeader } from 'mediashare/components/layout/index';
-import { AuthorProfileDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 export interface RecentlyPlayedProps {
-  list: PlaylistResponseDto[];
+  list: PlaylistDto[];
   selectable?: boolean;
   clearSelection?: boolean;
   showActions?: boolean;
@@ -38,7 +39,7 @@ export const RecentlyPlayed = ({ list = [], displayNoContent = false }: Recently
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-    const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', mediaIds = [], mediaItems = [], imageSrc = '' } = item;
     const dimensions = {
       w: Dimensions.get('window').width / 2,
       h: Dimensions.get('window').width / 2 + 100

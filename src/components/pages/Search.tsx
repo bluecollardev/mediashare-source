@@ -7,14 +7,14 @@ import { useSnack } from 'mediashare/hooks/useSnack';
 import { addUserPlaylist } from 'mediashare/store/modules/playlist';
 import { getUserPlaylists } from 'mediashare/store/modules/playlists';
 import { search as searchContent, select } from 'mediashare/store/modules/search';
-import { AuthorProfileDto, CreatePlaylistDto, PlaylistResponseDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
+import { CreatePlaylistDto, PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { GlobalStateProps, withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
-// import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
 // import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
 // import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
@@ -23,7 +23,7 @@ import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
 
 export interface SearchProps {
-  list: PlaylistResponseDto[];
+  list: PlaylistDto[];
   selectable?: boolean;
   clearSelection?: boolean;
   showActions?: boolean;
@@ -43,7 +43,7 @@ export const SearchComponent = withSearchComponent(
 
     function renderVirtualizedListItem(item) {
       // TODO: Can we have just one or the other, either mediaIds or mediaItems?
-      const { _id = '', title = '', authorProfile = {} as AuthorProfileDto, mediaIds = [], mediaItems = [], imageSrc = '', contentType = 'media' } = item;
+      const { _id = '', title = '', authorProfile = {} as AuthorProfile, mediaIds = [], mediaItems = [], imageSrc = '', contentType = 'media' } = item;
       const renderKey = `${contentType}_${_id}`;
       return (
         <>

@@ -1,10 +1,6 @@
-import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent'
-import { MediaComponent } from 'mediashare/components/pages/Media'
-import { createRandomRenderKey } from 'mediashare/core/utils/uuid'
-import { AuthorProfileDto, MediaItemResponseDto } from 'mediashare/rxjs-api'
-import { theme } from 'mediashare/styles'
-import React, { useEffect, useState } from 'react';
-import { Divider } from 'react-native-paper'
+import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
+import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { FlatList, View } from 'react-native';
 import { useAppSelector } from 'mediashare/store';
@@ -12,8 +8,7 @@ import { getFeedMediaItems, saveFeedMediaItems } from 'mediashare/store/modules/
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
-import { PageContainer, PageContent, PageActions, PageProps, NoItems, ActionButtons, MediaListItem, NoContent } from 'mediashare/components/layout';
+import { PageContainer, PageContent, PageActions, PageProps, ActionButtons, MediaListItem, NoContent } from 'mediashare/components/layout';
 import { useMediaItems } from 'mediashare/hooks/navigation';
 
 
@@ -25,7 +20,7 @@ export const AddFromFeedComponent = ({
   onChecked = () => undefined,
 }: {
   navigation: any;
-  list: MediaItemResponseDto[];
+  list: MediaItemDto[];
   onViewDetail: any;
   selectable: boolean;
   showActions?: boolean;

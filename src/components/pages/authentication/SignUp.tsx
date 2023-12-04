@@ -1,19 +1,17 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native';
-import { ErrorBoundary } from 'mediashare/components/error/ErrorBoundary';
+import { Linking, ScrollView, View } from 'react-native';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { TextInput, HelperText, Button, Text } from 'react-native-paper';
-import { ThemeProvider, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
 import PhoneInput from 'react-native-phone-number-input';
 import { theme } from 'mediashare/styles';
-import Loader from '../../loader/Loader';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Fontisto';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+
 interface FormData {
   username: string;
   password: string;

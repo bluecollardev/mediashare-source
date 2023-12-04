@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
@@ -6,7 +6,7 @@ import { ActionButtons } from 'mediashare/components/layout';
 import { makeEnum } from 'mediashare/core/utils/factory';
 import { useIsMounted } from 'mediashare/hooks/useIsMounted';
 import { GlobalStateProps } from 'mediashare/core/globalState';
-import { Divider, Searchbar, Switch } from 'react-native-paper'
+import { Divider, Searchbar, Switch } from 'react-native-paper';
 import { components, theme } from 'mediashare/styles';
 
 const supportedContentTypes = ['playlists', 'media', 'all'] as const;

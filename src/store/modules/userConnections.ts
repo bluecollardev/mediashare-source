@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { UserConnectionDto, UserDto } from 'mediashare/rxjs-api'
+import { UserConnectionDto, UserDto } from 'mediashare/apis/user-svc/rxjs-api';
 import { makeActions } from 'mediashare/store/factory';
 import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { ApiService } from 'mediashare/store/apis';
-import { ProfileDto } from 'mediashare/rxjs-api';
+import { ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
 const profileActionNames = [
@@ -13,8 +13,8 @@ export const profileActions = makeActions(profileActionNames);
 export const loadProfile = createAsyncThunk(profileActions.getUserById.type, async (userId: string | undefined, { extra  }) => {
   const { api } = extra as { api: ApiService };
   return userId ?
-    await api.users.usersControllerFindOne({ userId }).toPromise() :
-    await api.user.userControllerGetUser().toPromise();
+    await api.user.userControllerGetUser({ userId }).toPromise() :
+    await api.user.userControllerGetCurrentUser().toPromise();
 });
 
 interface ProfileState {

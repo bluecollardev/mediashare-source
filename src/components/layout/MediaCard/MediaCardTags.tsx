@@ -1,8 +1,7 @@
 import { theme } from 'mediashare/styles'
 import React from 'react';
 import { StyleSheet, View } from 'react-native'
-import { Button, Chip } from 'react-native-paper'
-// import { Tag } from 'mediashare/rxjs-api';
+import { Button } from 'react-native-paper'
 
 export interface MediaCardTagsProps {
   tags?: any[]; // TODO: This should be a Tag[] but for some reason _id is missing from the Tag model... fix in the API

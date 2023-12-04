@@ -10,12 +10,12 @@ import { mappedKeysToTags } from 'mediashare/core/utils/tags';
 import { titleValidator, descriptionValidator } from 'mediashare/core/utils/validators';
 import { theme, components } from 'mediashare/styles';
 
-import { AuthorProfileDto } from 'mediashare/rxjs-api';
+import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 
 export interface MediaCardProps {
   id?: string;
   title?: string;
-  authorProfile?: AuthorProfileDto;
+  authorProfile?: AuthorProfile;
   description?: string;
   sortIndex?: string;
   showSocial?: any | boolean;
@@ -52,7 +52,7 @@ export interface MediaCardProps {
 
 export const MediaCard: React.FC<MediaCardProps> = ({
   title = '',
-  authorProfile = {} as AuthorProfileDto,
+  authorProfile = {} as AuthorProfile,
   description = '',
   sortIndex = undefined as string,
   mediaSrc,

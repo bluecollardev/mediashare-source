@@ -40,5 +40,6 @@ export const setErrorAction = bindActionCreators(setError, store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = ReturnType<typeof store.dispatch>;
+// @ts-ignore
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

@@ -2,7 +2,7 @@ import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { ApiService } from 'mediashare/store/apis';
-import { CreatePlaylistItemDto, UpdatePlaylistItemDto, PlaylistItemResponseDto } from 'mediashare/rxjs-api';
+import { CreatePlaylistItemDto, UpdatePlaylistItemDto, PlaylistItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { deleteFromStorage, getFromStorage } from 'mediashare/core/aws/storage';
 import { forkJoin } from 'rxjs';
 
@@ -23,7 +23,7 @@ export const getPlaylistItemById = createAsyncThunk(
     }).toPromise();
     // TODO: Update views, we don't have anything that handles playlist items
     // api.views.viewsControllerCreateMediaView({ playlistItemId }).pipe(take(1)).subscribe();
-    return { playlistItem: result.playlistItem as PlaylistItemResponseDto, src: result.src };
+    return { playlistItem: result.playlistItem as PlaylistItemDto, src: result.src };
   }
 );
 
@@ -62,7 +62,7 @@ export const deletePlaylistItem = createAsyncThunk(playlistItemActions.removePla
   return await api.playlistItems.playlistItemControllerRemove({ playlistItemId: id }).toPromise();
 });
 
-export const setActivePlaylistItem = createAction<PlaylistItemResponseDto, 'setActivePlaylistItem'>('setActivePlaylistItem');
+export const setActivePlaylistItem = createAction<PlaylistItemDto, 'setActivePlaylistItem'>('setActivePlaylistItem');
 
 export const clearActivePlaylistItem = createAction('clearActivePlaylistItem');
 
@@ -70,7 +70,7 @@ export interface PlaylistItemState {
   getPlaylistItem: string;
   loading: boolean;
   file: any;
-  entity: PlaylistItemResponseDto | undefined;
+  entity: PlaylistItemDto | undefined;
   mediaSrc: string;
   loaded: boolean;
   createState: 'submitting' | 'progress' | 'empty';
