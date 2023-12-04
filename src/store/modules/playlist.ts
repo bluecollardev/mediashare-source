@@ -28,7 +28,7 @@ export const playlistActions = makeActions(playlistActionNames);
 export const getPlaylistById = createAsyncThunk(playlistActions.getPlaylistById.type, async (id: string, { extra }) => {
   const { api } = extra as { api: ApiService };
   const response = await api.playlists.playlistControllerFindOne({ playlistId: id }).toPromise();
-  api.views.viewsControllerCreatePlaylistView({ playlistId: id }).pipe(take(1)).subscribe();
+  // api.views.viewsControllerCreatePlaylistView({ playlistId: id }).pipe(take(1)).subscribe();
   return response;
 });
 

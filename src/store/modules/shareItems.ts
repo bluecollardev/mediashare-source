@@ -19,37 +19,37 @@ export const shareItemsActions = makeActions(shareItemActionNames);
 
 export const getShareItemById = createAsyncThunk(shareItemsActions.getShareItem.type, async (id: string, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerFindShareItem({ shareId: id }).toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerFindShareItem({ shareId: id }).toPromise();
 });
 
 export const readShareItem = createAsyncThunk(shareItemsActions.readShareItem.type, async (id: string, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerReadShareItem({ shareId: id }).toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerReadShareItem({ shareId: id }).toPromise();
 });
 
 export const removeShareItem = createAsyncThunk(shareItemsActions.removeShareItem.type, async (id: string, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
 });
 
 export const removeAllShareItems = createAsyncThunk(shareItemsActions.removeAllShareItems.type, async (shareIds: string[], { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
 });
 
 export const removeAllShareItemsByUserId = createAsyncThunk(shareItemsActions.removeAllShareItemsByUserId.type, async (shareUserIds: string[], { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerRemoveShareItemAllByUserId({ shareItemsByUserIdDto: { shareItemByUserIds: shareUserIds } }).toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerRemoveShareItemAllByUserId({ shareItemsByUserIdDto: { shareItemByUserIds: shareUserIds } }).toPromise();
 });
 
 export const findItemsSharedByMe = createAsyncThunk(shareItemsActions.findItemsSharedByUser.type, async (opts = undefined, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
 });
 
 export const findItemsSharedWithMe = createAsyncThunk(shareItemsActions.findItemsSharedWithUser.type, async (opts = undefined, { extra }) => {
   const { api } = extra as { api: ApiService };
-  return await api.shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
+  return undefined; // return await api.shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
 });
 
 interface ShareItemsState {
