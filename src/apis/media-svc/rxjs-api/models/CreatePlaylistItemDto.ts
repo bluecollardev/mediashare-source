@@ -13,6 +13,7 @@
 
 import {
     MediaVisibilityType,
+    TagKeyValue,
 } from './';
 
 /**
@@ -80,4 +81,9 @@ export interface CreatePlaylistItemDto {
      * @memberof CreatePlaylistItemDto
      */
     visibility: MediaVisibilityType;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof CreatePlaylistItemDto
+     */
+    tags?: Array<TagKeyValue> | null;
 }

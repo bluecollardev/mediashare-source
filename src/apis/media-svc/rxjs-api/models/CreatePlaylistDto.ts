@@ -13,6 +13,7 @@
 
 import {
     PlaylistVisibilityType,
+    TagKeyValue,
 } from './';
 
 /**
@@ -60,4 +61,9 @@ export interface CreatePlaylistDto {
      * @memberof CreatePlaylistDto
      */
     visibility: PlaylistVisibilityType;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof CreatePlaylistDto
+     */
+    tags?: Array<TagKeyValue> | null;
 }

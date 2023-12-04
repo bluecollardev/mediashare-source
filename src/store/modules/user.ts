@@ -41,8 +41,8 @@ export const updateAccount = createAsyncThunk(
     const { api } = extra as { api: ApiService };
     // TODO: If no userId, that means we're updating the account owner's account? Or was that for our previous hardcoded user?
     return userId
-      ? await api.users.usersControllerUpdate({ userId, updateUserDto }).toPromise()
-      : await api.user.userControllerUpdateUser({ updateUserDto }).toPromise();
+      ? await api.user.userControllerUpdateUser({ userId, updateUserDto }).toPromise()
+      : await api.user.userControllerUpdateCurrentUser({ updateUserDto }).toPromise();
   }
 );
 

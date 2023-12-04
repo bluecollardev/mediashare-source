@@ -13,8 +13,8 @@ export const profileActions = makeActions(profileActionNames);
 export const loadProfile = createAsyncThunk(profileActions.getUserById.type, async (userId: string | undefined, { extra  }) => {
   const { api } = extra as { api: ApiService };
   return userId ?
-    await api.users.usersControllerFindOne({ userId }).toPromise() :
-    await api.user.userControllerGetUser().toPromise();
+    await api.user.userControllerGetUser({ userId }).toPromise() :
+    await api.user.userControllerGetCurrentUser().toPromise();
 });
 
 interface ProfileState {

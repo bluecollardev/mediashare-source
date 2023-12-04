@@ -11,6 +11,10 @@
  * Do not edit the class manually.
  */
 
+import {
+    TagKeyValue,
+} from './';
+
 /**
  * @export
  * @interface CreateMediaItemDto
@@ -61,6 +65,11 @@ export interface CreateMediaItemDto {
      * @memberof CreateMediaItemDto
      */
     visibility: CreateMediaItemDtoVisibilityEnum;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof CreateMediaItemDto
+     */
+    tags?: Array<TagKeyValue> | null;
     /**
      * @type {string}
      * @memberof CreateMediaItemDto

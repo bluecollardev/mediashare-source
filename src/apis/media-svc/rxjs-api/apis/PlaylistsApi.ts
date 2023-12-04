@@ -15,7 +15,6 @@ import { Observable } from 'rxjs';
 import { BaseAPI, HttpHeaders, HttpQuery, throwIfNullOrUndefined, encodeURI, OperationOpts, RawAjaxResponse } from '../runtime';
 import {
     CreatePlaylistDto,
-    Playlist,
     PlaylistDto,
     UpdatePlaylistDto,
 } from '../models';
@@ -163,9 +162,9 @@ export class PlaylistsApi extends BaseAPI {
 
     /**
      */
-    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest): Observable<Playlist>
-    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest, opts?: OperationOpts): Observable<RawAjaxResponse<Playlist>>
-    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest, opts?: OperationOpts): Observable<Playlist | RawAjaxResponse<Playlist>> {
+    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest): Observable<object>
+    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest, opts?: OperationOpts): Observable<RawAjaxResponse<object>>
+    playlistControllerUpdate({ playlistId, updatePlaylistDto }: PlaylistControllerUpdateRequest, opts?: OperationOpts): Observable<object | RawAjaxResponse<object>> {
         throwIfNullOrUndefined(playlistId, 'playlistId', 'playlistControllerUpdate');
         throwIfNullOrUndefined(updatePlaylistDto, 'updatePlaylistDto', 'playlistControllerUpdate');
 
@@ -174,7 +173,7 @@ export class PlaylistsApi extends BaseAPI {
             ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        return this.request<Playlist>({
+        return this.request<object>({
             url: '/api/playlists/{playlistId}'.replace('{playlistId}', encodeURI(playlistId)),
             method: 'PUT',
             headers,

@@ -12,7 +12,9 @@
  */
 
 import {
+    PlaylistItemDto,
     PlaylistVisibilityType,
+    TagKeyValue,
 } from './';
 
 /**
@@ -36,13 +38,43 @@ export interface UpdatePlaylistDto {
      */
     readonly updatedDate?: string;
     /**
-     * @type {Array<string>}
+     * @type {string}
      * @memberof UpdatePlaylistDto
      */
-    mediaIds?: Array<string>;
+    cloneOf?: string;
+    /**
+     * @type {string}
+     * @memberof UpdatePlaylistDto
+     */
+    title: string;
+    /**
+     * @type {string}
+     * @memberof UpdatePlaylistDto
+     */
+    description: string;
+    /**
+     * @type {string}
+     * @memberof UpdatePlaylistDto
+     */
+    imageSrc: string;
     /**
      * @type {PlaylistVisibilityType}
      * @memberof UpdatePlaylistDto
      */
     visibility: PlaylistVisibilityType;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof UpdatePlaylistDto
+     */
+    tags?: Array<TagKeyValue> | null;
+    /**
+     * @type {Array<string>}
+     * @memberof UpdatePlaylistDto
+     */
+    mediaIds: Array<string>;
+    /**
+     * @type {Array<PlaylistItemDto>}
+     * @memberof UpdatePlaylistDto
+     */
+    playlistItems: Array<PlaylistItemDto>;
 }

@@ -13,6 +13,7 @@
 
 import {
     MediaVisibilityType,
+    TagKeyValue,
 } from './';
 
 /**
@@ -60,6 +61,11 @@ export interface UpdateMediaItemDto {
      * @memberof UpdateMediaItemDto
      */
     visibility: MediaVisibilityType;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof UpdateMediaItemDto
+     */
+    tags?: Array<TagKeyValue> | null;
     /**
      * @type {string}
      * @memberof UpdateMediaItemDto

@@ -15,6 +15,7 @@ import {
     MediaItemDto,
     PlaylistItemDto,
     PlaylistVisibilityType,
+    TagKeyValue,
 } from './';
 
 /**
@@ -62,6 +63,11 @@ export interface PlaylistDto {
      * @memberof PlaylistDto
      */
     visibility: PlaylistVisibilityType;
+    /**
+     * @type {Array<TagKeyValue>}
+     * @memberof PlaylistDto
+     */
+    tags?: Array<TagKeyValue> | null;
     /**
      * @type {Array<MediaItemDto>}
      * @memberof PlaylistDto
