@@ -1,7 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { CreateMediaItemDto, UpdateMediaItemDto, MediaItemDto, MediaVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import { AwsMediaItem } from 'mediashare/core/aws/aws-media-item.model';
 import { getVideoPath, getImagePath, getUploadPath, awsUrl, KeyFactory } from 'mediashare/core/aws/key-factory';
@@ -18,7 +17,6 @@ import {
   uploadImageToS3,
 } from 'mediashare/core/aws/storage';
 
-import { take } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 
 import Config from 'mediashare/config';
@@ -54,8 +52,8 @@ const mediaItemActionNames = [
 
 export const mediaItemActions = makeActions(mediaItemActionNames);
 
-export const getMediaItemById = createAsyncThunk(mediaItemActions.getMediaItem.type, async ({ uri, mediaId }: { uri: string; mediaId: string }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const getMediaItemById = createAsyncThunk(mediaItemActions.getMediaItem.type, async ({ uri, mediaId }: { uri: string; mediaId: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const result = await forkJoin({
     mediaItem: api.mediaItems.mediaItemControllerFindOne({ mediaId }).toPromise(),
     src: getFromStorage(uri),
@@ -70,8 +68,8 @@ export const createImage = createAsyncThunk(mediaItemActions.createMediaItemImag
 
 export const addMediaItem = createAsyncThunk(
   mediaItemActions.addMediaItem.type,
-  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'visibility' | 'tags' | 'uri'>, { extra }) => {
-    const { api } = extra as { api: ApiService };
+  async (dto: Pick<CreateMediaItemDto, 'key' | 'title' | 'description' | 'summary' | 'visibility' | 'tags' | 'uri'>, thunkApi) => {
+    const { api } = thunkApiWithState(thunkApi);
     const { uri: fileUri, title, visibility, tags = [], summary, description } = dto;
     try {
       const options = { description: dto.description, summary: dto.summary, contentType: 'video/mp4' };
@@ -106,8 +104,8 @@ export const addMediaItem = createAsyncThunk(
   }
 );
 
-export const updateMediaItem = createAsyncThunk(mediaItemActions.updateMediaItem.type, async (updateMediaItemDto: UpdateMediaItemDto, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const updateMediaItem = createAsyncThunk(mediaItemActions.updateMediaItem.type, async (updateMediaItemDto: UpdateMediaItemDto, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.mediaItems
     .mediaItemControllerUpdate({
       mediaId: updateMediaItemDto._id,
@@ -116,8 +114,8 @@ export const updateMediaItem = createAsyncThunk(mediaItemActions.updateMediaItem
     .toPromise();
 });
 
-export const shareMediaItem = createAsyncThunk(mediaItemActions.shareMediaItem.type, async (args: { id: string; userId: string }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const shareMediaItem = createAsyncThunk(mediaItemActions.shareMediaItem.type, async (args: { id: string; userId: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.mediaItems
     .mediaItemControllerShare({
       mediaId: args.id,
@@ -126,8 +124,8 @@ export const shareMediaItem = createAsyncThunk(mediaItemActions.shareMediaItem.t
     .toPromise();
 });
 
-export const deleteMediaItem = createAsyncThunk(mediaItemActions.removeMediaItem.type, async (args: { id: string; key: string }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const deleteMediaItem = createAsyncThunk(mediaItemActions.removeMediaItem.type, async (args: { id: string; key: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { id, key } = args;
   await deleteFromStorage(key);
   return await api.mediaItems.mediaItemControllerRemove({ mediaId: id }).toPromise();
@@ -146,8 +144,8 @@ export const getFeedMediaItems = createAsyncThunk(mediaItemActions.getFeedMediaI
     }));
 });
 
-export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMediaItems.type, async ({ items }: { items: AwsMediaItem[] }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMediaItems.type, async ({ items }: { items: AwsMediaItem[] }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
 
   const dtoPromises = items
     .map((item) => {

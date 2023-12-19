@@ -1,7 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { CreatePlaylistItemDto, UpdatePlaylistItemDto, PlaylistItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 import { deleteFromStorage, getFromStorage } from 'mediashare/core/aws/storage';
 import { forkJoin } from 'rxjs';
@@ -15,8 +14,8 @@ export const playlistItemActions = makeActions(playlistItemActionNames);
 
 export const getPlaylistItemById = createAsyncThunk(
   playlistItemActions.getPlaylistItem.type,
-  async ({ uri, playlistItemId }: { uri: string; playlistItemId: string }, { extra }) => {
-    const { api } = extra as { api: ApiService };
+  async ({ uri, playlistItemId }: { uri: string; playlistItemId: string }, thunkApi) => {
+    const { api } = thunkApiWithState(thunkApi);
     const result = await forkJoin({
       playlistItem: api.playlistItems.playlistItemControllerFindOne({ playlistItemId }).toPromise(),
       src: getFromStorage(uri),
@@ -27,15 +26,15 @@ export const getPlaylistItemById = createAsyncThunk(
   }
 );
 
-export const addPlaylistItem = createAsyncThunk(playlistItemActions.addPlaylistItem.type, async (createPlaylistItemDto: CreatePlaylistItemDto, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const addPlaylistItem = createAsyncThunk(playlistItemActions.addPlaylistItem.type, async (createPlaylistItemDto: CreatePlaylistItemDto, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.playlistItems.playlistItemControllerCreate({ createPlaylistItemDto }).toPromise();
 });
 
 export const updatePlaylistItem = createAsyncThunk(
   playlistItemActions.updatePlaylistItem.type,
-  async (updatePlaylistItemDto: UpdatePlaylistItemDto, { extra }) => {
-    const { api } = extra as { api: ApiService };
+  async (updatePlaylistItemDto: UpdatePlaylistItemDto, thunkApi) => {
+    const { api } = thunkApiWithState(thunkApi);
     return await api.playlistItems
       .playlistItemControllerUpdate({
         playlistItemId: updatePlaylistItemDto._id,
@@ -45,8 +44,8 @@ export const updatePlaylistItem = createAsyncThunk(
   }
 );
 
-export const sharePlaylistItem = createAsyncThunk(playlistItemActions.sharePlaylistItem.type, async (args: { id: string; userId: string }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const sharePlaylistItem = createAsyncThunk(playlistItemActions.sharePlaylistItem.type, async (args: { id: string; userId: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.playlistItems
     .playlistItemControllerShare({
       playlistItemId: args.id,
@@ -55,8 +54,8 @@ export const sharePlaylistItem = createAsyncThunk(playlistItemActions.sharePlayl
     .toPromise();
 });
 
-export const deletePlaylistItem = createAsyncThunk(playlistItemActions.removePlaylistItem.type, async (args: { id: string; key: string }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const deletePlaylistItem = createAsyncThunk(playlistItemActions.removePlaylistItem.type, async (args: { id: string; key: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { id, key } = args;
   await deleteFromStorage(key);
   return await api.playlistItems.playlistItemControllerRemove({ playlistItemId: id }).toPromise();

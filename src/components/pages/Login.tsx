@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, BackHandler, ScrollView, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { loginAction } from 'mediashare/store/modules/user';
+import { storeAuthTokens } from 'mediashare/store/modules/auth';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { Text, Card, TextInput, HelperText, Button } from 'react-native-paper';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
@@ -11,11 +11,47 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Auth } from 'aws-amplify';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
-import { MaterialIcons } from '@expo/vector-icons';
-import Loader from "../loader/Loader";
+
 interface FormData {
   username: string;
   password: string;
+}
+
+const onHandleForgotPassword = (nav) => {
+  nav.navigate(routeConfig.resetPassword.name as never, {} as never);
+};
+
+const onHandleSignUp = (nav) => {
+  nav.navigate(routeConfig.signUp.name as never, {} as never);
+};
+
+const handleFocusEffect = () => {
+  const backAction = () => {
+    Alert.alert('Logout', 'Are you sure you want to exit the app?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          BackHandler.exitApp();
+        },
+      },
+    ]);
+    return true;
+  };
+  const backHandler = BackHandler.addEventListener(
+    'hardwareBackPress',
+    backAction,
+  );
+  return () => backHandler.remove();
+};
+
+const handleLogin = async ({ username, password }) => {
+  const response = await Auth.signIn(username, password);
+  const { accessToken = undefined, idToken = undefined } = response?.['signInUserSession']?.['accessToken']?.['jwtToken'];
+  return { accessToken, idToken };
 }
 
 const LoginComponent = ({}: PageProps) => {
@@ -38,10 +74,8 @@ const LoginComponent = ({}: PageProps) => {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
-      const response = await Auth.signIn(data.username, data.password);
-      const accessToken = response.signInUserSession.accessToken.jwtToken;
-      const idToken = response.signInUserSession.idToken.jwtToken;
-      await dispatch(loginAction({ accessToken, idToken }));
+      const { accessToken, idToken } = await handleLogin(data);
+      dispatch(storeAuthTokens({ accessToken, idToken }));
     } catch (error) {
       setMessage(error.message);
       onToggleSnackBar();
@@ -54,36 +88,9 @@ const LoginComponent = ({}: PageProps) => {
       console.log('login', error);
     }
   };
-
-  const onHandleForgotPassword = () => {
-    nav.navigate(routeConfig.resetPassword.name as never, {} as never);
-  };
-
-  const onHandleSignUp = () => {
-    nav.navigate(routeConfig.signUp.name as never, {} as never);
-  };
   
   useFocusEffect(() => {
-    const backAction = () => {
-      Alert.alert('Logout', 'Are you sure you want to exit the app?', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => {
-            BackHandler.exitApp();
-          },
-        },
-      ]);
-      return true;
-    };
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-    return () => backHandler.remove();
+    return handleFocusEffect()
   });
 
 
@@ -162,10 +169,10 @@ const LoginComponent = ({}: PageProps) => {
                 paddingTop: 10,
               }}
             >
-              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleForgotPassword}>
+              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={() => onHandleForgotPassword(nav)}>
                 Forgot password?
               </Button>
-              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={onHandleSignUp}>
+              <Button labelStyle={{ fontSize: 10 }} mode="text" onPress={() => onHandleSignUp(nav)}>
                 Don't have an account?
               </Button>
             </View>

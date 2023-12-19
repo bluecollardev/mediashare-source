@@ -1,7 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -9,8 +8,8 @@ const searchActionNames = ['search', 'select', 'clear'] as const;
 
 export const searchActions = makeActions(searchActionNames);
 
-export const search = createAsyncThunk(searchActions.search.type, async (args: { target?: string; text?: string; tags?: string[] }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const search = createAsyncThunk(searchActions.search.type, async (args: { target?: string; text?: string; tags?: string[] }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { target, text, tags = [] } = args;
   // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);

@@ -1,10 +1,13 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
+import {
+  reduceFulfilledState,
+  reducePendingState,
+  reduceRejectedState,
+  thunkApiWithState,
+} from 'mediashare/store/helpers'
 import { signOut } from 'mediashare/core/aws/auth';
-import { ApiService } from 'mediashare/store/apis';
-import { AuthorizeDto, ProfileDto, UpdateUserDto, BcRolesType } from 'mediashare/apis/user-svc/rxjs-api';
-// import { setKeyPair } from './keypair-store'; // TODO: Not compatible with react-native-web [https://github.com/expo/expo/issues/7744]
+import { ProfileDto, UpdateUserDto, BcRolesType } from 'mediashare/apis/user-svc/rxjs-api';
 import { pick, clone } from 'remeda';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -17,28 +20,38 @@ export const setIsAcceptingInvitationAction = createAsyncThunk(userActions.setIs
   return connectionId;
 });
 
-export const loginAction = createAsyncThunk(userActions.login.type, async (authorizeDto: AuthorizeDto, { extra }) => {
-  const { api } = extra as { api: ApiService };
-  return await api.user.userControllerAuthorize({ authorizeDto }).toPromise();
+// TODO: Rework user sessions if we want the User API backend to maintain session state (store Cognito token in Redis?)
+//  Otherwise we can deprecate this!
+/**
+ * @deprecated
+ */
+export const loginAction = createAsyncThunk(userActions.login.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
+  return await api.user.userControllerAuthorize().toPromise();
 });
 
-export const logout = createAsyncThunk(userActions.logout.type, async (opts = undefined, { extra }) => {
-  const { api } = extra as { api: ApiService };
+// TODO: Rework user sessions if we want the User API backend to maintain session state (store Cognito token in Redis?)
+//  Otherwise we can deprecate this!
+/**
+ * @deprecated
+ */
+export const logout = createAsyncThunk(userActions.logout.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   await api.user.userControllerLogout().toPromise();
   // await setKeyPair('token', ''); // TODO: Not compatible with react-native-web [https://github.com/expo/expo/issues/7744]
   await signOut();
 });
 
-export const loadUser = createAsyncThunk(userActions.loadUser.type, async (opts = undefined, { extra }) => {
-  const { api } = extra as { api: ApiService };
-  return await api.user.userControllerGetUser().toPromise();
+export const loadUser = createAsyncThunk(userActions.loadUser.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
+  return await api.user.userControllerGetCurrentUser().toPromise();
 });
 
 export const updateAccount = createAsyncThunk(
   userActions.updateAccount.type,
-  async ({ updateUserDto, userId }: { updateUserDto: UpdateUserDto; userId?: string }, { extra }) => {
+  async ({ updateUserDto, userId }: { updateUserDto: UpdateUserDto; userId?: string }, thunkApi) => {
     
-    const { api } = extra as { api: ApiService };
+    const { api } = thunkApiWithState(thunkApi);
     // TODO: If no userId, that means we're updating the account owner's account? Or was that for our previous hardcoded user?
     return userId
       ? await api.user.userControllerUpdateUser({ userId, updateUserDto }).toPromise()
@@ -62,7 +75,9 @@ export const defaultUserProfile: Pick<
   likesCount: 0,
   sharesCount: 0,
   sharedItems: [],
-  transactionId:0,
+  // TODO: Fix this typing!
+  // @ts-ignore
+  transactionId: 0,
   transactionDate:'',
   transactionEndDate:''
 };
@@ -139,7 +154,8 @@ const userSlice = createSlice({
       .addCase(loadUser.rejected, reduceRejectedState())
       .addCase(loadUser.fulfilled, (state, action) => ({
         ...state,
-        entity: { ...pickUser(action.payload) },
+        // TODO: Fix typing!
+        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto>) },
         loading: false,
         loaded: true,
       }))
@@ -147,7 +163,8 @@ const userSlice = createSlice({
       .addCase(updateAccount.rejected, reduceRejectedState())
       .addCase(updateAccount.fulfilled, (state, action) => ({
         ...state,
-        entity: { ...pickUser(action.payload) },
+        // TODO: Fix typing!
+        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto>) },
         loading: false,
         loaded: true,
       }));

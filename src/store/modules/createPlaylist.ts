@@ -3,8 +3,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
 import { CreatePlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
-import { playlists } from 'mediashare/store/apis';
-
 function initialStateFactory(): CreatePlaylistDto & { loading: boolean } {
   return {
     description: '',
@@ -21,7 +19,7 @@ function initialStateFactory(): CreatePlaylistDto & { loading: boolean } {
 // const actions = makeActions(['addItem', 'removeItem', 'setDescription', 'setCreatedBy', 'setTitle', 'setVisibility', 'setTag']);
 
 const createPlaylist = createAsyncThunk('createPlaylist', async (createPlaylistDto: CreatePlaylistDto) => {
-  return await playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
+  // return await playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
 });
 
 const slice = createSlice({

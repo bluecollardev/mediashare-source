@@ -1,7 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -9,21 +8,21 @@ const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_u
 
 export const mediaItemsActions = makeActions(mediaItemsActionNames);
 
-export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMediaItems.type, async (opts = undefined, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMediaItems.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.user.userControllerGetUserMediaItems().toPromise();
 });
 
-export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [] } = args;
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   return await api.mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
 });
 
-export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaItems.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [] } = args;
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);

@@ -75,14 +75,14 @@ export class UserApi extends BaseAPI {
 
     /**
      */
-    userControllerAuthorize(): Observable<void>
-    userControllerAuthorize(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
-    userControllerAuthorize(opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+    userControllerAuthorize(): Observable<ProfileDto>
+    userControllerAuthorize(opts?: OperationOpts): Observable<RawAjaxResponse<ProfileDto>>
+    userControllerAuthorize(opts?: OperationOpts): Observable<ProfileDto | RawAjaxResponse<ProfileDto>> {
         const headers: HttpHeaders = {
             ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        return this.request<void>({
+        return this.request<ProfileDto>({
             url: '/api/user/authorize',
             method: 'POST',
             headers,
@@ -258,6 +258,7 @@ export class UserApi extends BaseAPI {
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<ProfileDto>({

@@ -1,7 +1,6 @@
 import { createAsyncThunk, createAction, createSlice, createSelector } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import {
   CreatePlaylistDto,
   UpdatePlaylistDto,
@@ -10,7 +9,6 @@ import {
 } from 'mediashare/apis/media-svc/rxjs-api'
 
 import { flattenDeep } from 'remeda';
-import { take } from 'rxjs/operators';
 import { merge } from 'rxjs';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -25,28 +23,28 @@ const playlistActionNames = [
 
 export const playlistActions = makeActions(playlistActionNames);
 
-export const getPlaylistById = createAsyncThunk(playlistActions.getPlaylistById.type, async (id: string, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const getPlaylistById = createAsyncThunk(playlistActions.getPlaylistById.type, async (id: string, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const response = await api.playlists.playlistControllerFindOne({ playlistId: id }).toPromise();
   // api.views.viewsControllerCreatePlaylistView({ playlistId: id }).pipe(take(1)).subscribe();
   return response;
 });
 
-export const addUserPlaylist = createAsyncThunk(playlistActions.addUserPlaylist.type, async (createPlaylistDto: CreatePlaylistDto, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const addUserPlaylist = createAsyncThunk(playlistActions.addUserPlaylist.type, async (createPlaylistDto: CreatePlaylistDto, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
 });
 
-export const updateUserPlaylist = createAsyncThunk(playlistActions.updateUserPlaylist.type, async (updatePlaylistDto: UpdatePlaylistDto, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const updateUserPlaylist = createAsyncThunk(playlistActions.updateUserPlaylist.type, async (updatePlaylistDto: UpdatePlaylistDto, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   // @ts-ignore - TODO: Fix _id property on UpdatePlaylistDto!
   return await api.playlists.playlistControllerUpdate({ playlistId: updatePlaylistDto._id, updatePlaylistDto }).toPromise();
 });
 
 export const shareUserPlaylist = createAsyncThunk(
   playlistActions.shareUserPlaylist.type,
-  async ({ userIds, playlistIds }: { userIds: string[]; playlistIds: string[] }, { extra }) => {
-    const { api } = extra as { api: ApiService };
+  async ({ userIds, playlistIds }: { userIds: string[]; playlistIds: string[] }, thunkApi) => {
+    const { api } = thunkApiWithState(thunkApi);
     const prom = ({ playlistId, userId }) => api.playlists.playlistControllerShare({ playlistId, userId });
     const promises = userIds.map((userId) => playlistIds.map((playlistId) => prom({ userId, playlistId })));
     const flat = flattenDeep(promises);
@@ -54,8 +52,8 @@ export const shareUserPlaylist = createAsyncThunk(
   }
 );
 
-export const removeUserPlaylist = createAsyncThunk(playlistActions.removeUserPlaylist.type, async (id: string, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const removeUserPlaylist = createAsyncThunk(playlistActions.removeUserPlaylist.type, async (id: string, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.playlists.playlistControllerRemove({ playlistId: id }).toPromise();
 });
 

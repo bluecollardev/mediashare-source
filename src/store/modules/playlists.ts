@@ -1,7 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
-import { reduceFulfilledState, reducePendingState, reduceRejectedState } from 'mediashare/store/helpers';
-import { ApiService } from 'mediashare/store/apis';
+import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -9,16 +8,16 @@ const playlistsActionNames = ['find_playlists', 'get_user_playlists', 'select_pl
 
 export const playlistsActions = makeActions(playlistsActionNames);
 
-export const findUserPlaylists = createAsyncThunk(playlistsActions.findPlaylists.type, async (args: { text?: string; tags?: string[] }, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const findUserPlaylists = createAsyncThunk(playlistsActions.findPlaylists.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [] } = args;
   // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   return await api.playlists.playlistControllerFindAll({ text, tags }).toPromise();
 });
 
-export const getUserPlaylists = createAsyncThunk(playlistsActions.getUserPlaylists.type, async (opts = undefined, { extra }) => {
-  const { api } = extra as { api: ApiService };
+export const getUserPlaylists = createAsyncThunk(playlistsActions.getUserPlaylists.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
   return await api.playlists.playlistControllerFindAll({ text: '', tags: [] }).toPromise();
 });
 

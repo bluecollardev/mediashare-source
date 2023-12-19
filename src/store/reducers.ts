@@ -2,6 +2,7 @@
 import { combineReducers } from 'redux';
 
 import { reducer as appStateReducer } from './modules/appState';
+import { reducer as authReducer } from './modules/auth';
 import { reducer as profileReducer } from './modules/profile';
 import { reducer as usersReducer } from './modules/users';
 import { reducer as userReducer } from './modules/user';
@@ -19,6 +20,7 @@ import { reducer as tagsReducer } from './modules/tags';
 // Combine our reducers and export
 const rootReducer = combineReducers({
   app: appStateReducer,
+  auth: authReducer,
   user: userReducer,
   userConnections: userConnectionsReducer,
   users: usersReducer,

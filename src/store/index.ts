@@ -3,7 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators, configureStore } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
 
-import { apis } from './apis';
+import { apiFactory, ApiService } from './apis'
 import { rootReducer as reducer } from './reducers';
 import { loading, setError } from './modules/appState';
 import { clearMediaItems } from './modules/mediaItems';
@@ -30,7 +30,7 @@ export const store = configureStore({
       // We have a larger than normal state tree, as we load lots of data when user initially logs in (default is 32ms, increase to 128ms)
       serializableCheck: { warnAfter: 128 },
     })
-      .prepend(thunk.withExtraArgument({ api: apis }))
+      .prepend(thunk.withExtraArgument({ apiFactory }))
       .concat(errorMiddleware),
 });
 export const actions = bindActionCreators({ clearMediaItems, clearPlaylists }, store.dispatch);

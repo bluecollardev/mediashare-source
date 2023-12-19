@@ -1,5 +1,3 @@
-// https://github.com/reduxjs/redux-thunk/issues/333
-
 // TODO: https://react-redux.js.org/tutorials/typescript-quick-start#define-typed-hooks
 import type {} from 'redux-thunk/extend-redux';
 
@@ -20,8 +18,9 @@ import Amplify, { Hub } from 'aws-amplify';
 import awsmobile from './aws-exports';
 import { store, useAppSelector } from './store';
 import { routeConfig } from './routes'
-import { loginAction, setIsAcceptingInvitationAction } from './store/modules/user';
+import { loadUser, setIsAcceptingInvitationAction } from './store/modules/user'
 import { useUser } from 'mediashare/hooks/useUser';
+import { storeAuthTokens } from 'mediashare/store/modules/auth';
 import { theme } from './styles';
 import { useFonts } from 'expo-font';
 import { createBottomTabListeners } from './screenListeners';
@@ -116,8 +115,11 @@ const LibraryNavigation = () => {
 };
 
 const AccountStackNavigator = createStackNavigator();
-const AccountNavigation = () => {
-  // const user = useUser();
+const AccountNavigation = ({ globalState }) => {
+  const { loadUserData } = globalState;
+  useEffect(() => {
+    loadUserData();
+  }, []);
   return (
     <AccountStackNavigator.Navigator initialRouteName={'accountEdit'}>
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
@@ -167,6 +169,7 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
   if (isAcceptingInvitationFrom) {
     openInvitation();
   }
+  
   return (
     <PrivateNavigator.Navigator
       initialRouteName="Search"
@@ -186,13 +189,17 @@ const PrivateMainNavigation = ({ globalState }: PrivateMainNavigationProps) => {
             : undefined,
       })}
     >
+      {/* TODO: Fix this! */}
       <>
-        {(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
+        {/*{(build.forFreeUser || build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
         ) : null}
         {(build.forSubscriber || build.forAdmin) ? (
           <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         ) : null}
+        <PrivateNavigator.Screen name="Network" component={NetworkNavigation} listeners={navigationTabListeners} />*/}
+        <PrivateNavigator.Screen name="Search" component={SearchNavigation} listeners={navigationTabListeners} />
+        <PrivateNavigator.Screen name="Library" component={LibraryNavigation} listeners={navigationTabListeners} />
         <PrivateNavigator.Screen name="Network" component={NetworkNavigation} listeners={navigationTabListeners} />
       </>
     </PrivateNavigator.Navigator>
@@ -283,6 +290,8 @@ function App() {
   });
 
   const loading = useAppSelector((state) => state?.app?.loading);
+  const auth = useAppSelector((state) => state?.auth);
+  console.log(`auth: ${JSON.stringify(auth, null, 2)}`);
   
   const { isLoggedIn } = useUser();
   const [isCurrentUser, setIsCurrentUser] = useState(undefined);
@@ -290,7 +299,13 @@ function App() {
 
   const fetchData = async () => {
     const authUser = await Auth.currentUserPoolUser({ bypassCache: true });
-    await dispatch(loginAction({ accessToken: authUser.signInUserSession.accessToken.jwtToken, idToken: authUser.signInUserSession.idToken.jwtToken }));
+    const { signInUserSession } = authUser;
+    const { accessToken, idToken } = signInUserSession;
+    dispatch(storeAuthTokens({
+      accessToken: accessToken?.['jwtToken'],
+      idToken: idToken?.['jwtToken'],
+    }))
+    dispatch(loadUser());
     setIsCurrentUser(authUser);
   };
   
