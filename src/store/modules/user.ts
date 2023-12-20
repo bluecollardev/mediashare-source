@@ -7,7 +7,7 @@ import {
   thunkApiWithState,
 } from 'mediashare/store/helpers'
 import { signOut } from 'mediashare/core/aws/auth';
-import { ProfileDto, UpdateUserDto, BcRolesType } from 'mediashare/apis/user-svc/rxjs-api';
+import { ProfileDto, UpdateUserDto, BcRolesType, UserDto } from 'mediashare/apis/user-svc/rxjs-api'
 import { pick, clone } from 'remeda';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -60,9 +60,11 @@ export const updateAccount = createAsyncThunk(
 );
 
 export const defaultUserProfile: Pick<
-  ProfileDto,
-  'username' | 'firstName' | 'lastName' | '_id' | 'phoneNumber' | 'imageSrc' | 'email' | 'role' | 'sharedCount' | 'sharesCount' | 'likesCount' | 'sharedItems' |'transactionId'|'transactionDate'|'transactionEndDate'
+  UserDto,
+  // 'sub' | 'username' | 'firstName' | 'lastName' | '_id' | 'phoneNumber' | 'imageSrc' | 'email' | 'role' | 'sharedCount' | 'sharesCount' | 'likesCount' | 'sharedItems' |'transactionId'|'transactionDate'|'transactionEndDate'
+  'sub' | 'username' | 'firstName' | 'lastName' | '_id' | 'phoneNumber' | 'imageSrc' | 'email' | 'role' | 'transactionId'|'transactionDate'|'transactionEndDate'
 > = {
+  sub: '',
   username: '',
   firstName: '',
   lastName: '',
@@ -97,8 +99,9 @@ export const userInitialState: UserState = {
 };
 
 // TODO: Double check these fields, do we even have roles?
-const pickUser = (user: Partial<ProfileDto>) =>
+const pickUser = (user: Partial<ProfileDto & UserDto>) =>
   pick(user, [
+    'sub',
     'username',
     'email',
     '_id',
@@ -138,7 +141,7 @@ const userSlice = createSlice({
       .addCase(loginAction.rejected, reduceRejectedState())
       .addCase(loginAction.fulfilled, (state, action) => ({
         ...state,
-        entity: { ...pickUser(action.payload) },
+        entity: { ...(pickUser(action?.payload as ProfileDto & UserDto)) },
         loading: false,
         loaded: true,
       }))
@@ -155,7 +158,7 @@ const userSlice = createSlice({
       .addCase(loadUser.fulfilled, (state, action) => ({
         ...state,
         // TODO: Fix typing!
-        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto>) },
+        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto & UserDto>) },
         loading: false,
         loaded: true,
       }))
@@ -164,7 +167,7 @@ const userSlice = createSlice({
       .addCase(updateAccount.fulfilled, (state, action) => ({
         ...state,
         // TODO: Fix typing!
-        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto>) },
+        entity: { ...pickUser(action.payload as unknown as Partial<ProfileDto & UserDto>) },
         loading: false,
         loaded: true,
       }));

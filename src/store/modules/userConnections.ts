@@ -9,12 +9,14 @@ export const userConnectionsActions = makeActions(userConnectionsActionNames);
 
 export const sendEmail = createAsyncThunk(userConnectionsActions.userSendMail.type, async ({ userId, email }: { userId: string; email: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerSendEmail({ userId, email }).toPromise();
+  return await api.email.emailControllerSendEmail({ userId, email }).toPromise();
 });
 
 export const acceptInvitation = createAsyncThunk(userConnectionsActions.acceptInvitation.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerCreateUserConnection({ userConnectionDto: { userId, connectionId } }).toPromise();
+  console.log(userId)
+  console.log(connectionId)
+  return await api.user.userControllerCreateUserConnection({ createUserConnectionDto: { userId, connectionId } }).toPromise();
 });
 
 export const loadUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async (opts = undefined, thunkApi) => {

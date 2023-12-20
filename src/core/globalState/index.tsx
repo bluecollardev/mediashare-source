@@ -7,7 +7,7 @@ import { useUser } from 'mediashare/hooks/useUser';
 import { INITIAL_DISPLAY_MODE } from 'mediashare/core/globalState/constants';
 import { loadUser, setIsAcceptingInvitationAction } from 'mediashare/store/modules/user'
 import { getTags } from 'mediashare/store/modules/tags';
-import { BcRolesType, ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
+import { BcRolesType, ProfileDto, UserDto } from 'mediashare/apis/user-svc/rxjs-api'
 import { TagDto } from 'mediashare/apis/tags-svc/rxjs-api';
 
 export interface GlobalStateProps {
@@ -15,7 +15,7 @@ export interface GlobalStateProps {
   location?: any;
   loading?: boolean;
   isLoggedIn?: boolean;
-  user?: Partial<ProfileDto>;
+  user?: Partial<UserDto>;
   roles?: BcRolesType[];
   build?: {
     forFreeUser: boolean;

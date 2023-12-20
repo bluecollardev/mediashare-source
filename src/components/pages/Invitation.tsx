@@ -13,9 +13,9 @@ import { theme } from 'mediashare/styles';
 interface InvitationProps extends PageProps {}
 
 const Invitation = ({ route, globalState }: InvitationProps) => {
-  const accountId = globalState?.user?._id;
+  const accountSub = globalState?.user?.sub;
   
-  const { userId } = route.params;
+  const { userId: userSub } = route.params;
   
   const goBack = useGoBack();
 
@@ -27,8 +27,8 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
 
   useEffect(() => {
-    dispatch(loadProfile(userId));
-  }, [userId]);
+    dispatch(loadProfile(userSub));
+  }, [userSub]);
 
   // const [fabState, setFabState] = useState({ open: false });
   // const fabActions = [{ icon: 'rule', onPress: () => activateUnshareMode(), color: theme.colors.text, style: { backgroundColor: theme.colors.error } }];
@@ -59,7 +59,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   );
   
   async function accept() {
-    await dispatch(acceptInvitation({ userId: accountId, connectionId: userId }));
+    await dispatch(acceptInvitation({ userId: accountSub, connectionId: userSub }));
     await dispatch(loadUserConnections());
     goBack();
   }

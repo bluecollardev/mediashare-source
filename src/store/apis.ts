@@ -16,7 +16,8 @@ import {
   servers as userApiServers,
   Configuration as UserApiConfig,
   UserApi,
-} from 'mediashare/apis/user-svc/rxjs-api';
+  EmailApi,
+} from 'mediashare/apis/user-svc/rxjs-api'
 import {
   servers as tagsApiServers,
   Configuration as TagsApiConfig,
@@ -120,6 +121,7 @@ export function apiFactory(thunkApi: { state: any; }) {
     playlistItems: new PlaylistItemsApi(mediaApiConfiguration),
     shareItems: undefined, // new ShareItemsApi(mediaApiConfiguration),
     user: new UserApi(userApiConfiguration),
+    email: new EmailApi(userApiConfiguration),
     views: undefined, // new ViewsApi(configuration),
     tags: new TagsApi(tagsApiConfiguration),
     configuration: mediaApiConfiguration,
