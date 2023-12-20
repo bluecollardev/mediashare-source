@@ -4,7 +4,7 @@ import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
 import { shareUserPlaylist } from 'mediashare/store/modules/playlist';
 import { clearPlaylists, getUserPlaylists } from 'mediashare/store/modules/playlists';
-import { loadUserConnections } from 'mediashare/store/modules/userConnections';
+import { loadCurrentUserConnections } from 'mediashare/store/modules/userConnections';
 import { useGoBack, useRouteName } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { PageContainer, PageContent, PageActions, PageProps, ActionButtons, ContactList } from 'mediashare/components/layout';
@@ -23,7 +23,7 @@ const SharePlaylistsWith = ({}: PageProps) => {
 
   useEffect(() => {
     if (!loaded) {
-      dispatch(loadUserConnections());
+      dispatch(loadCurrentUserConnections());
       setIsLoaded(true);
     }
   }, [loaded, dispatch]);

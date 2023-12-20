@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
-import { loadUserConnections, removeUserConnections } from 'mediashare/store/modules/userConnections'
+import { loadCurrentUserConnections, removeUserConnections } from 'mediashare/store/modules/userConnections'
 import { loadProfile } from 'mediashare/store/modules/profile';
 import { sendEmail } from 'mediashare/store/modules/userConnections';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -40,10 +40,11 @@ export const Shared = ({ globalState }: PageProps) => {
   const [openInvite, setInvite] = React.useState(false);
 
   const user = useUser();
-  const userId = user?._id || null;
+  const userSub = user?.sub || null;
   const { build } = user;
-
-  const contacts = useAppSelector((state) => state?.userConnections?.entities).filter((e) => e._id != userId);
+  
+  const contacts = useAppSelector((state) => state?.userConnections?.entities).filter((e) => e.sub != userSub);
+  console.log(contacts);
   const [actionMode, setActionMode] = useState(actionModes.default);
   const [isSelectable, setIsSelectable] = useState(false);
   const [selectedConnections, setSelectedConnections] = React.useState([]);
@@ -94,7 +95,7 @@ export const Shared = ({ globalState }: PageProps) => {
           // @ts-ignore
           onSubmit={async (data) => {
             try {
-              await dispatch(sendEmail({ userId, email: data?.email }));
+              await dispatch(sendEmail({ userId: userSub, email: data?.email }));
               setMessage(`Invitation sent to ${data?.email}`);
               onToggleSnackBar();
             } catch (error) {
@@ -126,19 +127,17 @@ export const Shared = ({ globalState }: PageProps) => {
           />
         </Card>
         {/* <Highlights highlights={state.highlights} /> */}
-        {!build.forFreeUser ? (
-          <ScrollView style={{ height: '100%' }}>
-            <ContactList
-              key={clearSelectionKey}
-              contacts={contacts}
-              showGroups={false}
-              showActions={!isSelectable}
-              onViewDetail={viewProfileById}
-              selectable={isSelectable}
-              onChecked={updateSelection}
-            />
-          </ScrollView>
-        ) : null}
+        <ScrollView style={{ height: '100%' }}>
+          <ContactList
+            key={clearSelectionKey}
+            contacts={contacts}
+            showGroups={false}
+            showActions={!isSelectable}
+            onViewDetail={viewProfileById}
+            selectable={isSelectable}
+            onChecked={updateSelection}
+          />
+        </ScrollView>
       </PageContent>
       {isSelectable && actionMode === actionModes.delete ? (
         <PageActions>
@@ -193,9 +192,9 @@ export const Shared = ({ globalState }: PageProps) => {
     await dispatch(logout());
   }
   async function loadData() {
-    await dispatch(loadUserConnections());
     // @ts-ignore
-    await dispatch(loadProfile(userId));
+    await dispatch(loadProfile(userSub));
+    await dispatch(loadCurrentUserConnections());
     setIsLoaded(true);
   }
 
@@ -229,9 +228,9 @@ export const Shared = ({ globalState }: PageProps) => {
 
   async function deleteConnections() {
     console.log(selectedConnections);
-    await dispatch(removeUserConnections({ userId, connectionIds: selectedConnections }));
+    await dispatch(removeUserConnections({ userId: userSub, connectionIds: selectedConnections }));
     setSelectedConnections([]);
-    await dispatch(loadUserConnections());
+    await dispatch(loadCurrentUserConnections());
   }
 
   function updateSelection(bool: boolean, connectionId: string) {

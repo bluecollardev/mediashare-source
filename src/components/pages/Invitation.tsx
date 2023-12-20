@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadProfile } from 'mediashare/store/modules/profile';
-import { acceptInvitation, loadUserConnections } from 'mediashare/store/modules/userConnections';
+import { acceptInvitation, loadCurrentUserConnections } from 'mediashare/store/modules/userConnections';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { useGoBack } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
@@ -27,7 +27,9 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   const fullName = firstName || lastName ? `${firstName} ${lastName}` : 'Unnamed User';
 
   useEffect(() => {
-    dispatch(loadProfile(userSub));
+    dispatch(loadProfile(userSub)).then(() => {
+      dispatch(loadCurrentUserConnections());
+    });
   }, [userSub]);
 
   // const [fabState, setFabState] = useState({ open: false });
@@ -60,7 +62,7 @@ const Invitation = ({ route, globalState }: InvitationProps) => {
   
   async function accept() {
     await dispatch(acceptInvitation({ userId: accountSub, connectionId: userSub }));
-    await dispatch(loadUserConnections());
+    await dispatch(loadCurrentUserConnections());
     goBack();
   }
   

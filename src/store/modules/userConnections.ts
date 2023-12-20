@@ -19,9 +19,14 @@ export const acceptInvitation = createAsyncThunk(userConnectionsActions.acceptIn
   return await api.user.userControllerCreateUserConnection({ createUserConnectionDto: { userId, connectionId } }).toPromise();
 });
 
-export const loadUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async (opts = undefined, thunkApi) => {
+export const loadCurrentUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerGetUserConnections().toPromise();
+  return await api.user.userControllerGetCurrentUserConnections().toPromise();
+});
+
+export const loadUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async ({ userId }: { userId: string }, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
+  return await api.user.userControllerGetUserConnections({ userId }).toPromise();
 });
 
 export const removeUserConnection = createAsyncThunk(userConnectionsActions.removeUserConnections.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, thunkApi) => {
