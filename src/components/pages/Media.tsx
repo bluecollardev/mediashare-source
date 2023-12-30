@@ -96,7 +96,9 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
-    loadData().then();
+    console.log('Media useEffect ONCE');
+    // console.log('Media useEffect loadData...');
+    // loadData().then();
   }, []);
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
