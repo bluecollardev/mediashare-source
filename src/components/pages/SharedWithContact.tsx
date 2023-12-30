@@ -44,9 +44,10 @@ const SharedWithContact = ({ route }: SharedWithContactProps) => {
   const [showUnshareDialog, setShowUnshareDialog] = useState(false);
   const [showUnshareItemDialog, setShowUnshareItemDialog] = useState(false);
   const [itemToUnshare, setItemToUnshare] = useState(undefined as string);
-
+  
   const itemsSharedWithContact = (useAppSelector((state) => state?.shareItems?.sharedByMe?.entities) || []).filter((item) => item.sharedWithUserId === userId);
-
+  console.log(`SharedWithContact ${JSON.stringify(itemsSharedWithContact, null, 2)}`);
+  
   useEffect(() => {
     dispatch(loadProfile(userId));
     dispatch(findItemsSharedByMe());

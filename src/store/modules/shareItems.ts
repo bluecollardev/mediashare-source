@@ -28,12 +28,12 @@ export const readShareItem = createAsyncThunk(shareItemsActions.readShareItem.ty
 
 export const removeShareItem = createAsyncThunk(shareItemsActions.removeShareItem.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
+  return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
 });
 
 export const removeAllShareItems = createAsyncThunk(shareItemsActions.removeAllShareItems.type, async (shareIds: string[], thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
+  return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
 });
 
 export const removeAllShareItemsByUserId = createAsyncThunk(shareItemsActions.removeAllShareItemsByUserId.type, async (shareUserIds: string[], thunkApi) => {
@@ -43,12 +43,12 @@ export const removeAllShareItemsByUserId = createAsyncThunk(shareItemsActions.re
 
 export const findItemsSharedByMe = createAsyncThunk(shareItemsActions.findItemsSharedByUser.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
+  return await api.shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
 });
 
 export const findItemsSharedWithMe = createAsyncThunk(shareItemsActions.findItemsSharedWithUser.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
+  return await api.shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
 });
 
 interface ShareItemsState {

@@ -28,12 +28,6 @@ const SharePlaylistsWith = ({}: PageProps) => {
     }
   }, [loaded, dispatch]);
 
-  useEffect(() => {
-    if (!loaded) {
-      loadData().then(() => setIsLoaded(true));
-    }
-  }, [loaded]);
-
   return (
     <PageContainer>
       <PageContent>
@@ -44,11 +38,7 @@ const SharePlaylistsWith = ({}: PageProps) => {
       </PageActions>
     </PageContainer>
   );
-
-  async function loadData() {
-    await dispatch(getUserPlaylists());
-  }
-
+  
   function updateSelectedUsers(bool: boolean, userId: string) {
     const filtered = bool ? selectedUsers.concat([userId]) : selectedUsers.filter((id) => id !== userId);
     setSelectedUsers(filtered);
