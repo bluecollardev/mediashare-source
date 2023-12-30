@@ -14,6 +14,12 @@ import { PlaylistsComponent } from './Playlists';
 import { filterUnique, shortenText } from 'mediashare/utils';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 
+/**
+ * TODO: Remove this if unused!
+ * @deprecated
+ * @param globalState
+ * @constructor
+ */
 export const SharedList = ({ globalState }) => {
   const { entities, loaded, loading } = useAppSelector((state) => state?.shareItems?.sharedWithMe);
   const ShowMyShare = false;

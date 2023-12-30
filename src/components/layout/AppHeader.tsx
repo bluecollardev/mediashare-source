@@ -102,7 +102,9 @@ const AppHeaderComponent = ({
   );
   
   async function accountLogout() {
-    Alert.alert('Logout', 'Are you sure you want to logout?', [
+    // TODO: Fix this alert!
+    logOut();
+    /* Alert.alert('Logout', 'Are you sure you want to logout?', [
       {
         text: 'Cancel',
         style: 'cancel',
@@ -113,8 +115,7 @@ const AppHeaderComponent = ({
           logOut()
         },
       },
-    ]);
-
+    ]); */
   }
   
   async function logOut() {
