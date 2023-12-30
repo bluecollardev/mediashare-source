@@ -291,7 +291,7 @@ function App() {
 
   const loading = useAppSelector((state) => state?.app?.loading);
   const auth = useAppSelector((state) => state?.auth);
-  console.log(`auth: ${JSON.stringify(auth, null, 2)}`);
+  // console.log(`auth: ${JSON.stringify(auth, null, 2)}`);
   
   const { isLoggedIn } = useUser();
   const [isCurrentUser, setIsCurrentUser] = useState(undefined);

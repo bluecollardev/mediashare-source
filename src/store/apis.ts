@@ -9,7 +9,7 @@ import {
   MediaItemsApi,
   PlaylistsApi,
   PlaylistItemsApi,
-  // ShareItemsApi,
+  ShareItemsApi,
   // ViewsApi,
 } from 'mediashare/apis/media-svc/rxjs-api';
 import {
@@ -82,7 +82,7 @@ export const authMiddleware = ({ state }): Middleware => ({
     const authHeaders = {};
     authHeaders['Authorization'] = `Bearer ${state.auth.idToken}`;
     const headers = { ...prevHeaders, ...authHeaders };
-    console.log(`headers: ${JSON.stringify(headers, null, 2)}`)
+    // console.log(`headers: ${JSON.stringify(headers, null, 2)}`)
     return { headers, ...rest };
   }
 });
@@ -97,7 +97,7 @@ export function apiFactory(thunkApi: { state: any; }) {
     ];
   }
   
-  console.log(`Configuration: ${JSON.stringify(Config, null, 2)}`);
+  // console.log(`Configuration: ${JSON.stringify(Config, null, 2)}`);
   const mediaApiConfiguration = new MediaApiConfig({
     basePath: mediaApiServers[Config.ApiServer].getUrl(),
     middleware: middlewareFactory(),
@@ -119,7 +119,7 @@ export function apiFactory(thunkApi: { state: any; }) {
     mediaItems: new MediaItemsApi(mediaApiConfiguration),
     playlists: new PlaylistsApi(mediaApiConfiguration),
     playlistItems: new PlaylistItemsApi(mediaApiConfiguration),
-    shareItems: undefined, // new ShareItemsApi(mediaApiConfiguration),
+    shareItems: new ShareItemsApi(mediaApiConfiguration),
     user: new UserApi(userApiConfiguration),
     email: new EmailApi(userApiConfiguration),
     views: undefined, // new ViewsApi(configuration),
@@ -127,17 +127,17 @@ export function apiFactory(thunkApi: { state: any; }) {
     configuration: mediaApiConfiguration,
     mediaApiConfiguration,
     userApiConfiguration,
-  };
+  } as ApiService;
 }
 
 export type ApiService = {
-  default:DefaultApi;
-  search:SearchApi;
-  mediaItems:MediaItemsApi;
-  playlists:PlaylistsApi;
-  playlistItems:PlaylistItemsApi;
-  shareItems: undefined; //ShareItemsApi;
-  user:UserApi;
+  default: DefaultApi;
+  search: SearchApi;
+  mediaItems: MediaItemsApi;
+  playlists: PlaylistsApi;
+  playlistItems: PlaylistItemsApi;
+  shareItems: ShareItemsApi;
+  user: UserApi;
   views: undefined; //ViewsApi(configuration);
-  tags:TagsApi;
+  tags: TagsApi;
 };

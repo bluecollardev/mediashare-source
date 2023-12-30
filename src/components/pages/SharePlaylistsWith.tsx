@@ -50,7 +50,7 @@ const SharePlaylistsWith = ({}: PageProps) => {
   }
 
   function updateSelectedUsers(bool: boolean, userId: string) {
-    const filtered = bool ? selectedUsers.concat([userId]) : selectedUsers.filter((item) => item._id !== userId);
+    const filtered = bool ? selectedUsers.concat([userId]) : selectedUsers.filter((id) => id !== userId);
     setSelectedUsers(filtered);
   }
 

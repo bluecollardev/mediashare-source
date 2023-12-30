@@ -198,6 +198,7 @@ export const Search = ({ globalState }: PageProps & any) => {
   );
 
   async function loadData() {
+    console.log('Search loadData...');
     const search = globalState?.getSearchFilters(searchKey);
     const args = {
       target: search?.target ? search.target : '',
@@ -208,6 +209,7 @@ export const Search = ({ globalState }: PageProps & any) => {
   }
 
   async function refresh() {
+    console.log('refresh...');
     setRefreshing(true);
     await loadData();
     setRefreshing(false);

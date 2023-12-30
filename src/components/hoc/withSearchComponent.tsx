@@ -85,13 +85,14 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     }, [searchActive])
   
     useEffect(() => {
-      if (!loaded || !isLoaded) {
+      if (!isLoaded) {
+        console.log('withSearchComponent loadData...');
         loadData().then(() => {
           if (!isMountedRef.current) return;
           setIsLoaded(true);
         });
       }
-    }, [loaded, isLoaded, isMountedRef]);
+    }, [isLoaded, isMountedRef]);
   
     useEffect(() => {
       if (searchFilters?.text) {

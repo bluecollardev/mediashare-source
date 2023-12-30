@@ -9,6 +9,7 @@ const searchActionNames = ['search', 'select', 'clear'] as const;
 export const searchActions = makeActions(searchActionNames);
 
 export const search = createAsyncThunk(searchActions.search.type, async (args: { target?: string; text?: string; tags?: string[] }, thunkApi) => {
+  console.log('search...');
   const { api } = thunkApiWithState(thunkApi);
   const { target, text, tags = [] } = args;
   // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);

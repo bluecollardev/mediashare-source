@@ -9,11 +9,13 @@ const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_u
 export const mediaItemsActions = makeActions(mediaItemsActionNames);
 
 export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMediaItems.type, async (opts = undefined, thunkApi) => {
+  console.log('loadUserMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
   return await api.user.userControllerGetUserMediaItems().toPromise();
 });
 
 export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+  console.log('findMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [] } = args;
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
@@ -22,6 +24,7 @@ export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.
 });
 
 export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+  console.log('searchMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [] } = args;
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);

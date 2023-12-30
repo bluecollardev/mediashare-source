@@ -1,4 +1,5 @@
 import { createAsyncThunk, createAction, createSlice, createSelector } from '@reduxjs/toolkit';
+import { ApiService } from 'mediashare/store/apis';
 import { makeActions } from 'mediashare/store/factory';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import {
@@ -32,21 +33,21 @@ export const getPlaylistById = createAsyncThunk(playlistActions.getPlaylistById.
 
 export const addUserPlaylist = createAsyncThunk(playlistActions.addUserPlaylist.type, async (createPlaylistDto: CreatePlaylistDto, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
+  return await (api as ApiService).playlists.playlistControllerCreate({ createPlaylistDto }).toPromise();
 });
 
 export const updateUserPlaylist = createAsyncThunk(playlistActions.updateUserPlaylist.type, async (updatePlaylistDto: UpdatePlaylistDto, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
   // @ts-ignore - TODO: Fix _id property on UpdatePlaylistDto!
-  return await api.playlists.playlistControllerUpdate({ playlistId: updatePlaylistDto._id, updatePlaylistDto }).toPromise();
+  return await (api as ApiService).playlists.playlistControllerUpdate({ playlistId: updatePlaylistDto._id, updatePlaylistDto }).toPromise();
 });
 
 export const shareUserPlaylist = createAsyncThunk(
   playlistActions.shareUserPlaylist.type,
   async ({ userIds, playlistIds }: { userIds: string[]; playlistIds: string[] }, thunkApi) => {
     const { api } = thunkApiWithState(thunkApi);
-    const prom = ({ playlistId, userId }) => api.playlists.playlistControllerShare({ playlistId, userId });
-    const promises = userIds.map((userId) => playlistIds.map((playlistId) => prom({ userId, playlistId })));
+    const prom = ({ playlistId, userSub }) => api.shareItems.shareItemControllerSharePlaylist({ playlistId, userSub });
+    const promises = userIds.map((userSub) => playlistIds.map((playlistId) => prom({ userSub, playlistId })));
     const flat = flattenDeep(promises);
     return await merge(...flat).toPromise();
   }
@@ -54,7 +55,7 @@ export const shareUserPlaylist = createAsyncThunk(
 
 export const removeUserPlaylist = createAsyncThunk(playlistActions.removeUserPlaylist.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.playlists.playlistControllerRemove({ playlistId: id }).toPromise();
+  return await (api as ApiService).playlists.playlistControllerRemove({ playlistId: id }).toPromise();
 });
 
 export const clearUserPlaylist = createAction(playlistActions.clearUserPlaylist.type);
