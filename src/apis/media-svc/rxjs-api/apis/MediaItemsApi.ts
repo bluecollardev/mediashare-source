@@ -36,12 +36,6 @@ export interface MediaItemControllerRemoveRequest {
     mediaId: string;
 }
 
-export interface MediaItemControllerShareRequest {
-    mediaId: string;
-    userId: string;
-    userId2: string;
-}
-
 export interface MediaItemControllerUpdateRequest {
     mediaId: string;
     updateMediaItemDto: UpdateMediaItemDto;
@@ -154,26 +148,6 @@ export class MediaItemsApi extends BaseAPI {
         return this.request<void>({
             url: '/api/media-items/{mediaId}'.replace('{mediaId}', encodeURI(mediaId)),
             method: 'DELETE',
-            headers,
-        }, opts?.responseOpts);
-    };
-
-    /**
-     */
-    mediaItemControllerShare({ mediaId, userId, userId2 }: MediaItemControllerShareRequest): Observable<object>
-    mediaItemControllerShare({ mediaId, userId, userId2 }: MediaItemControllerShareRequest, opts?: OperationOpts): Observable<RawAjaxResponse<object>>
-    mediaItemControllerShare({ mediaId, userId, userId2 }: MediaItemControllerShareRequest, opts?: OperationOpts): Observable<object | RawAjaxResponse<object>> {
-        throwIfNullOrUndefined(mediaId, 'mediaId', 'mediaItemControllerShare');
-        throwIfNullOrUndefined(userId, 'userId', 'mediaItemControllerShare');
-        throwIfNullOrUndefined(userId2, 'userId2', 'mediaItemControllerShare');
-
-        const headers: HttpHeaders = {
-            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
-        };
-
-        return this.request<object>({
-            url: '/api/media-items/{mediaId}/share/{userId}'.replace('{mediaId}', encodeURI(mediaId)).replace('{userId}', encodeURI(userId)).replace('{:userId}', encodeURI(userId2)),
-            method: 'POST',
             headers,
         }, opts?.responseOpts);
     };

@@ -36,12 +36,6 @@ export interface PlaylistItemControllerRemoveRequest {
     playlistItemId: string;
 }
 
-export interface PlaylistItemControllerShareRequest {
-    playlistItemId: string;
-    userId: string;
-    userId2: string;
-}
-
 export interface PlaylistItemControllerUpdateRequest {
     playlistItemId: string;
     updatePlaylistItemDto: UpdatePlaylistItemDto;
@@ -154,26 +148,6 @@ export class PlaylistItemsApi extends BaseAPI {
         return this.request<void>({
             url: '/api/playlist-items/{playlistItemId}'.replace('{playlistItemId}', encodeURI(playlistItemId)),
             method: 'DELETE',
-            headers,
-        }, opts?.responseOpts);
-    };
-
-    /**
-     */
-    playlistItemControllerShare({ playlistItemId, userId, userId2 }: PlaylistItemControllerShareRequest): Observable<object>
-    playlistItemControllerShare({ playlistItemId, userId, userId2 }: PlaylistItemControllerShareRequest, opts?: OperationOpts): Observable<RawAjaxResponse<object>>
-    playlistItemControllerShare({ playlistItemId, userId, userId2 }: PlaylistItemControllerShareRequest, opts?: OperationOpts): Observable<object | RawAjaxResponse<object>> {
-        throwIfNullOrUndefined(playlistItemId, 'playlistItemId', 'playlistItemControllerShare');
-        throwIfNullOrUndefined(userId, 'userId', 'playlistItemControllerShare');
-        throwIfNullOrUndefined(userId2, 'userId2', 'playlistItemControllerShare');
-
-        const headers: HttpHeaders = {
-            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
-        };
-
-        return this.request<object>({
-            url: '/api/playlist-items/{playlistItemId}/share/{userId}'.replace('{playlistItemId}', encodeURI(playlistItemId)).replace('{:userId}', encodeURI(userId)).replace('{userId}', encodeURI(userId2)),
-            method: 'POST',
             headers,
         }, opts?.responseOpts);
     };
