@@ -1,6 +1,7 @@
 // TODO: We need to finish this...
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState, thunkApiWithState } from 'mediashare/store/helpers';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -18,37 +19,37 @@ export const shareItemsActions = makeActions(shareItemActionNames);
 
 export const getShareItemById = createAsyncThunk(shareItemsActions.getShareItem.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerFindShareItem({ shareId: id }).toPromise();
+  return undefined; // return await (api as ApiService).shareItems.shareItemControllerFindShareItem({ shareId: id }).toPromise();
 });
 
 export const readShareItem = createAsyncThunk(shareItemsActions.readShareItem.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerReadShareItem({ shareId: id }).toPromise();
+  return undefined; // return await (api as ApiService).shareItems.shareItemControllerReadShareItem({ shareId: id }).toPromise();
 });
 
 export const removeShareItem = createAsyncThunk(shareItemsActions.removeShareItem.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
+  return await (api as ApiService).shareItems.shareItemControllerRemoveShareItem({ shareId: id }).toPromise();
 });
 
 export const removeAllShareItems = createAsyncThunk(shareItemsActions.removeAllShareItems.type, async (shareIds: string[], thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
+  return await (api as ApiService).shareItems.shareItemControllerRemoveAllShareItems({ shareItemsDto: { shareItemIds: shareIds } }).toPromise();
 });
 
 export const removeAllShareItemsByUserId = createAsyncThunk(shareItemsActions.removeAllShareItemsByUserId.type, async (shareUserIds: string[], thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return undefined; // return await api.shareItems.shareItemControllerRemoveShareItemAllByUserId({ shareItemsByUserIdDto: { shareItemByUserIds: shareUserIds } }).toPromise();
+  return undefined; // return await (api as ApiService).shareItems.shareItemControllerRemoveShareItemAllByUserId({ shareItemsByUserIdDto: { shareItemByUserIds: shareUserIds } }).toPromise();
 });
 
 export const findItemsSharedByMe = createAsyncThunk(shareItemsActions.findItemsSharedByUser.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
+  return await (api as ApiService).shareItems.shareItemControllerFindItemsSharedByUser().toPromise();
 });
 
 export const findItemsSharedWithMe = createAsyncThunk(shareItemsActions.findItemsSharedWithUser.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
+  return await (api as ApiService).shareItems.shareItemControllerFindItemsSharedWithUser().toPromise();
 });
 
 interface ShareItemsState {

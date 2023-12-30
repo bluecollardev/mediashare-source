@@ -1,5 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 
@@ -11,7 +12,7 @@ export const mediaItemsActions = makeActions(mediaItemsActionNames);
 export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMediaItems.type, async (opts = undefined, thunkApi) => {
   console.log('loadUserMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerGetUserMediaItems().toPromise();
+  return await (api as ApiService).user.userControllerGetUserMediaItems().toPromise();
 });
 
 export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
@@ -20,7 +21,7 @@ export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.
   const { text, tags = [] } = args;
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
-  return await api.mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
+  return await (api as ApiService).mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
 });
 
 export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
@@ -30,7 +31,7 @@ export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaIt
   // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
   // TODO: Use a const!
-  return await api.search.searchControllerFindAll({ target: 'media', text, tags }).toPromise();
+  return await (api as ApiService).search.searchControllerFindAll({ target: 'media', text, tags }).toPromise();
 });
 
 

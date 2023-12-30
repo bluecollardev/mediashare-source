@@ -1,5 +1,6 @@
 import { createAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
@@ -14,7 +15,7 @@ export const search = createAsyncThunk(searchActions.search.type, async (args: {
   const { target, text, tags = [] } = args;
   // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
   // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
-  return await api.search.searchControllerFindAll({ target, text, tags }).toPromise();
+  return await (api as ApiService).search.searchControllerFindAll({ target, text, tags }).toPromise();
 });
 
 export const select = createAction<{ isChecked: boolean; plist: PlaylistDto }, typeof searchActions.select.type>(

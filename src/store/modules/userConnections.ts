@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { UserConnectionDto, UserDto } from 'mediashare/apis/user-svc/rxjs-api';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 
 // Define these in snake case or our converter won't work... we need to fix that
@@ -9,35 +10,35 @@ export const userConnectionsActions = makeActions(userConnectionsActionNames);
 
 export const sendEmail = createAsyncThunk(userConnectionsActions.userSendMail.type, async ({ userId, email }: { userId: string; email: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.email.emailControllerSendEmail({ userId, email }).toPromise();
+  return await (api as ApiService).email.emailControllerSendEmail({ userId, email }).toPromise();
 });
 
 export const acceptInvitation = createAsyncThunk(userConnectionsActions.acceptInvitation.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
   console.log(userId)
   console.log(connectionId)
-  return await api.user.userControllerCreateUserConnection({ createUserConnectionDto: { userId, connectionId } }).toPromise();
+  return await (api as ApiService).user.userControllerCreateUserConnection({ createUserConnectionDto: { userId, connectionId } }).toPromise();
 });
 
 export const loadCurrentUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerGetCurrentUserConnections().toPromise();
+  return await (api as ApiService).user.userControllerGetCurrentUserConnections().toPromise();
 });
 
 export const loadUserConnections = createAsyncThunk(userConnectionsActions.loadUserConnections.type, async ({ userId }: { userId: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerGetUserConnections({ userId }).toPromise();
+  return await (api as ApiService).user.userControllerGetUserConnections({ userId }).toPromise();
 });
 
 export const removeUserConnection = createAsyncThunk(userConnectionsActions.removeUserConnections.type, async ({ userId, connectionId }: { userId: string; connectionId: string }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerRemoveUserConnection({ userConnectionDto: { userId, connectionId } }).toPromise();
+  return await (api as ApiService).user.userControllerRemoveUserConnection({ userConnectionDto: { userId, connectionId } }).toPromise();
 });
 
 export const removeUserConnections = createAsyncThunk(userConnectionsActions.removeUserConnections.type, async ({ userId, connectionIds }: { userId: string; connectionIds: string[] }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
   const userConnections = connectionIds.map((connectionId) => ({ userId, connectionId }));
-  return await api.user.userControllerRemoveUserConnections({ userConnectionDto: userConnections }).toPromise();
+  return await (api as ApiService).user.userControllerRemoveUserConnections({ userConnectionDto: userConnections }).toPromise();
 });
 
 export interface UserConnectionsState {

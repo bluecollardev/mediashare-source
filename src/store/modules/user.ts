@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import {
   reduceFulfilledState,
   reducePendingState,
@@ -27,7 +28,7 @@ export const setIsAcceptingInvitationAction = createAsyncThunk(userActions.setIs
  */
 export const loginAction = createAsyncThunk(userActions.login.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerAuthorize().toPromise();
+  return await (api as ApiService).user.userControllerAuthorize().toPromise();
 });
 
 // TODO: Rework user sessions if we want the User API backend to maintain session state (store Cognito token in Redis?)
@@ -37,14 +38,14 @@ export const loginAction = createAsyncThunk(userActions.login.type, async (opts 
  */
 export const logout = createAsyncThunk(userActions.logout.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  await api.user.userControllerLogout().toPromise();
+  await (api as ApiService).user.userControllerLogout().toPromise();
   // await setKeyPair('token', ''); // TODO: Not compatible with react-native-web [https://github.com/expo/expo/issues/7744]
   await signOut();
 });
 
 export const loadUser = createAsyncThunk(userActions.loadUser.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerGetCurrentUser().toPromise();
+  return await (api as ApiService).user.userControllerGetCurrentUser().toPromise();
 });
 
 export const updateAccount = createAsyncThunk(
@@ -54,8 +55,8 @@ export const updateAccount = createAsyncThunk(
     const { api } = thunkApiWithState(thunkApi);
     // TODO: If no userId, that means we're updating the account owner's account? Or was that for our previous hardcoded user?
     return userId
-      ? await api.user.userControllerUpdateUser({ userId, updateUserDto }).toPromise()
-      : await api.user.userControllerUpdateCurrentUser({ updateUserDto }).toPromise();
+      ? await (api as ApiService).user.userControllerUpdateUser({ userId, updateUserDto }).toPromise()
+      : await (api as ApiService).user.userControllerUpdateCurrentUser({ updateUserDto }).toPromise();
   }
 );
 

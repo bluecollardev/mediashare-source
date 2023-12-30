@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState, thunkApiWithState } from 'mediashare/store/helpers';
 import { TagDto } from 'mediashare/apis/tags-svc/rxjs-api';
 
@@ -13,7 +14,7 @@ export const tagsActions = makeActions(tagActionNames);
 
 export const getTags = createAsyncThunk(tagsActions.getTags.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.tags.tagControllerFindAll().toPromise();
+  return await (api as ApiService).tags.tagControllerFindAll().toPromise();
 });
 
 interface TagsState {

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { ProfileDto } from 'mediashare/apis/user-svc/rxjs-api';
 import { thunkApiWithState } from 'mediashare/store/helpers';
 
@@ -13,8 +14,8 @@ export const profileActions = makeActions(profileActionNames);
 export const loadProfile = createAsyncThunk(profileActions.getUserById.type, async (userId: string | undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
   return userId ?
-    await api.user.userControllerGetUser({ userId }).toPromise() :
-    await api.user.userControllerGetCurrentUser().toPromise();
+    await (api as ApiService).user.userControllerGetUser({ userId }).toPromise() :
+    await (api as ApiService).user.userControllerGetCurrentUser().toPromise();
 });
 
 interface ProfileState {

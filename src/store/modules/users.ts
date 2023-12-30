@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reducePendingState, reduceRejectedState, reduceFulfilledState, thunkApiWithState } from 'mediashare/store/helpers';
 import { UserDto } from 'mediashare/apis/user-svc/rxjs-api';
 
@@ -10,7 +11,7 @@ export const usersActions = makeActions(usersActionNames);
 
 export const loadUsers = createAsyncThunk(usersActions.loadUsers.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  return await api.user.userControllerFindAll().toPromise();
+  return await (api as ApiService).user.userControllerFindAll().toPromise();
 });
 
 export interface UsersState {

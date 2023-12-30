@@ -1,6 +1,6 @@
 import { createAsyncThunk, createAction, createSlice, createSelector } from '@reduxjs/toolkit';
-import { ApiService } from 'mediashare/store/apis';
 import { makeActions } from 'mediashare/store/factory';
+import { ApiService } from 'mediashare/store/apis';
 import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApiWithState } from 'mediashare/store/helpers';
 import {
   CreatePlaylistDto,
@@ -26,7 +26,7 @@ export const playlistActions = makeActions(playlistActionNames);
 
 export const getPlaylistById = createAsyncThunk(playlistActions.getPlaylistById.type, async (id: string, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  const response = await api.playlists.playlistControllerFindOne({ playlistId: id }).toPromise();
+  const response = await (api as ApiService).playlists.playlistControllerFindOne({ playlistId: id }).toPromise();
   // api.views.viewsControllerCreatePlaylistView({ playlistId: id }).pipe(take(1)).subscribe();
   return response;
 });
