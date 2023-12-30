@@ -73,17 +73,19 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       }
     }, [forcedSearchMode]);
     
-    // TODO: Fix this
     /* useEffect(() => {
       // Only update state if component is mounted
       console.log(`Search active? ${searchActive}`);
       if (searchActive === false) {
+        setIsLoaded(false);
         console.log('withSearchComponent searchActive is false effect...');
         loadData().then(() => {
           if (!isMountedRef.current) return;
           updateSearchText('');
           updateSearchTags([]);
         });
+      } else if (searchActive === true) {
+        setIsLoaded(true);
       }
     }, [searchActive]) */
   
@@ -218,7 +220,8 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
           {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
             <>
               <ActionButtons
-                loading={!isLoaded}
+                // TODO: Find a different way to do this SearchComponent doesn't know if loadData is completed
+                // loading={!isLoaded}
                 primaryLabel="Apply"
                 primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
                 showSecondary={false}
