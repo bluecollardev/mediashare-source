@@ -98,14 +98,17 @@ export const Playlists = ({ globalState }: PageProps) => {
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
-    loadData().then();
+    console.log('Playlists useEffect ONCE');
+    // console.log('Playlists useEffect loadData...');
+    // loadData().then();
   }, []);
   
   useFocusEffect(
     React.useCallback(() => {
+      console.log('Playlists useFocusEffect...');
       clearCheckboxSelection();
-      checkIfAccountIsDeactivated()
-      loadData().then();
+      checkIfAccountIsDeactivated();
+      // loadData().then();
     }, []),
   );
 
@@ -237,14 +240,17 @@ export const Playlists = ({ globalState }: PageProps) => {
     };
 
     if (args.text || args.tags.length > 0) {
+      console.log('Playlists loadData findUserPlaylists...');
       await dispatch(findUserPlaylists(args));
     } else {
+      console.log('Playlists loadData getUserPlaylists...');
       await dispatch(getUserPlaylists());
     }
   }
 
   async function refresh() {
     setRefreshing(true);
+    console.log('Playlists refresh loadData...');
     await loadData();
     setRefreshing(false);
   }

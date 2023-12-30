@@ -47,7 +47,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const searchFilters = getSearchFilters(searchKey);
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
-    const [isLoaded, setIsLoaded] = useState(true);
+    const [isLoaded, setIsLoaded] = useState(false);
     const searchActive = searchIsActive(searchKey);
     const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
@@ -73,19 +73,22 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       }
     }, [forcedSearchMode]);
     
-    useEffect(() => {
+    // TODO: Fix this
+    /* useEffect(() => {
       // Only update state if component is mounted
+      console.log(`Search active? ${searchActive}`);
       if (searchActive === false) {
+        console.log('withSearchComponent searchActive is false effect...');
         loadData().then(() => {
           if (!isMountedRef.current) return;
           updateSearchText('');
           updateSearchTags([]);
         });
       }
-    }, [searchActive])
+    }, [searchActive]) */
   
     useEffect(() => {
-      if (!isLoaded) {
+      if (loaded && !isLoaded) {
         console.log('withSearchComponent loadData...');
         loadData().then(() => {
           if (!isMountedRef.current) return;
