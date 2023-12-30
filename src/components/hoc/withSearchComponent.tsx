@@ -47,7 +47,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const searchFilters = getSearchFilters(searchKey);
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(forcedSearchMode);
     const searchActive = searchIsActive(searchKey);
     const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
