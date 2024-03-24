@@ -55,6 +55,7 @@ import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
 import Invitation from 'mediashare/components/pages/Invitation';
 import Subscriptions from './components/pages/Subscriptions';
+import Config from 'mediashare/config';
 import { Auth } from 'aws-amplify';
 
 // Map route names to icons
@@ -262,7 +263,9 @@ Amplify.configure({
   ...(Platform.OS === 'web' ? { Auth: {
     cookieStorage: {
       // - Cookie domain (only required if cookieStorage is provided)
-      domain: 'localhost',
+      // TODO: Set this to localhost when running locally
+      // domain: 'localhost',
+      domain: Config.CookieDomain || 'localhost',
       // (optional) - Cookie path
       path: '/',
       // (optional) - Cookie expiration in days

@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 const environments = {
   development: {
     EnvName: 'development',
+    CookieDomain: 'localhost',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 0),
     AwsRoot: 'temp/',
@@ -15,6 +16,7 @@ const environments = {
   },
   staging: {
     EnvName: 'staging',
+    CookieDomain: 'afehrpt.com',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
     AwsRoot: 'temp/',
@@ -26,6 +28,7 @@ const environments = {
   },
   production: {
     EnvName: 'production',
+    CookieDomain: 'afehrpt.com',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 2),
     AwsRoot: 'temp/',
