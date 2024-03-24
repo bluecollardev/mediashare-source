@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, useWindowDimensions, Platform } from 'react-native';
 import { Card, Paragraph } from 'react-native-paper';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
-import { TextField, MultiSelectIcon } from 'mediashare/components/form';
+import { TextInput } from 'react-native-paper';
+import { MultiSelectIcon } from 'mediashare/components/form';
 import { DisplayPreviewOrVideo } from './DisplayPreviewOrVideo';
 import { MediaCardTitle } from './MediaCardTitle';
 import { MediaCardTags } from './MediaCardTags';
@@ -229,7 +230,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
     return (
       <>
         <View style={{ ...defaultStyles.formField, marginTop: isPortrait ? 25 : 0 }}>
-          <TextField
+          <TextInput
             label="Title"
             value={title}
             multiline={true}
@@ -240,7 +241,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         </View>
         {sortIndex !== undefined ? (
           <View style={{ ...defaultStyles.formField }}>
-            <TextField
+            <TextInput
               keyboardType="numeric"
               style={{ backgroundColor: theme.colors.surface, fontSize: 15 }}
               multiline={true}
@@ -302,7 +303,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
         {renderChildren ? <View>{children}</View> : null}
         {/* Description can be the longest field so we've moved it to last when we're in edit mode */}
         <View style={{ ...defaultStyles.formField, marginTop: renderChildren ? 25 : 10 }}>
-          <TextField
+          <TextInput
             style={{ ...defaultStyles.descriptionField, ...(Platform.OS !== 'web' ? { overflow: 'scroll' } : {}) }}
             multiline={true}
             label="Description"

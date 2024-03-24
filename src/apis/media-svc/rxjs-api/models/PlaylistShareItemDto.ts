@@ -11,13 +11,6 @@
  * Do not edit the class manually.
  */
 
-import {
-    MediaItemDto,
-    PlaylistItemDto,
-    PlaylistVisibilityType,
-    TagKeyValue,
-} from './';
-
 /**
  * @export
  * @interface PlaylistShareItemDto
@@ -42,67 +35,12 @@ export interface PlaylistShareItemDto {
      * @type {string}
      * @memberof PlaylistShareItemDto
      */
-    cloneOf?: string;
-    /**
-     * @type {string}
-     * @memberof PlaylistShareItemDto
-     */
-    title: string;
-    /**
-     * @type {string}
-     * @memberof PlaylistShareItemDto
-     */
-    description: string;
-    /**
-     * @type {string}
-     * @memberof PlaylistShareItemDto
-     */
-    imageSrc: string;
-    /**
-     * @type {PlaylistVisibilityType}
-     * @memberof PlaylistShareItemDto
-     */
-    visibility: PlaylistVisibilityType;
-    /**
-     * @type {Array<TagKeyValue>}
-     * @memberof PlaylistShareItemDto
-     */
-    tags?: Array<TagKeyValue> | null;
-    /**
-     * @type {Array<MediaItemDto>}
-     * @memberof PlaylistShareItemDto
-     */
-    mediaItems: Array<MediaItemDto>;
-    /**
-     * @type {Array<PlaylistItemDto>}
-     * @memberof PlaylistShareItemDto
-     */
-    playlistItems: Array<PlaylistItemDto>;
-    /**
-     * @type {number}
-     * @memberof PlaylistShareItemDto
-     */
-    shareCount: number;
-    /**
-     * @type {number}
-     * @memberof PlaylistShareItemDto
-     */
-    viewCount: number;
-    /**
-     * @type {number}
-     * @memberof PlaylistShareItemDto
-     */
-    likesCount: number;
-    /**
-     * @type {string}
-     * @memberof PlaylistShareItemDto
-     */
     shareId: string;
     /**
      * @type {string}
      * @memberof PlaylistShareItemDto
      */
-    mediaItemId: string;
+    mediaId: string;
     /**
      * @type {string}
      * @memberof PlaylistShareItemDto

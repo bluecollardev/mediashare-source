@@ -2,7 +2,7 @@ import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 
 const environments = {
-  default: {
+  development: {
     EnvName: 'development',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 0),
@@ -27,7 +27,7 @@ const environments = {
   production: {
     EnvName: 'production',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
-    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
+    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 2),
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
@@ -42,7 +42,8 @@ const commonConfigs = {
   facebookAppId: '189foo bar884439',
 }
 
-const env = 'default'; // Updates.releaseChannel || 'default';
+// TODO: Fix / implement releaseChannel
+const env = 'staging'; // Updates.releaseChannel || 'development';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {

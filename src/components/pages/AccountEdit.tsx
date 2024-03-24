@@ -11,7 +11,7 @@ import { routeNames } from 'mediashare/routes';
 import { useRouteWithParams } from 'mediashare/hooks/navigation';
 import { useProfile } from 'mediashare/hooks/useProfile';
 import { UploadResult, useUploader } from 'mediashare/hooks/useUploader';
-import { TextField } from 'mediashare/components/form/TextField';
+import { TextInput } from 'react-native-paper';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { PageContainer, PageProps, ActionButtons, AccountCard, KeyboardAvoidingPageContent } from 'mediashare/components/layout';
 import { HelperText } from 'react-native-paper';
@@ -83,28 +83,28 @@ const AccountEdit = ({ route }: AccountEditProps) => {
             />
           </View>
           <View style={styles.formSection}>
-            <TextField  label="Shared Type" value={state?.role} disabled={true}   >
-            </TextField>
+            <TextInput  label="Shared Type" value={state?.role} disabled={true}   >
+            </TextInput>
             <HelperText style={{top:-11}} type="error">{''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField  onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username?.toLowerCase()} disabled={true} />
+            <TextInput  onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username?.toLowerCase()} disabled={true} />
             <HelperText style={{top:-11}} type="error">{state?.username?.length===0? 'Required':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
+            <TextInput onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
             <HelperText style={{top:-11}} type="error">{state?.firstName?.length===0? 'Required':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
+            <TextInput onChangeText={(text) => onUpdate({ lastName: text })} label="Last Name*" value={state?.lastName} disabled={!isLoaded} />
             <HelperText style={{top:-11}} type="error">{state?.lastName?.length===0? 'Required':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email?.toLowerCase()} disabled={!isLoaded} />
+            <TextInput onChangeText={(text) => onUpdate({ email: text })} label="Email*" value={state?.email?.toLowerCase()} disabled={!isLoaded} />
             <HelperText style={{top:-11}} type="error">{validEmail || state?.email?.length===0? 'Please enter valid email':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextField  onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
+            <TextInput  onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
             <HelperText  type="error">{state?.phoneNumber?.length===0? 'Required':''}</HelperText>
           </View>
           <ActionButtons
@@ -130,7 +130,8 @@ const AccountEdit = ({ route }: AccountEditProps) => {
 
   // eslint-disable-next-line no-shadow
   function onUpdate(user: Partial<UserDto>) {
-    setState({ ...state, ...user });
+    // TODO: Fix types!
+    setState({ ...state, ...user } as any);
   }
   
   function cancel() {

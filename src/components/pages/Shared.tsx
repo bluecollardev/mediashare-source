@@ -175,15 +175,14 @@ export const Shared = ({ globalState }: PageProps) => {
         (attribute) => attribute.getName() === 'custom:isDeactivated'
       ).getValue();
       if (isDeactivated === 'true') {
-        Alert.alert('Account Deactivated', 'Your account has been deactivated.', [
-          
+        /* Alert.alert('Account Deactivated', 'Your account has been deactivated.', [
           {
             text: 'OK',
             onPress: () => {
               logOut()
             },
           },
-        ]);
+        ]); */
       }
     } catch (error) {
     }

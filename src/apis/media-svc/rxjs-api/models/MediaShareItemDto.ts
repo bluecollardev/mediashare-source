@@ -11,10 +11,6 @@
  * Do not edit the class manually.
  */
 
-import {
-    TagKeyValue,
-} from './';
-
 /**
  * @export
  * @interface MediaShareItemDto
@@ -39,97 +35,15 @@ export interface MediaShareItemDto {
      * @type {string}
      * @memberof MediaShareItemDto
      */
-    key: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    userId: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    title: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    summary?: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    description: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    uri: string;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    imageSrc?: string;
-    /**
-     * @type {boolean}
-     * @memberof MediaShareItemDto
-     */
-    isPlayable?: boolean;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    visibility: MediaShareItemDtoVisibilityEnum;
-    /**
-     * @type {Array<TagKeyValue>}
-     * @memberof MediaShareItemDto
-     */
-    tags?: Array<TagKeyValue> | null;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
-    eTag?: string;
-    /**
-     * @type {number}
-     * @memberof MediaShareItemDto
-     */
-    shareCount: number;
-    /**
-     * @type {number}
-     * @memberof MediaShareItemDto
-     */
-    viewCount: number;
-    /**
-     * @type {number}
-     * @memberof MediaShareItemDto
-     */
-    likesCount: number;
-    /**
-     * @type {string}
-     * @memberof MediaShareItemDto
-     */
     shareId: string;
     /**
      * @type {string}
      * @memberof MediaShareItemDto
      */
-    mediaItemId: string;
+    mediaId: string;
     /**
      * @type {string}
      * @memberof MediaShareItemDto
      */
     playlistId: string;
 }
-
-/**
- * @export
- * @enum {string}
- */
-export enum MediaShareItemDtoVisibilityEnum {
-    Private = 'private',
-    Shared = 'shared',
-    Subscription = 'subscription',
-    Public = 'public'
-}
-
