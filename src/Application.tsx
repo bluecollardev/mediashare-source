@@ -258,31 +258,33 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
 
 const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 
-Amplify.configure({
+const amplifyConfig = {
   ...awsmobile,
   ...(Platform.OS === 'web' ? { Auth: {
-    cookieStorage: {
-      // - Cookie domain (only required if cookieStorage is provided)
-      // TODO: Set this to localhost when running locally
-      // domain: 'localhost',
-      domain: Config.CookieDomain || 'localhost',
-      // (optional) - Cookie path
-      path: '/',
-      // (optional) - Cookie expiration in days
-      // expires: 365,
-      // (optional) - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
-      sameSite: 'lax',
-      // (optional) - Cookie secure flag
-      // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-      // TODO: Enable https!
-      secure: false
-    },
-  } } : {}),
+      cookieStorage: {
+        // - Cookie domain (only required if cookieStorage is provided)
+        // TODO: Set this to localhost when running locally
+        // domain: 'localhost',
+        domain: Config.CookieDomain || 'localhost',
+        // (optional) - Cookie path
+        path: '/',
+        // (optional) - Cookie expiration in days
+        // expires: 365,
+        // (optional) - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+        sameSite: 'lax',
+        // (optional) - Cookie secure flag
+        // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
+        // TODO: Enable https, this should only be set to false when running locally!
+        secure: false
+      },
+    } } : {}),
   // Fix AWS Pinpoint connection issues
   Analytics: {
     disabled: true,
   },
-});
+};
+console.log(amplifyConfig);
+Amplify.configure(amplifyConfig);
 
 function App() {
   const [fontsLoaded] = useFonts({
