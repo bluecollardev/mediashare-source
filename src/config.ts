@@ -16,7 +16,7 @@ const environments = {
   },
   staging: {
     EnvName: 'staging',
-    CookieDomain: 'afehrpt.com',
+    CookieDomain: '*.afehrpt.com',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
     AwsRoot: 'temp/',
@@ -28,7 +28,7 @@ const environments = {
   },
   production: {
     EnvName: 'production',
-    CookieDomain: 'afehrpt.com',
+    CookieDomain: '*.afehrpt.com',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 2),
     AwsRoot: 'temp/',
