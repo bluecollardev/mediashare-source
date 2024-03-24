@@ -274,7 +274,8 @@ Amplify.configure({
       sameSite: 'lax',
       // (optional) - Cookie secure flag
       // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-      secure: true
+      // TODO: Enable https!
+      secure: false
     },
   } } : {}),
   // Fix AWS Pinpoint connection issues
