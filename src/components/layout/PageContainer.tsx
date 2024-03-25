@@ -44,7 +44,7 @@ export function KeyboardAvoidingPageContent({ children }: PageContentProps) {
   return (
     <View style={styles.pageContent}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={100}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback onPress={Platform.OS !== 'web' ? Keyboard.dismiss : undefined}>
           <View style={styles.visibleContent}>
             {children}
           </View>

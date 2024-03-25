@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Alert, BackHandler, ScrollView, View, TextInput as TextInputNative } from 'react-native';
+import { Alert, BackHandler, ScrollView, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { storeAuthTokens } from 'mediashare/store/modules/auth';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
@@ -89,9 +89,9 @@ const LoginComponent = ({}: PageProps) => {
     }
   };
   
-  /* useFocusEffect(() => {
+  useFocusEffect(() => {
     return handleFocusEffect()
-  }); */
+  });
 
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
@@ -115,10 +115,7 @@ const LoginComponent = ({}: PageProps) => {
                 Sign in to account
               </Text>
             </View>
-            <TextInputNative autoCapitalize="none" ref={usernameRef} onPressOut={(e) => {
-              console.log(e);
-            }} />
-            {/*<Controller
+            <Controller
               control={control}
               name="username"
               rules={{
@@ -127,7 +124,7 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
+                    <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
@@ -154,7 +151,7 @@ const LoginComponent = ({}: PageProps) => {
                   <HelperText type="error">{errors.password?.message}</HelperText>
                 </>
               )}
-            />*/}
+            />
         
             <Button
               style={{
