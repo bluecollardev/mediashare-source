@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Alert, BackHandler, ScrollView, View } from 'react-native';
+import React, { useRef, useState } from 'react'
+import { Alert, BackHandler, ScrollView, View, TextInput as TextInputNative } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { storeAuthTokens } from 'mediashare/store/modules/auth';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
-import { Text, Card, TextInput, HelperText, Button } from 'react-native-paper';
+import { Text, TextInput, Card, HelperText, Button } from 'react-native-paper';
 import { PageContainer, PageProps, KeyboardAvoidingPageContent } from 'mediashare/components/layout/PageContainer';
 import { theme } from 'mediashare/styles';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -89,12 +89,14 @@ const LoginComponent = ({}: PageProps) => {
     }
   };
   
-  useFocusEffect(() => {
+  /* useFocusEffect(() => {
     return handleFocusEffect()
-  });
+  }); */
 
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
+  
+  const usernameRef = useRef();
 
   return (
     <PageContainer>
@@ -113,7 +115,10 @@ const LoginComponent = ({}: PageProps) => {
                 Sign in to account
               </Text>
             </View>
-            <Controller
+            <TextInputNative autoCapitalize="none" ref={usernameRef} onPressOut={(e) => {
+              console.log(e);
+            }} />
+            {/*<Controller
               control={control}
               name="username"
               rules={{
@@ -122,13 +127,12 @@ const LoginComponent = ({}: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => {
                 return (
                   <View>
-                    <TextInput autoCapitalize="none" label="Username" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
+                    <TextInput autoCapitalize="none" value={value} onBlur={onBlur} onChangeText={(value) => onChange(value?.toLowerCase())} />
                     <HelperText type="error">{errors.username?.message}</HelperText>
                   </View>
                 );
               }}
             />
-        
             <Controller
               control={control}
               name="password"
@@ -150,7 +154,7 @@ const LoginComponent = ({}: PageProps) => {
                   <HelperText type="error">{errors.password?.message}</HelperText>
                 </>
               )}
-            />
+            />*/}
         
             <Button
               style={{
