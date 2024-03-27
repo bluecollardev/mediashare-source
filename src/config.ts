@@ -2,11 +2,23 @@ import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 
 const environments = {
+  local: {
+    EnvName: 'local',
+    CookieDomain: 'localhost',
+    IsRunningInExpoGo: Constants.appOwnership === 'expo',
+    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 0),
+    AwsRoot: 'temp/',
+    VideoRoot: 'videos/',
+    UploadRoot: 'uploads/',
+    ImageRoot: 'thumbnails/',
+    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    MaxUpload: 104857600,
+  },
   development: {
     EnvName: 'development',
     CookieDomain: 'localhost',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
-    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 0),
+    ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
     AwsRoot: 'temp/',
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
@@ -46,7 +58,7 @@ const commonConfigs = {
 }
 
 // TODO: Fix / implement releaseChannel
-const env = 'staging'; // Updates.releaseChannel || 'development';
+const env = 'development'; // Updates.releaseChannel || 'development';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {
