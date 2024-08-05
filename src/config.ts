@@ -58,7 +58,7 @@ const commonConfigs = {
 }
 
 // TODO: Fix / implement releaseChannel
-const env = 'development'; // Updates.releaseChannel || 'development';
+const env = 'staging'; // Updates.releaseChannel || 'development';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {
