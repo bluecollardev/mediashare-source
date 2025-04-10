@@ -1,6 +1,3 @@
-// TODO: https://react-redux.js.org/tutorials/typescript-quick-start#define-typed-hooks
-import type {} from 'redux-thunk/extend-redux'
-
 import React from 'react'
 import { createMaterialBottomTabNavigator as createBottomTabNavigator } from 'mediashare/lib/material-bottom-tabs'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'

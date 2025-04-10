@@ -1,6 +1,3 @@
-// TODO: https://react-redux.js.org/tutorials/typescript-quick-start#define-typed-hooks
-import type {} from 'redux-thunk/extend-redux'
-
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import PlaylistDetail from 'mediashare/components/pages/PlaylistDetail'
