@@ -28,7 +28,7 @@ const environments = {
   },
   staging: {
     EnvName: 'staging',
-    CookieDomain: 'pocketpt.afehrpt.com',
+    CookieDomain: 'localhost',
     IsRunningInExpoGo: Constants.appOwnership === 'expo',
     ApiServer: parseInt(Constants.expoConfig.extra?.apiServer || 1),
     AwsRoot: 'temp/',
