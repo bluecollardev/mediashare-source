@@ -7,8 +7,8 @@ import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Auth } from 'aws-amplify';
 import { useSnack } from 'mediashare/hooks/useSnack';
 import { routeConfig } from 'mediashare/routes';
-import PhoneInput from 'react-native-phone-number-input';
-import { theme } from 'mediashare/styles';
+import PhoneInput from 'react-native-international-phone-number';
+// import { theme } from 'mediashare/styles';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/Fontisto';
 
@@ -38,6 +38,17 @@ const SignUpComponent = ({ }: PageProps) => {
       phone: '',
     },
   });
+  
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  
+  function handleInputValue(phoneNumber) {
+    setInputValue(phoneNumber);
+  }
+  
+  function handleSelectedCountry(country) {
+    setSelectedCountry(country);
+  }
 
   const { element, onToggleSnackBar, setMessage } = useSnack();
 
@@ -158,16 +169,10 @@ const SignUpComponent = ({ }: PageProps) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <View>
                   <PhoneInput
-                    defaultValue={value}
-                    layout="first"
-                    onChangeText={(value) => onChange(value)}
-                    onChangeFormattedText={(value) => onChange(value)}
-                    defaultCode="US"
-                    withDarkTheme={true}
-                    containerStyle={{ backgroundColor: '#252525', width: '100%' }}
-                    textContainerStyle={{ backgroundColor: '#252525' }}
-                    codeTextStyle={{ color: theme.colors.primary }}
-                    textInputStyle={{ color: '#fff' }}
+                    value={inputValue}
+                    onChangePhoneNumber={handleInputValue}
+                    selectedCountry={selectedCountry}
+                    onChangeSelectedCountry={handleSelectedCountry}
                   />
                   <HelperText type="error">{errors.phone?.message}</HelperText>
                 </View>

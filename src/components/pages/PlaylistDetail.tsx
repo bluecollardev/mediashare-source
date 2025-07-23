@@ -46,6 +46,7 @@ export interface PlaylistDetailProps extends PageProps {
 
 // @ts-ignore
 export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }: PlaylistDetailProps) => {
+  console.log(`Loading PlaylistDetail page`);
   const dispatch = useDispatch();
 
   const { playlistId = '', disableEdit = false, disableControls = false } = route?.params || {};
@@ -64,7 +65,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [isLoaded, setIsLoaded] = useState(loaded);
   const [isSaved, setIsSaved] = useState(false);
 
-  const appUserId = useAppSelector((state) => state?.user?.entity?._id);
+  const appUserSub = useAppSelector((state) => state?.user?.entity?.sub);
   // @ts-ignore
   const {
     _id,
@@ -80,7 +81,9 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
     // mediaItems = [],
   } = selected || {};
 
-  const allowEdit = createdBy === appUserId && !disableEdit;
+  const allowEdit = createdBy === appUserSub && !disableEdit;
+  console.log(`Is createdBy [${createdBy}] equal to appUserSub [${appUserSub}]? ${createdBy === appUserSub}`);
+  console.log(`Is disableEdit? ${disableEdit}`);
 
   const { tags = [], build } = globalState;
   const tagKeys = (selected?.tags || []).map(({ key }) => key);
@@ -125,6 +128,11 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
       { icon: 'share', label: `Share`, onPress: () => sharePlaylist(), color: theme.colors.text, style: { backgroundColor: theme.colors.primary } },
     ];
   }
+  
+  console.log('FAB actions', fabActions)
+  console.log(`FAB enabled - isSelectable [${isSelectable}]`)
+  console.log(`FAB enabled - disableControls [${disableControls}]`)
+  console.log(`FAB enabled - build.forFreeUser [${build.forFreeUser}]`)
 
   return (
     <PageContainer>
@@ -314,8 +322,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   }
 
   function activatePlaylistDetail(item) {
-    console.log('activatePlaylistDetail');
-    console.log(item);
+    console.log('activatePlaylistDetail', item);
     return allowEdit
       ? editPlaylistMediaItem({ playlistItemId: item.playlistItemId, mediaId: item.mediaItemId, uri: item.uri, playlistId })
       : hasPlaylistItemRecord(item)

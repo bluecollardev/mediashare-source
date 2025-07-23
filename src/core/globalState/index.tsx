@@ -183,7 +183,9 @@ const GlobalStateConsumerWrapper = (WrappedComponent: any) => {
   };
 };
 
-const withGlobalStateProvider = compose(GlobalStateProviderWrapper);
+// TODO: We had to remove recompose https://github.com/acdlite/recompose it's not compatible with React 18!
+// const withGlobalStateProvider = compose(GlobalStateProviderWrapper);
+const withGlobalStateProvider = (Component: any) => GlobalStateProviderWrapper(Component);
 const withGlobalStateConsumer = GlobalStateConsumerWrapper;
 
 export { withGlobalStateProvider, withGlobalStateConsumer };

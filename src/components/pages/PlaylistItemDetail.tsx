@@ -33,7 +33,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
   // const goToPlaylists = usePlaylists();
   // const playFromBeginning = useViewPlaylistItemById();
   
-  const appUserId = useAppSelector((state) => state?.user?.entity?._id);
+  const appUserSub = useAppSelector((state) => state?.user?.entity?.sub);
   const mediaItem = useAppSelector((state) => state?.playlistItem?.entity);
   
   const {
@@ -51,7 +51,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
     likesCount = 0,
   } = mediaItem || {};
   
-  const allowEdit = createdBy === appUserId && !disableEdit;
+  const allowEdit = createdBy === appUserSub && !disableEdit;
 
   const { tags = [] } = globalState;
   const tagKeys = (mediaItem?.tags || []).map(({ key }) => key);
