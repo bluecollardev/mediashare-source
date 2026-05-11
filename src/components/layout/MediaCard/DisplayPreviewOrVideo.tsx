@@ -1,6 +1,6 @@
 import React, { useEffect, useState ,useRef} from 'react';
 import { Audio, ResizeMode, Video } from 'expo-av';
-import { Dimensions, ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, ImageBackground, Platform, TouchableWithoutFeedback, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 
@@ -56,10 +56,9 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews stay 1:1. Video plays at 16:9, capped at 480px wide so
-  // it doesn't dominate the page. overflow:hidden + position:relative on
-  // the wrapper paired with the video's absolute positioning forces the
-  // video element inside the bounding box.
+  // Image previews stay 1:1. Video plays at 16:9. No overflow:hidden so
+  // we don't clip the player; rely on the inner video element's
+  // object-fit/resizeMode to scale to fit.
   const isVideo = mediaDisplayMode === 'video';
   const containerAspect = isVideo ? 16 / 9 : 1 / 1;
 
@@ -73,8 +72,6 @@ const checkUrl = () => {
         marginLeft: 'auto',
         marginRight: 'auto',
         backgroundColor: '#000',
-        position: 'relative',
-        overflow: 'hidden',
         ...style,
       }}
     >
@@ -90,6 +87,26 @@ const checkUrl = () => {
             </TouchableWithoutFeedback>
           ) : null}
         </ImageBackground>
+      ) : mediaDisplayMode === 'video' && mediaSrc && Platform.OS === 'web' ? (
+        // Plain HTML5 video on web — expo-av's web build doesn't reliably
+        // apply object-fit:contain, so the inner element renders at native
+        // resolution and gets clipped. Direct <video> respects CSS sizing.
+        React.createElement('video', {
+          src: mediaUrl,
+          poster: imageSrc && !isDefaultImage ? imageSrc : undefined,
+          autoPlay: true,
+          muted: true,
+          loop: true,
+          controls: true,
+          playsInline: true,
+          style: {
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+            backgroundColor: '#000',
+          },
+        })
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <Video
           ref={video}
