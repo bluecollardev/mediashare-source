@@ -51,13 +51,17 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const searchActive = searchIsActive(searchKey);
     const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
+    // Explicit user-controlled toggle for the filter panel. Defaults open when
+    // there's no active search (so the user can configure one); collapses when
+    // Apply is pressed; user can re-open via the filter icon next to the searchbar.
+    const [filtersExpanded, setFiltersExpanded] = useState(!searchActive);
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
       if (searchTarget?.[0] === SupportedContentTypes.playlists) return availableTags.filter((tag) => tag.isPlaylistTag);
       if (searchTarget?.[0] === SupportedContentTypes.media) return availableTags.filter((tag) => tag.isMediaTag);
       return availableTags;
-    }, []);
+    }, [globalState?.tags, searchTarget]);
     ``
     const shouldShowApplyButton = () => {
       const textChanged = searchFilters?.text != searchText;
@@ -142,11 +146,15 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 value={searchText}
                 onChangeText={(text) => updateSearchText(text)}
                 clearIcon="clear"
+                // Right-side icon: tune/filter. Single click toggles the filter
+                // panel — no more "click twice" via the dirty-flag.
+                icon={filtersExpanded ? 'tune' : 'tune-variant'}
+                onIconPress={() => setFiltersExpanded((open) => !open)}
                 autoCapitalize="none"
               />
             </View>
           ) : null}
-          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+          {filtersExpanded || shouldShowApplyButton() ? (
             <>
               {showSearchTargetField ? (
                 <View style={{ marginBottom: 0 }}>
@@ -217,7 +225,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               
             </>
             ) : null}
-          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+          {filtersExpanded || shouldShowApplyButton() ? (
             <>
               <ActionButtons
                 primaryLabel="Apply"
@@ -284,6 +292,8 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       console.log(`searching [${searchKey}] for ${JSON.stringify(searchValue, null, 2)}`);
       updateSearchFilters(searchKey, searchValue);
       setIsLoaded(false);
+      // Collapse the filter panel once the search is committed.
+      setFiltersExpanded(false);
     }
 
     function hasActiveFilters() {
