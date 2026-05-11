@@ -232,7 +232,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               
             </>
             ) : null}
-          {filtersExpanded || shouldShowApplyButton() ? (
+          {filtersExpanded || shouldShowApplyButton() || hasActiveFilters() ? (
             <>
               <View
                 style={{
@@ -242,6 +242,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   marginTop: showNetworkContentSwitch ? 15 : 0,
                 }}
               >
+                {filtersExpanded || shouldShowApplyButton() ? (
                 <TouchableOpacity
                   accessibilityRole="button"
                   disabled={!shouldShowApplyButton()}
@@ -277,17 +278,22 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     Apply
                   </Text>
                 </TouchableOpacity>
+                ) : null}
                 {hasActiveFilters() ? (
                   <TouchableOpacity
                     accessibilityRole="button"
                     onPress={() => clearSearch()}
                     style={{
-                      width: 96,
-                      flexGrow: 0,
+                      // When the filter panel is collapsed and there are
+                      // active filters, Clear is the only visible action —
+                      // let it stretch to fill the row instead of sitting
+                      // as a fixed 96px button.
+                      width: filtersExpanded || shouldShowApplyButton() ? 96 : undefined,
+                      flexGrow: filtersExpanded || shouldShowApplyButton() ? 0 : 1,
                       flexShrink: 0,
-                      flexBasis: 96,
+                      flexBasis: filtersExpanded || shouldShowApplyButton() ? 96 : 0,
                       minHeight: 48,
-                      marginLeft: 8,
+                      marginLeft: filtersExpanded || shouldShowApplyButton() ? 8 : 0,
                       flexDirection: 'row',
                       backgroundColor: theme.colors.surface,
                       alignItems: 'center',
@@ -359,23 +365,38 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     }
 
     function hasActiveFilters() {
-      return !!(
-        searchText ||
-        (searchTags && searchTags.length > 0) ||
-        includeNetworkContent ||
-        searchFilters?.text ||
-        (searchFilters?.tags && searchFilters.tags.length > 0) ||
-        searchFilters?.networkContent
+      // Pending (in-component) text or tag edits count as active filters
+      // immediately so Clear/Apply can act on them.
+      const pendingFilters =
+        !!searchText || (searchTags && searchTags.length > 0);
+      // Pending network-content toggle differing from the page default.
+      const pendingNetworkContent = includeNetworkContent !== networkContent;
+      // Pending target differing from the page default.
+      const pendingTarget = searchTarget?.[0] !== defaultSearchTarget;
+      // Persisted filters: defer to globalState's route-aware predicate
+      // so the Clear button visibility matches the AppHeader icon color.
+      const persistedFilters =
+        typeof globalState?.searchIsFiltering === 'function' &&
+        globalState.searchIsFiltering(searchKey) === true;
+      return (
+        pendingFilters ||
+        pendingNetworkContent ||
+        pendingTarget ||
+        persistedFilters
       );
     }
 
     function clearSearch() {
       setSearchText('');
       setSearchTags([]);
-      setIncludeNetworkContent(false);
+      // Reset toggle/target back to the page's defaults (passed as props)
+      // so the filter icon flips back to white and the next Apply on Search
+      // doesn't surface a hidden non-default networkContent value.
+      setIncludeNetworkContent(networkContent);
+      setSearchTarget([defaultSearchTarget]);
       updateSearchFilters(searchKey, {
-        target: searchTarget?.[0] || '',
-        networkContent: false,
+        target: defaultSearchTarget,
+        networkContent: networkContent,
         text: '',
         tags: [],
       });

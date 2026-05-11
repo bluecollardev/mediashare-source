@@ -42,9 +42,13 @@ const AppHeaderComponent = ({
   const route = useRoute();
   const goToAccount = useGoToAccount();
   
-  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters, filtersExpanded, setFiltersExpanded } = globalState;
+  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters, searchIsFiltering, filtersExpanded, setFiltersExpanded } = globalState;
   const displaySearch = searchIsActive(route?.name);
   const forceSearchDisplay = forcedSearchMode(route?.name);
+  // Orange filter icon should reflect whether real filters are active
+  // (text / tags / networkContent), not just whether a filter object
+  // has been written — Clear writes an empty filter object.
+  const hasActiveFilters = typeof searchIsFiltering === 'function' && searchIsFiltering(route?.name) === true;
   
   const avatar = globalState?.user?.imageSrc;
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
@@ -86,7 +90,21 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls ? renderDisplayControls() : null}
-      {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.accent : '#ffffff'} onPress={() => toggleSearch()} /> : null}
+      {searchable ? (
+        <Appbar.Action
+          icon={searchIcon}
+          color={hasActiveFilters ? theme.colors.accent : '#ffffff'}
+          onPress={() => toggleSearch()}
+          style={{
+            transform: [{
+              rotate:
+                typeof filtersExpanded === 'function' && filtersExpanded(route?.name)
+                  ? '180deg'
+                  : '0deg',
+            }],
+          }}
+        />
+      ) : null}
       {/* {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null} */}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>

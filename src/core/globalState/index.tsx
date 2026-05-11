@@ -134,10 +134,21 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function searchIsFiltering(searchKey: string): boolean | undefined {
       const filters = getSearchFilters(searchKey);
       if (filters === undefined) return;
+      // Route-aware semantics: on the Search page, networkContent is
+      // always on (toggle is hidden) so it doesn't count as a filter,
+      // and the "All Types" target is the default — picking Playlists
+      // or Media Items deviates from default and counts as a filter.
+      // On Library pages, target equals the route default and is never
+      // user-changed, but the networkContent toggle is a real filter.
+      const onSearchPage = searchKey === 'search';
+      const networkContentIsFilter = !onSearchPage && !!filters?.networkContent;
+      const targetIsFilter =
+        onSearchPage && !!filters?.target && filters.target !== 'all';
       return (
         !!filters?.text ||
         filters?.tags?.length > 0 ||
-        !!filters?.networkContent
+        networkContentIsFilter ||
+        targetIsFilter
       );
     }
     
