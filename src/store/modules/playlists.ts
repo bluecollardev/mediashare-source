@@ -5,7 +5,7 @@ import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApi
 import { PlaylistDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const playlistsActionNames = ['find_playlists', 'get_user_playlists', 'select_playlist', 'clear_playlists'] as const;
+const playlistsActionNames = ['find_playlists', 'get_user_playlists', 'get_popular_playlists', 'select_playlist', 'clear_playlists'] as const;
 
 export const playlistsActions = makeActions(playlistsActionNames);
 
@@ -22,6 +22,11 @@ export const getUserPlaylists = createAsyncThunk(playlistsActions.getUserPlaylis
   return await (api as ApiService).playlists.playlistControllerFindAll({ text: '', tags: [] }).toPromise();
 });
 
+export const getPopularPlaylists = createAsyncThunk(playlistsActions.getPopularPlaylists.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
+  return await (api as ApiService).search.searchControllerFindPopular().toPromise();
+});
+
 export const selectPlaylist = createAction<{ isChecked: boolean; plist: PlaylistDto }, typeof playlistsActions.selectPlaylist.type>(
   playlistsActions.selectPlaylist.type
 );
@@ -30,6 +35,7 @@ export const clearPlaylists = createAction(playlistsActions.clearPlaylists.type)
 
 export interface PlaylistsState {
   entities: PlaylistDto[];
+  popular: PlaylistDto[];
   selected: PlaylistDto[];
   loading: boolean;
   loaded: boolean;
@@ -37,6 +43,7 @@ export interface PlaylistsState {
 
 export const playlistsInitialState: PlaylistsState = {
   entities: [],
+  popular: [],
   selected: [],
   loading: false,
   loaded: false,
@@ -59,6 +66,10 @@ const playlistsSlice = createSlice({
           loaded: true,
         }))
       )
+      .addCase(getPopularPlaylists.fulfilled, (state, action) => ({
+        ...state,
+        popular: (action.payload as PlaylistDto[]) || [],
+      }))
       .addCase(findUserPlaylists.pending, reducePendingState())
       .addCase(findUserPlaylists.rejected, reduceRejectedState())
       .addCase(

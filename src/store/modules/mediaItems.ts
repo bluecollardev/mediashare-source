@@ -5,7 +5,7 @@ import { reduceFulfilledState, reducePendingState, reduceRejectedState, thunkApi
 import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_user_media_items', 'select_media_item', 'clear_media_items'] as const;
+const mediaItemsActionNames = ['find_media_items', 'search_media_items', 'load_user_media_items', 'get_popular_media_items', 'select_media_item', 'clear_media_items'] as const;
 
 export const mediaItemsActions = makeActions(mediaItemsActionNames);
 
@@ -35,6 +35,11 @@ export const searchMediaItems = createAsyncThunk(mediaItemsActions.searchMediaIt
 });
 
 
+export const getPopularMediaItems = createAsyncThunk(mediaItemsActions.getPopularMediaItems.type, async (opts = undefined, thunkApi) => {
+  const { api } = thunkApiWithState(thunkApi);
+  return await (api as ApiService).mediaItems.mediaItemControllerFindPopular().toPromise();
+});
+
 export const selectMediaItem = createAction<{ isChecked: boolean; item: MediaItemDto }, typeof mediaItemsActions.selectMediaItem.type>(
   mediaItemsActions.selectMediaItem.type
 );
@@ -45,6 +50,7 @@ export interface MediaItemsState {
   selected: MediaItemDto[];
   entities: MediaItemDto[];
   mediaItems: MediaItemDto[];
+  popular: MediaItemDto[];
   loading: boolean;
   loaded: boolean;
 }
@@ -53,6 +59,7 @@ export const mediaItemsInitialState: MediaItemsState = {
   selected: [],
   entities: [],
   mediaItems: [],
+  popular: [],
   loading: false,
   loaded: false,
 };
@@ -85,6 +92,10 @@ const mediaItemsSlice = createSlice({
           loaded: true,
         }))
       )
+      .addCase(getPopularMediaItems.fulfilled, (state, action) => ({
+        ...state,
+        popular: (action.payload as MediaItemDto[]) || [],
+      }))
       .addCase(loadUserMediaItems.pending, reducePendingState())
       .addCase(loadUserMediaItems.rejected, reduceRejectedState())
       .addCase(

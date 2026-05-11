@@ -15,10 +15,12 @@ import { SupportedContentTypes, withSearchComponent } from 'mediashare/component
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
-import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent } from 'mediashare/components/layout';
+import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent, TrendingSection } from 'mediashare/components/layout';
 // import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
 // import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
 import { TagBlocks } from 'mediashare/components/layout/TagBlocks';
+import { getPopularPlaylists } from 'mediashare/store/modules/playlists';
+import { getPopularMediaItems } from 'mediashare/store/modules/mediaItems';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { theme, components } from 'mediashare/styles';
 
@@ -93,6 +95,14 @@ export const Search = ({ globalState }: PageProps & any) => {
 
   const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
   const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
+  const popularPlaylists = useAppSelector((state) => state?.playlists?.popular) || [];
+  const popularMediaItems = useAppSelector((state) => state?.mediaItems?.popular) || [];
+
+  // Trending content for the empty/no-results state. Re-fetched on mount.
+  useEffect(() => {
+    dispatch(getPopularPlaylists());
+    dispatch(getPopularMediaItems());
+  }, [dispatch]);
   
   // const searchFilters = globalState?.getSearchFilters(searchKey);
   const selectedItems = useAppSelector((state) => state?.search)?.selected;
@@ -142,9 +152,11 @@ export const Search = ({ globalState }: PageProps & any) => {
           // TODO: Need separate update methods for media items and playlists
           onChecked={updateSelection}
         />
-        {!globalState.searchIsFiltering(searchKey) && searchResults.length === 0
-          ? (
-            <ScrollView>
+        {searchResults.length === 0 ? (
+          <ScrollView>
+            {globalState?.searchIsFiltering(searchKey) === true ? (
+              <NoContent messageButtonText="No results were found." icon="info" />
+            ) : (
               <TagBlocks
                 list={tags}
                 onViewDetailClicked={async (item) => {
@@ -154,17 +166,29 @@ export const Search = ({ globalState }: PageProps & any) => {
                   await loadData();
                 }}
               />
-              {/*<Divider style={{ marginTop: 10, marginBottom: 20 }} />
-              <RecentlyAdded list={searchResults} />
-              <Divider style={{ marginTop: 10, marginBottom: 20 }} />
-              <RecentlyPlayed list={searchResults} />*/}
-            </ScrollView>
-          ) : globalState?.searchIsFiltering(searchKey) === true && searchResults?.length === 0 ? (
-            <>
-              <NoContent messageButtonText="No results were found." icon="info" />
-            </>
-          ) : null
-        }
+            )}
+            {/* Trending sections respect the search target: all → both,
+                playlists → only playlists, media → only media. */}
+            {(contentType !== SupportedContentTypes.media) ? (
+              <TrendingSection
+                title="Trending Playlists"
+                list={popularPlaylists}
+                max={10}
+                onItemPress={(item) => viewPlaylist({ playlistId: item._id })}
+              />
+            ) : null}
+            {(contentType !== SupportedContentTypes.playlists) ? (
+              <TrendingSection
+                title="Trending Media Items"
+                list={popularMediaItems}
+                max={10}
+                onItemPress={(item) =>
+                  viewMediaItemById({ mediaId: item._id, uri: item.uri })
+                }
+              />
+            ) : null}
+          </ScrollView>
+        ) : null}
       </KeyboardAvoidingPageContent>
       {isSelectable && actionMode === SearchActionModes.share ? (
         <PageActions>
