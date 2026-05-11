@@ -56,14 +56,20 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
+  // Image previews are square (1:1) thumbnails; video playback uses 16:9 so
+  // landscape clips don't get crammed into a square and look cropped.
+  const containerAspect = mediaDisplayMode === 'video' ? 16 / 9 : 1 / 1;
+
   return (
     <View
       style={{
-        aspectRatio: 1 / 1,
+        aspectRatio: containerAspect,
         width: '100%',
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
+        backgroundColor: '#000',
+        overflow: 'hidden',
         ...style,
       }}
     >
@@ -82,12 +88,14 @@ const checkUrl = () => {
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <Video
           ref={video}
-          style={{ width: '100%', height: '100%' }}
+          // Explicit dimensions + position so the HTML5 <video> element on web
+          // (and the native AVPlayer/MediaPlayer on iOS/Android) has room to
+          // render its native control overlay without being clipped.
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}
           usePoster={true}
           posterSource={imageSrc}
-          source={{
-            uri: mediaUrl,
-          }}
+          posterStyle={{ resizeMode: 'contain' as any }}
+          source={{ uri: mediaUrl }}
           shouldPlay={true}
           useNativeControls={true}
           resizeMode={ResizeMode.CONTAIN}
