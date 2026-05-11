@@ -107,11 +107,16 @@ const checkUrl = () => {
             } as any
           }
           videoStyle={{ objectFit: 'contain' as any }}
-          usePoster={true}
-          posterSource={imageSrc}
+          // Only attach a poster when we have a real image source; otherwise
+          // the underlying <img> renders broken alt-text in the corner.
+          usePoster={!!imageSrc && !isDefaultImage}
+          posterSource={imageSrc ? { uri: imageSrc } : undefined}
           posterStyle={{ resizeMode: 'contain' as any }}
           source={{ uri: mediaUrl }}
+          // Autoplay muted so Chrome/Safari allow it AND the native control
+          // overlay becomes visible. User can unmute via the controls.
           shouldPlay={true}
+          isMuted={true}
           useNativeControls={true}
           resizeMode={ResizeMode.CONTAIN}
           isLooping={true}
