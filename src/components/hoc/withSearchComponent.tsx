@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
-import { ActionButtons } from 'mediashare/components/layout';
 import { makeEnum } from 'mediashare/core/utils/factory';
 import { useIsMounted } from 'mediashare/hooks/useIsMounted';
 import { GlobalStateProps } from 'mediashare/core/globalState';
@@ -234,44 +233,70 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             ) : null}
           {filtersExpanded || shouldShowApplyButton() ? (
             <>
-              <ActionButtons
-                primaryLabel="Apply"
-                primaryIcon="check-circle"
-                showSecondary={hasActiveFilters()}
-                secondaryLabel="Clear"
-                secondaryIcon={undefined}
-                onSecondaryClicked={() => clearSearch()}
-                containerStyles={{
-                  marginHorizontal: 0,
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'stretch',
                   marginTop: showNetworkContentSwitch ? 15 : 0,
-                  height: 48,
-                  overflow: 'visible',
                 }}
-                // Apply on the left grows; Clear on the right is compact and
-                // fixed-width so it never gets squashed when filters are dirty.
-                actionButtonsStyles={{ flexDirection: 'row-reverse' }}
-                primaryButtonTouchableStyles={{ flex: 1 }}
-                primaryButtonStyles={{
-                  backgroundColor: theme.colors.accent,
-                  flex: 1,
-                  minHeight: 48,
-                  paddingVertical: 12,
-                  paddingHorizontal: 12,
-                }}
-                primaryButtonLabelStyles={{ paddingRight: 0 }}
-                secondaryButtonTouchableStyles={{ flex: 0, flexShrink: 0, flexGrow: 0, width: 72, marginLeft: 8 }}
-                secondaryButtonStyles={{
-                  width: 72,
-                  flex: 0,
-                  flexShrink: 0,
-                  flexGrow: 0,
-                  minHeight: 48,
-                  paddingVertical: 12,
-                  paddingHorizontal: 0,
-                }}
-                secondaryButtonLabelStyles={{ paddingRight: 0 }}
-                onPrimaryClicked={() => submitSearch()}
-              />
+              >
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  disabled={!shouldShowApplyButton()}
+                  onPress={() => submitSearch()}
+                  style={{
+                    flexGrow: 1,
+                    flexShrink: 1,
+                    flexBasis: 0,
+                    minWidth: 0,
+                    minHeight: 48,
+                    backgroundColor: shouldShowApplyButton()
+                      ? theme.colors.accent
+                      : theme.colors.secondary,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingHorizontal: 16,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: '#ffffff',
+                      fontSize: 13,
+                      fontFamily: theme.fonts.medium.fontFamily,
+                    }}
+                  >
+                    Apply
+                  </Text>
+                </TouchableOpacity>
+                {hasActiveFilters() ? (
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    onPress={() => clearSearch()}
+                    style={{
+                      width: 72,
+                      flexGrow: 0,
+                      flexShrink: 0,
+                      flexBasis: 72,
+                      minHeight: 48,
+                      marginLeft: 8,
+                      backgroundColor: theme.colors.surface,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#ffffff',
+                        fontSize: 13,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Clear
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
               <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
             </>
           ) : null}
