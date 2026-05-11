@@ -146,7 +146,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               />
             </View>
           ) : null}
-          {(forcedSearchMode || searchActive) ? (
+          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
             <>
               {showSearchTargetField ? (
                 <View style={{ marginBottom: 0 }}>
@@ -217,18 +217,16 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               
             </>
             ) : null}
-          {(forcedSearchMode || searchActive) ? (
+          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
             <>
               <ActionButtons
                 primaryLabel="Apply"
-                primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
-                disablePrimary={!shouldShowApplyButton()}
                 showSecondary={hasActiveFilters()}
                 secondaryLabel="Clear"
                 secondaryIcon={undefined}
                 onSecondaryClicked={() => clearSearch()}
-                // Side-by-side: Apply on the left, Clear on the right.
-                // Bigger container so neither button gets clipped.
+                // Apply on the left, Clear on the right. Container/buttons
+                // sized so neither label is clipped.
                 containerStyles={{
                   marginHorizontal: 0,
                   marginTop: showNetworkContentSwitch ? 15 : 0,
