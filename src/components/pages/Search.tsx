@@ -133,7 +133,9 @@ export const Search = ({ globalState }: PageProps & any) => {
           loadData={loadData}
           defaultSearchTarget={SupportedContentTypes.playlists}
           showSearchTargetField={true}
-          showNetworkContentSwitch={true}
+          // Search always includes network content; hide the toggle.
+          showNetworkContentSwitch={false}
+          networkContent={true}
           forcedSearchMode={true}
           key={clearSelectionKey}
           list={searchResults}

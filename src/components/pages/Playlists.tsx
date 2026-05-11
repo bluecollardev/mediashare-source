@@ -173,6 +173,8 @@ export const Playlists = ({ globalState }: PageProps) => {
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
           defaultSearchTarget="playlists"
+          showNetworkContentSwitch={true}
+          networkContent={false}
           key={clearSelectionKey}
           list={entities}
           onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
@@ -237,6 +239,7 @@ export const Playlists = ({ globalState }: PageProps) => {
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
+      networkContent: !!search?.networkContent,
     };
 
     if (args.text || args.tags.length > 0) {
@@ -244,7 +247,7 @@ export const Playlists = ({ globalState }: PageProps) => {
       await dispatch(findUserPlaylists(args));
     } else {
       console.log('Playlists loadData getUserPlaylists...');
-      await dispatch(getUserPlaylists());
+      await dispatch(getUserPlaylists({ networkContent: args.networkContent }));
     }
   }
 

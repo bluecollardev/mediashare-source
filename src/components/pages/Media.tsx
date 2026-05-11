@@ -131,6 +131,8 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
           loadData={loadData}
           defaultSearchTarget="media"
+          showNetworkContentSwitch={true}
+          networkContent={false}
           key={clearSelectionKey}
           navigation={navigation}
           list={entities}
@@ -194,6 +196,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
+      networkContent: !!search?.networkContent,
     };
 
     await dispatch(findMediaItems(args));

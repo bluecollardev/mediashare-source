@@ -15,12 +15,17 @@ export const loadUserMediaItems = createAsyncThunk(mediaItemsActions.loadUserMed
   return await (api as ApiService).user.userControllerGetUserMediaItems().toPromise();
 });
 
-export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.type, async (args: { text?: string; tags?: string[]; networkContent?: boolean }, thunkApi) => {
   console.log('findMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
-  const { text, tags = [] } = args;
-  // console.log(`Search media items args: ${JSON.stringify(args, null, 2)}`);
-  // console.log(`Searching media items for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
+  const { text, tags = [], networkContent } = args;
+  // When network content is included, route through the search endpoint
+  // which unions owner content with master subscriber-content creators'.
+  if (networkContent) {
+    return await (api as ApiService).search
+      .searchControllerFindAll({ target: 'media', text, tags })
+      .toPromise();
+  }
   return await (api as ApiService).mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
 });
 

@@ -9,18 +9,33 @@ const playlistsActionNames = ['find_playlists', 'get_user_playlists', 'get_popul
 
 export const playlistsActions = makeActions(playlistsActionNames);
 
-export const findUserPlaylists = createAsyncThunk(playlistsActions.findPlaylists.type, async (args: { text?: string; tags?: string[] }, thunkApi) => {
+export const findUserPlaylists = createAsyncThunk(playlistsActions.findPlaylists.type, async (args: { text?: string; tags?: string[]; networkContent?: boolean }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
-  const { text, tags = [] } = args;
-  // console.log(`Search playlists args: ${JSON.stringify(args, null, 2)}`);
-  // console.log(`Searching playlists for: text -> [${text}, tags -> [${JSON.stringify(tags)}]`);
+  const { text, tags = [], networkContent } = args;
+  // When network content is included, route through the search endpoint
+  // which unions owner content with the master subscriber-content creators'.
+  if (networkContent) {
+    return await (api as ApiService).search
+      .searchControllerFindAll({ target: 'playlists', text, tags })
+      .toPromise();
+  }
   return await (api as ApiService).playlists.playlistControllerFindAll({ text, tags }).toPromise();
 });
 
-export const getUserPlaylists = createAsyncThunk(playlistsActions.getUserPlaylists.type, async (opts = undefined, thunkApi) => {
-  const { api } = thunkApiWithState(thunkApi);
-  return await (api as ApiService).playlists.playlistControllerFindAll({ text: '', tags: [] }).toPromise();
-});
+export const getUserPlaylists = createAsyncThunk(
+  playlistsActions.getUserPlaylists.type,
+  async (opts: { networkContent?: boolean } = {}, thunkApi) => {
+    const { api } = thunkApiWithState(thunkApi);
+    if (opts?.networkContent) {
+      return await (api as ApiService).search
+        .searchControllerFindAll({ target: 'playlists' })
+        .toPromise();
+    }
+    return await (api as ApiService).playlists
+      .playlistControllerFindAll({ text: '', tags: [] })
+      .toPromise();
+  }
+);
 
 export const getPopularPlaylists = createAsyncThunk(playlistsActions.getPopularPlaylists.type, async (opts = undefined, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
