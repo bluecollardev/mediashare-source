@@ -258,24 +258,28 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
 
 const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 
+// Browsers drop Set-Cookie whose Domain doesn't match the current page's host
+// (Domain=localhost is rejected outright, and a staging/prod domain is rejected
+// when running on localhost). Only use cookieStorage when the current host is
+// actually within the configured cookie domain; otherwise fall back to Amplify's
+// default localStorage.
+const cookieDomain = Config.CookieDomain;
+const pageHost =
+  typeof window !== 'undefined' && window.location ? window.location.hostname : '';
+const useCookieStorage =
+  Platform.OS === 'web' &&
+  !!cookieDomain &&
+  cookieDomain !== 'localhost' &&
+  (pageHost === cookieDomain || pageHost.endsWith('.' + cookieDomain));
+
 const amplifyConfig = {
   ...awsmobile,
-  ...(Platform.OS === 'web' ? { Auth: {
+  ...(useCookieStorage ? { Auth: {
       cookieStorage: {
-        // - Cookie domain (only required if cookieStorage is provided)
-        // TODO: Set this to localhost when running locally
-        // domain: 'localhost',
-        domain: Config.CookieDomain || 'localhost',
-        // (optional) - Cookie path
+        domain: cookieDomain,
         path: '/',
-        // (optional) - Cookie expiration in days
-        // expires: 365,
-        // (optional) - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
         sameSite: 'lax',
-        // (optional) - Cookie secure flag
-        // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-        // TODO: Enable https, this should only be set to false when running locally!
-        secure: false
+        secure: false,
       },
     } } : {}),
   // Fix AWS Pinpoint connection issues

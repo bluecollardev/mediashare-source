@@ -58,7 +58,11 @@ const commonConfigs = {
 }
 
 // TODO: Fix / implement releaseChannel
-const env = 'staging'; // Updates.releaseChannel || 'development';
+const isLocalhostWeb =
+  typeof window !== 'undefined' &&
+  !!window.location &&
+  /^(localhost|127\.0\.0\.1|\[?::1\]?)$/.test(window.location.hostname);
+const env = isLocalhostWeb ? 'local' : 'staging'; // Updates.releaseChannel || 'development';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {
