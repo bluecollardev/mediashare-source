@@ -65,7 +65,7 @@ const checkUrl = () => {
       style={{
         aspectRatio: isVideo ? undefined : 1 / 1,
         width: '100%',
-        maxWidth: isVideo ? 320 : undefined,
+        maxWidth: undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
