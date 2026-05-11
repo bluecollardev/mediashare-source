@@ -56,21 +56,19 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews stay 1:1. Video plays at 16:9, capped at the current
-  // screen width so it never exceeds the viewport regardless of how the
-  // parent container is laid out. overflow:hidden + position:absolute on
-  // the video makes the wrapper the absolute size box — the video element
-  // is forced inside it and objectFit:contain scales it down to fit.
+  // Image previews stay 1:1. Video plays at 16:9, capped at 480px wide so
+  // it doesn't dominate the page. overflow:hidden + position:relative on
+  // the wrapper paired with the video's absolute positioning forces the
+  // video element inside the bounding box.
   const isVideo = mediaDisplayMode === 'video';
   const containerAspect = isVideo ? 16 / 9 : 1 / 1;
-  const screenWidth = Dimensions.get('window').width;
 
   return (
     <View
       style={{
         aspectRatio: containerAspect,
         width: '100%',
-        maxWidth: isVideo ? screenWidth : undefined,
+        maxWidth: isVideo ? 480 : undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
