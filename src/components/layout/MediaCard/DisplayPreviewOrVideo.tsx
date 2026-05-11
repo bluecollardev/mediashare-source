@@ -1,6 +1,6 @@
 import React, { useEffect, useState ,useRef} from 'react';
 import { Audio, ResizeMode, Video } from 'expo-av';
-import { ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 
@@ -56,18 +56,19 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews stay full-width 1:1. Video plays at 16:9 scaled down to
-  // ~70% width (cap 480px), centered, so non-square content doesn't blow
-  // up the layout.
+  // Image previews stay 1:1. Video plays at 16:9, capped at the current
+  // screen width so it never exceeds the viewport regardless of how the
+  // parent container is laid out.
   const isVideo = mediaDisplayMode === 'video';
   const containerAspect = isVideo ? 16 / 9 : 1 / 1;
+  const screenWidth = Dimensions.get('window').width;
 
   return (
     <View
       style={{
         aspectRatio: containerAspect,
-        width: isVideo ? '70%' : '100%',
-        maxWidth: isVideo ? 480 : undefined,
+        width: '100%',
+        maxWidth: isVideo ? screenWidth : undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
@@ -90,10 +91,12 @@ const checkUrl = () => {
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <Video
           ref={video}
-          // Explicit dimensions + position so the HTML5 <video> element on web
-          // (and the native AVPlayer/MediaPlayer on iOS/Android) has room to
-          // render its native control overlay without being clipped.
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}
+          // CONTAIN — letterbox if needed. objectFit override is the web
+          // fallback: expo-av on web maps to an <video> element, and some
+          // builds ignore the resizeMode prop unless objectFit is set
+          // explicitly on the underlying DOM element via style.
+          style={{ width: '100%', height: '100%', objectFit: 'contain' as any }}
+          videoStyle={{ objectFit: 'contain' as any }}
           usePoster={true}
           posterSource={imageSrc}
           posterStyle={{ resizeMode: 'contain' as any }}
