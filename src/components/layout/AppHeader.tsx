@@ -42,7 +42,7 @@ const AppHeaderComponent = ({
   const route = useRoute();
   const goToAccount = useGoToAccount();
   
-  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters } = globalState;
+  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters, filtersExpanded, setFiltersExpanded } = globalState;
   const displaySearch = searchIsActive(route?.name);
   const forceSearchDisplay = forcedSearchMode(route?.name);
   
@@ -133,10 +133,15 @@ const AppHeaderComponent = ({
   }
   
   function toggleSearch() {
-    if (displaySearch) {
-      clearSearchFilters(route.name);
-    } else {
+    // Ensure the search context is active for this route, then flip the
+    // filter-panel expansion state. One click on this icon should always
+    // show/hide filters — never silently clear them.
+    if (!displaySearch && !forceSearchDisplay) {
       setSearchIsActive(route?.name, true);
+    }
+    if (typeof setFiltersExpanded === 'function') {
+      const current = filtersExpanded ? filtersExpanded(route?.name) : false;
+      setFiltersExpanded(route?.name, !current);
     }
   }
 

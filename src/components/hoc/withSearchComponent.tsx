@@ -43,7 +43,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
   }: PlaylistSearchProps & any) {
     const isMountedRef = useIsMounted();
     
-    const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode } = globalState;
+    const { searchIsActive, updateSearchFilters, getSearchFilters, setForcedSearchMode, filtersExpanded: gsFiltersExpanded, setFiltersExpanded: gsSetFiltersExpanded } = globalState;
     const searchFilters = getSearchFilters(searchKey);
     const [searchText, setSearchText] = useState(searchFilters?.text || '');
     const [searchTags, setSearchTags] = useState(searchFilters?.tags || []);
@@ -51,10 +51,18 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     const searchActive = searchIsActive(searchKey);
     const [searchTarget, setSearchTarget] = useState([defaultSearchTarget]);
     const [includeNetworkContent, setIncludeNetworkContent] = useState(networkContent);
-    // Explicit user-controlled toggle for the filter panel. Defaults open when
-    // there's no active search (so the user can configure one); collapses when
-    // Apply is pressed; user can re-open via the filter icon next to the searchbar.
-    const [filtersExpanded, setFiltersExpanded] = useState(!searchActive);
+    // Filter panel visibility is driven by globalState so the AppHeader's
+    // filter icon can flip it from outside this component. Defaults open
+    // when there's no active search.
+    const filtersExpanded =
+      typeof gsFiltersExpanded === 'function'
+        ? gsFiltersExpanded(searchKey)
+        : !searchActive;
+    const setFiltersExpanded = (value: boolean) => {
+      if (typeof gsSetFiltersExpanded === 'function') {
+        gsSetFiltersExpanded(searchKey, value);
+      }
+    };
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
@@ -228,25 +236,35 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
             <>
               <ActionButtons
                 primaryLabel="Apply"
+                primaryIcon="check-circle"
                 showSecondary={hasActiveFilters()}
                 secondaryLabel="Clear"
                 secondaryIcon={undefined}
                 onSecondaryClicked={() => clearSearch()}
-                // Apply on the left, Clear on the right. Container/buttons
-                // sized so neither label is clipped.
+                // Apply on the left, Clear on the right. Both flex equally so
+                // they sit side-by-side without overlap, with comfortable
+                // padding and matching height.
                 containerStyles={{
                   marginHorizontal: 0,
                   marginTop: showNetworkContentSwitch ? 15 : 0,
                   height: 48,
                   overflow: 'visible',
                 }}
-                actionButtonsStyles={{ flexDirection: 'row-reverse' }}
-                secondaryButtonStyles={{ minHeight: 48, paddingVertical: 12 }}
+                actionButtonsStyles={{ flexDirection: 'row-reverse', gap: 8 }}
+                secondaryButtonTouchableStyles={{ flex: 1 }}
+                secondaryButtonStyles={{
+                  width: undefined,
+                  flex: 1,
+                  minHeight: 48,
+                  paddingVertical: 12,
+                }}
+                secondaryButtonLabelStyles={{ paddingRight: 0 }}
                 primaryButtonStyles={{
                   backgroundColor: theme.colors.accent,
                   minHeight: 48,
                   paddingVertical: 12,
                 }}
+                primaryButtonLabelStyles={{ paddingRight: 0 }}
                 onPrimaryClicked={() => submitSearch()}
               />
               <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
