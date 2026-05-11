@@ -282,10 +282,10 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     accessibilityRole="button"
                     onPress={() => clearSearch()}
                     style={{
-                      width: 72,
+                      width: 96,
                       flexGrow: 0,
                       flexShrink: 0,
-                      flexBasis: 72,
+                      flexBasis: 96,
                       minHeight: 48,
                       marginLeft: 8,
                       flexDirection: 'row',
