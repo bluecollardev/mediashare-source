@@ -123,6 +123,7 @@ export const Search = ({ globalState }: PageProps & any) => {
           loadData={loadData}
           defaultSearchTarget={SupportedContentTypes.playlists}
           showSearchTargetField={true}
+          showNetworkContentSwitch={true}
           forcedSearchMode={true}
           key={clearSelectionKey}
           list={searchResults}
