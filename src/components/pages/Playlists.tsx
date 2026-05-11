@@ -11,7 +11,7 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { Alert, FlatList, RefreshControl, StyleSheet } from 'react-native'
+import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
 import {
   PageActions,
@@ -41,7 +41,26 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
   const sortedList = list.map((item) => item);
   sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
 
-  return <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
+  const countLabel = sortedList.length === 1
+    ? '1 playlist'
+    : `${sortedList.length} playlists`;
+
+  return (
+    <View>
+      <Text
+        style={{
+          color: theme.colors.text,
+          opacity: 0.7,
+          fontSize: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+        }}
+      >
+        {countLabel}
+      </Text>
+      <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
+    </View>
+  );
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View } from 'react-native';
+import { StyleSheet, FlatList, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
@@ -44,8 +44,23 @@ export const MediaComponent = ({
   const sortedList = list.map((item) => item) || [];
   sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
 
+  const countLabel = sortedList.length === 1
+    ? '1 media item'
+    : `${sortedList.length} media items`;
+
   return (
     <View>
+      <Text
+        style={{
+          color: theme.colors.text,
+          opacity: 0.7,
+          fontSize: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+        }}
+      >
+        {countLabel}
+      </Text>
       <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `media_item_${_id}`} />
     </View>
   );
