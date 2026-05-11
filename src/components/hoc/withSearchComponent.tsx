@@ -241,33 +241,33 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 secondaryLabel="Clear"
                 secondaryIcon={undefined}
                 onSecondaryClicked={() => clearSearch()}
-                // Apply on the left, Clear on the right. Both flex equally so
-                // they sit side-by-side without overlap, with comfortable
-                // padding and matching height.
                 containerStyles={{
                   marginHorizontal: 0,
                   marginTop: showNetworkContentSwitch ? 15 : 0,
                   height: 48,
                   overflow: 'visible',
                 }}
-                actionButtonsStyles={{ flexDirection: 'row-reverse', gap: 8 }}
+                // Apply on the left grows; Clear on the right is compact and
+                // fixed-width so it never gets squashed when filters are dirty.
+                actionButtonsStyles={{ flexDirection: 'row-reverse' }}
                 primaryButtonTouchableStyles={{ flex: 1 }}
                 primaryButtonStyles={{
                   backgroundColor: theme.colors.accent,
                   flex: 1,
                   minHeight: 48,
                   paddingVertical: 12,
+                  paddingHorizontal: 12,
                 }}
                 primaryButtonLabelStyles={{ paddingRight: 0 }}
-                // Clear is a fixed-width compact button so it doesn't grow
-                // and crowd Apply.
-                secondaryButtonTouchableStyles={{ flex: 0, flexShrink: 0 }}
+                secondaryButtonTouchableStyles={{ flex: 0, flexShrink: 0, flexGrow: 0, width: 72, marginLeft: 8 }}
                 secondaryButtonStyles={{
-                  width: 96,
+                  width: 72,
                   flex: 0,
                   flexShrink: 0,
+                  flexGrow: 0,
                   minHeight: 48,
                   paddingVertical: 12,
+                  paddingHorizontal: 0,
                 }}
                 secondaryButtonLabelStyles={{ paddingRight: 0 }}
                 onPrimaryClicked={() => submitSearch()}
