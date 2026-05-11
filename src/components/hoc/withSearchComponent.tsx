@@ -146,7 +146,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               />
             </View>
           ) : null}
-          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+          {(forcedSearchMode || searchActive) ? (
             <>
               {showSearchTargetField ? (
                 <View style={{ marginBottom: 0 }}>
@@ -217,15 +217,31 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               
             </>
             ) : null}
-          {(forcedSearchMode && !searchActive && shouldShowApplyButton()) || (searchActive && shouldShowApplyButton()) ? (
+          {(forcedSearchMode || searchActive) ? (
             <>
               <ActionButtons
-                // TODO: Find a different way to do this SearchComponent doesn't know if loadData is completed
-                // loading={!isLoaded}
                 primaryLabel="Apply"
                 primaryButtonStyles={{ backgroundColor: theme.colors.accent }}
-                showSecondary={false}
-                containerStyles={{ marginHorizontal: 0, marginTop: showNetworkContentSwitch ? 15 : 0 }}
+                disablePrimary={!shouldShowApplyButton()}
+                showSecondary={hasActiveFilters()}
+                secondaryLabel="Clear"
+                secondaryIcon={undefined}
+                onSecondaryClicked={() => clearSearch()}
+                // Side-by-side: Apply on the left, Clear on the right.
+                // Bigger container so neither button gets clipped.
+                containerStyles={{
+                  marginHorizontal: 0,
+                  marginTop: showNetworkContentSwitch ? 15 : 0,
+                  height: 48,
+                  overflow: 'visible',
+                }}
+                actionButtonsStyles={{ flexDirection: 'row-reverse' }}
+                secondaryButtonStyles={{ minHeight: 48, paddingVertical: 12 }}
+                primaryButtonStyles={{
+                  backgroundColor: theme.colors.accent,
+                  minHeight: 48,
+                  paddingVertical: 12,
+                }}
                 onPrimaryClicked={() => submitSearch()}
               />
               <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
@@ -269,6 +285,30 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
       };
       console.log(`searching [${searchKey}] for ${JSON.stringify(searchValue, null, 2)}`);
       updateSearchFilters(searchKey, searchValue);
+      setIsLoaded(false);
+    }
+
+    function hasActiveFilters() {
+      return !!(
+        searchText ||
+        (searchTags && searchTags.length > 0) ||
+        includeNetworkContent ||
+        searchFilters?.text ||
+        (searchFilters?.tags && searchFilters.tags.length > 0) ||
+        searchFilters?.networkContent
+      );
+    }
+
+    function clearSearch() {
+      setSearchText('');
+      setSearchTags([]);
+      setIncludeNetworkContent(false);
+      updateSearchFilters(searchKey, {
+        target: searchTarget?.[0] || '',
+        networkContent: false,
+        text: '',
+        tags: [],
+      });
       setIsLoaded(false);
     }
   };
