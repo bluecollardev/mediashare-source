@@ -251,20 +251,25 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   overflow: 'visible',
                 }}
                 actionButtonsStyles={{ flexDirection: 'row-reverse', gap: 8 }}
-                secondaryButtonTouchableStyles={{ flex: 1 }}
-                secondaryButtonStyles={{
-                  width: undefined,
+                primaryButtonTouchableStyles={{ flex: 1 }}
+                primaryButtonStyles={{
+                  backgroundColor: theme.colors.accent,
                   flex: 1,
                   minHeight: 48,
                   paddingVertical: 12,
                 }}
-                secondaryButtonLabelStyles={{ paddingRight: 0 }}
-                primaryButtonStyles={{
-                  backgroundColor: theme.colors.accent,
+                primaryButtonLabelStyles={{ paddingRight: 0 }}
+                // Clear is a fixed-width compact button so it doesn't grow
+                // and crowd Apply.
+                secondaryButtonTouchableStyles={{ flex: 0, flexShrink: 0 }}
+                secondaryButtonStyles={{
+                  width: 96,
+                  flex: 0,
+                  flexShrink: 0,
                   minHeight: 48,
                   paddingVertical: 12,
                 }}
-                primaryButtonLabelStyles={{ paddingRight: 0 }}
+                secondaryButtonLabelStyles={{ paddingRight: 0 }}
                 onPrimaryClicked={() => submitSearch()}
               />
               <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
