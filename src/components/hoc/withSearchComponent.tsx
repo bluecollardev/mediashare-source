@@ -146,10 +146,9 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 value={searchText}
                 onChangeText={(text) => updateSearchText(text)}
                 clearIcon="clear"
-                // Right-side icon: tune/filter. Single click toggles the filter
-                // panel — no more "click twice" via the dirty-flag.
-                icon={filtersExpanded ? 'tune' : 'tune-variant'}
-                onIconPress={() => setFiltersExpanded((open) => !open)}
+                // Tapping anywhere in the searchbar expands the filter panel —
+                // single click, regardless of dirty-flag state.
+                onFocus={() => setFiltersExpanded(true)}
                 autoCapitalize="none"
               />
             </View>
