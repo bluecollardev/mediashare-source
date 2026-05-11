@@ -65,7 +65,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
     <PageContainer>
       <PageContent>
         <AppDialog
-          key={showUnshareDialog as unknown as string}
+          key={`unshare-all-${showUnshareDialog}`}
           leftActionLabel="Cancel"
           rightActionLabel="Confirm"
           buttonColor={theme.colors.error}
@@ -77,7 +77,7 @@ const SharedByContact = ({ route }: SharedByContactProps) => {
           subtitle="Are you sure you want to do this? This action is final and cannot be undone."
         />
         <AppDialog
-          key={showUnshareItemDialog as unknown as string}
+          key={`unshare-item-${showUnshareItemDialog}`}
           leftActionLabel="Cancel"
           rightActionLabel="Confirm"
           buttonColor={theme.colors.error}
