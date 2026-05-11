@@ -25,23 +25,26 @@ export const TagBlocks = ({ list = [], onViewDetailClicked = () => undefined }: 
   const columns = columnsForWidth(width);
   // Slice to fill an even grid: 2 full rows on whichever layout (2/3/4 up).
   const displayTags = sortedList.slice(0, columns * 2);
-  const cellWidth = width / columns;
+  // Use percentages so the grid hugs its parent's content width rather than
+  // the viewport width — avoids overflow when the parent has padding/margin
+  // (e.g., desktop layouts with side gutters).
+  const cellWidthPct = `${100 / columns}%`;
 
   return (
     <View style={{ marginTop: 20, marginBottom: 15 }}>
       <SectionHeader title={`Popular Tags`} />
       {displayTags && displayTags.length > 0 ? (
-        <View style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width, marginBottom: 10 }}>
-          {displayTags.map((tag) => renderTag(tag, cellWidth))}
+        <View style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%', marginBottom: 10 }}>
+          {displayTags.map((tag) => renderTag(tag, cellWidthPct))}
         </View>
       ) : null}
     </View>
   );
 
-  function renderTag(item: any, cellWidthPx: number) {
+  function renderTag(item: any, cellWidth: string) {
     const { key = '', value = '', imageSrc = '' } = item;
     return (
-      <View key={key} style={{ width: cellWidthPx }}>
+      <View key={key} style={{ width: cellWidth as any }}>
         <MediaListItem
           key={`tag_${key}`}
           title={value}
