@@ -56,22 +56,20 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews stay 1:1. Video plays at 16:9. No overflow:hidden so
-  // we don't clip the player; rely on the inner video element's
-  // object-fit/resizeMode to scale to fit.
+  // Image previews stay 1:1. For video, drop the forced aspectRatio so the
+  // wrapper hugs the video's natural aspect (no black bars on either side).
   const isVideo = mediaDisplayMode === 'video';
-  const containerAspect = isVideo ? 16 / 9 : 1 / 1;
 
   return (
     <View
       style={{
-        aspectRatio: containerAspect,
+        aspectRatio: isVideo ? undefined : 1 / 1,
         width: '100%',
         maxWidth: isVideo ? 320 : undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
-        backgroundColor: '#000',
+        backgroundColor: isVideo ? 'transparent' : '#000',
         ...style,
       }}
     >
@@ -88,9 +86,10 @@ const checkUrl = () => {
           ) : null}
         </ImageBackground>
       ) : mediaDisplayMode === 'video' && mediaSrc && Platform.OS === 'web' ? (
-        // Plain HTML5 video on web — expo-av's web build doesn't reliably
-        // apply object-fit:contain, so the inner element renders at native
-        // resolution and gets clipped. Direct <video> respects CSS sizing.
+        // Plain HTML5 video on web. width:100% + height:auto = video sizes
+        // to the wrapper width at its NATURAL aspect ratio, so the wrapper
+        // hugs it (no black bars). display:block kills the inline
+        // baseline whitespace that <video> elements otherwise get.
         React.createElement('video', {
           src: mediaUrl,
           poster: imageSrc && !isDefaultImage ? imageSrc : undefined,
@@ -101,8 +100,7 @@ const checkUrl = () => {
           playsInline: true,
           style: {
             width: '100%',
-            height: '100%',
-            objectFit: 'contain',
+            height: 'auto',
             display: 'block',
             backgroundColor: '#000',
           },
