@@ -7,7 +7,7 @@ import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
 import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
-import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
+import { useRouteName, useEditMediaItemById, useViewMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
@@ -33,6 +33,7 @@ export const MediaComponent = ({
   showActions = true,
   onViewDetail,
   onChecked = () => undefined,
+  currentUserSub,
 }: {
   navigation: any;
   list: MediaItemDto[];
@@ -40,6 +41,7 @@ export const MediaComponent = ({
   selectable: boolean;
   showActions?: boolean;
   onChecked?: (checked: boolean, item?: any) => void;
+  currentUserSub?: string;
 }) => {
   const sortedList = list.map((item) => item) || [];
   sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
@@ -66,7 +68,8 @@ export const MediaComponent = ({
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', imageSrc, visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', imageSrc, visibility, createdBy } = item;
+    const isOwner = !!currentUserSub && createdBy === currentUserSub;
     return (
       <>
         <MediaListItem
@@ -78,9 +81,9 @@ export const MediaComponent = ({
           image={imageSrc}
           showPlayableIcon={false}
           showActions={showActions}
-          iconRight="edit"
+          iconRight={isOwner ? 'edit' : 'visibility'}
           iconRightColor={theme.colors.default}
-          selectable={selectable}
+          selectable={selectable && isOwner}
           onViewDetail={() => onViewDetail(item)}
           onChecked={(checked) => onChecked(checked, item)}
         />
@@ -100,6 +103,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const addFromFeed = useRouteName(routeNames.addFromFeed);
   const addMedia = useRouteName(routeNames.mediaItemAdd);
   const editMedia = useEditMediaItemById();
+  const viewMedia = useViewMediaItemById();
 
   const [isSelectable, setIsSelectable] = useState(false);
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -107,6 +111,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities, selected, loaded, loading } = useAppSelector((state) => state?.mediaItems);
+  const currentUserSub = useAppSelector((state) => state?.user?.entity?.sub);
   
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
@@ -155,6 +160,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           selectable={isSelectable}
           onViewDetail={onEditItem}
           onChecked={updateSelection}
+          currentUserSub={currentUserSub}
         />
         {globalState.searchIsFiltering('media') === undefined && entities.length === 0
           ? (
@@ -224,7 +230,12 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   }
 
   async function onEditItem(item: MediaItemDto) {
-    await editMedia ({ mediaId: item._id, uri: item.uri });
+    const isOwner = !!currentUserSub && (item as any).createdBy === currentUserSub;
+    if (isOwner) {
+      await editMedia({ mediaId: item._id, uri: item.uri });
+    } else {
+      await viewMedia({ mediaId: item._id, uri: item.uri });
+    }
   }
 
   function activateDeleteMode() {
