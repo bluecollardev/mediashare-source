@@ -58,7 +58,9 @@ const checkUrl = () => {
   
   // Image previews stay 1:1. Video plays at 16:9, capped at the current
   // screen width so it never exceeds the viewport regardless of how the
-  // parent container is laid out.
+  // parent container is laid out. overflow:hidden + position:absolute on
+  // the video makes the wrapper the absolute size box — the video element
+  // is forced inside it and objectFit:contain scales it down to fit.
   const isVideo = mediaDisplayMode === 'video';
   const containerAspect = isVideo ? 16 / 9 : 1 / 1;
   const screenWidth = Dimensions.get('window').width;
@@ -73,6 +75,8 @@ const checkUrl = () => {
         marginLeft: 'auto',
         marginRight: 'auto',
         backgroundColor: '#000',
+        position: 'relative',
+        overflow: 'hidden',
         ...style,
       }}
     >
@@ -91,11 +95,19 @@ const checkUrl = () => {
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <Video
           ref={video}
-          // CONTAIN — letterbox if needed. objectFit override is the web
-          // fallback: expo-av on web maps to an <video> element, and some
-          // builds ignore the resizeMode prop unless objectFit is set
-          // explicitly on the underlying DOM element via style.
-          style={{ width: '100%', height: '100%', objectFit: 'contain' as any }}
+          // Force the inner <video> element into the wrapper's box via
+          // absolute positioning. Native AVPlayer/MediaPlayer (iOS/Android)
+          // honors resizeMode; HTML5 <video> on web honors object-fit.
+          style={
+            {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            } as any
+          }
           videoStyle={{ objectFit: 'contain' as any }}
           usePoster={true}
           posterSource={imageSrc}
