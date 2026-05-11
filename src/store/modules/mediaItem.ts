@@ -88,19 +88,27 @@ export const addMediaItem = createAsyncThunk(
         key: videoKey,
         title,
         description,
-        summary,
+        // Optional string fields on the API DTO use Length(5, …) under
+        // @IsOptional — class-validator only skips on null/undefined,
+        // so an empty string still fails. Omit empties.
+        ...(summary && summary.length >= 5 ? { summary } : {}),
         visibility: visibility || MediaVisibilityType.Private,
         tags: tags || [],
-        imageSrc: awsUrl + getImagePath(sanitizedKey) + '.jpeg',
-        // video: awsUrl + getVideoPath(sanitizedKey),
+        ...(image ? { imageSrc: awsUrl + getImagePath(sanitizedKey) + '.jpeg' } : {}),
         uri: awsUrl + getVideoPath(sanitizedKey),
         isPlayable: true,
-        eTag: '',
       };
 
       return await (api as ApiService).mediaItems.mediaItemControllerCreate({ createMediaItemDto }).toPromise();
     } catch (err) {
       console.log(err);
+      // Surface the failure so the redux loading state flips off and
+      // the caller can show a toast. Without this, the fulfilled
+      // reducer fires with payload=undefined and the page spinner
+      // hangs.
+      return thunkApi.rejectWithValue({
+        message: (err as Error)?.message || 'Failed to upload media item',
+      });
     }
   }
 );

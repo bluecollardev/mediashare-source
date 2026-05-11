@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, FlatList, Text, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
@@ -117,9 +118,15 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   useEffect(() => {
     clearCheckboxSelection();
     console.log('Media useEffect ONCE');
-    // console.log('Media useEffect loadData...');
-    // loadData().then();
   }, []);
+
+  // Refetch on focus so newly created / deleted items appear after
+  // returning from MediaItemAdd / MediaItemEdit.
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   

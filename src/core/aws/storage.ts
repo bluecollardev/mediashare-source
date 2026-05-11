@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { Storage } from 'aws-amplify';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 
@@ -199,17 +200,88 @@ export async function fetchAndPutToS3({
   }
 }
 
+// expo-video-thumbnails has no web implementation, so on web we draw the
+// first decoded video frame to a canvas and return a blob URL.
+async function getWebVideoThumbnail(
+  fileUri: string
+): Promise<{ uri: string } | undefined> {
+  if (typeof document === 'undefined') return undefined;
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.crossOrigin = 'anonymous';
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    video.src = fileUri;
+    const cleanup = () => {
+      video.removeAttribute('src');
+      video.load();
+    };
+    const fail = (err: any) => {
+      console.log('[getWebVideoThumbnail] failed', err);
+      cleanup();
+      resolve(undefined);
+    };
+    video.addEventListener('loadedmetadata', () => {
+      try {
+        video.currentTime = Math.min(1, (video.duration || 1) / 2);
+      } catch (err) {
+        fail(err);
+      }
+    });
+    video.addEventListener('seeked', () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 720;
+        canvas.height = video.videoHeight || 405;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return fail(new Error('canvas 2d unavailable'));
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            cleanup();
+            if (!blob) return resolve(undefined);
+            resolve({ uri: URL.createObjectURL(blob) });
+          },
+          'image/jpeg',
+          videoImageDefaultOptions.quality
+        );
+      } catch (err) {
+        fail(err);
+      }
+    });
+    video.addEventListener('error', () => fail(video.error));
+  });
+}
+
 async function getVideoImageFromUri(fileUri) {
-  let item;
-  try {
-    item = await VideoThumbnails.getThumbnailAsync(fileUri, videoImageDefaultOptions);
-  } catch (err) {
-    console.log('[getVideoImageFromUri] Error getting image, getImageAsync failed');
-    console.log('[getVideoImageFromUri] Make sure the file at [$fileUri] exists');
-    console.log('[getVideoImageFromUri] You may need to manually link the expo modules');
-    console.log(err);
+  if (Platform.OS === 'web') {
+    const result = await getWebVideoThumbnail(fileUri);
+    if (!result) {
+      console.log(
+        '[getVideoImageFromUri] web thumbnail generation returned no result'
+      );
+    }
+    return result;
   }
-  return item;
+  try {
+    return await VideoThumbnails.getThumbnailAsync(
+      fileUri,
+      videoImageDefaultOptions
+    );
+  } catch (err) {
+    console.log(
+      '[getVideoImageFromUri] Error getting image, getImageAsync failed'
+    );
+    console.log(
+      '[getVideoImageFromUri] Make sure the file at [$fileUri] exists'
+    );
+    console.log(
+      '[getVideoImageFromUri] You may need to manually link the expo modules'
+    );
+    console.log(err);
+    return undefined;
+  }
 }
 
 /**
@@ -218,11 +290,18 @@ async function getVideoImageFromUri(fileUri) {
  * @return string URL for uploaded AWS file
  */
 export async function uploadImageToS3({ fileUri, key }): Promise<string> {
-  const { uri: imageUri } = await getVideoImageFromUri(fileUri);
+  const thumbnail = await getVideoImageFromUri(fileUri);
+  if (!thumbnail?.uri) {
+    // Caller (uploadMediaToS3) treats a falsy image response as "no
+    // thumbnail" — the video upload still proceeds and the consumer
+    // shows the default placeholder.
+    console.log('[uploadImageToS3] skipping — no thumbnail available');
+    return undefined;
+  }
   const { imageKey } = KeyFactory(key);
   const payload = {
     key: imageKey,
-    fileUri: imageUri,
+    fileUri: thumbnail.uri,
     options: { contentType: 'image/jpeg' },
   };
   console.log(`[uploadImageToS3] ${JSON.stringify(payload, null, 2)}`);

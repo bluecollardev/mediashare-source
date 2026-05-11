@@ -127,7 +127,9 @@ export const Playlists = ({ globalState }: PageProps) => {
       console.log('Playlists useFocusEffect...');
       clearCheckboxSelection();
       checkIfAccountIsDeactivated();
-      // loadData().then();
+      // Refetch on focus so newly created / deleted playlists appear
+      // after returning from PlaylistAdd / PlaylistEdit.
+      loadData();
     }, []),
   );
 

@@ -97,8 +97,12 @@ const AppHeaderComponent = ({
           onPress={() => toggleSearch()}
           style={{
             transform: [{
+              // Only the filter-list icon should flip — rotating the
+              // magnifying glass doesn't convey expand/collapse state.
               rotate:
-                typeof filtersExpanded === 'function' && filtersExpanded(route?.name)
+                searchIcon === 'filter-list' &&
+                typeof filtersExpanded === 'function' &&
+                filtersExpanded(route?.name)
                   ? '180deg'
                   : '0deg',
             }],

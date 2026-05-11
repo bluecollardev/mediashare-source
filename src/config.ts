@@ -1,5 +1,11 @@
 import Constants from 'expo-constants';
 
+// Fallback when Constants.expoConfig.extra is empty (app.json doesn't
+// populate `awsUrl` in this repo). Without it, uri/imageSrc start with
+// "undefined" and the API rejects them.
+const DEFAULT_AWS_URL =
+  'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/';
+
 const environments = {
   local: {
     EnvName: 'local',
@@ -10,7 +16,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   development: {
@@ -22,7 +28,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   staging: {
@@ -34,7 +40,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   production: {
@@ -46,7 +52,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   }
 };
