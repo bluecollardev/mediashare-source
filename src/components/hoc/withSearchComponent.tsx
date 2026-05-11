@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
 import { makeEnum } from 'mediashare/core/utils/factory';
@@ -251,6 +252,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     flexBasis: 0,
                     minWidth: 0,
                     minHeight: 48,
+                    flexDirection: 'row',
                     backgroundColor: shouldShowApplyButton()
                       ? theme.colors.accent
                       : theme.colors.secondary,
@@ -259,6 +261,12 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     paddingHorizontal: 16,
                   }}
                 >
+                  <MaterialIcons
+                    name="check-circle"
+                    color="#ffffff"
+                    size={18}
+                    style={{ marginRight: 6 }}
+                  />
                   <Text
                     style={{
                       color: '#ffffff',
@@ -280,11 +288,18 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                       flexBasis: 72,
                       minHeight: 48,
                       marginLeft: 8,
+                      flexDirection: 'row',
                       backgroundColor: theme.colors.surface,
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
+                    <MaterialIcons
+                      name="clear"
+                      color="#ffffff"
+                      size={18}
+                      style={{ marginRight: 4 }}
+                    />
                     <Text
                       style={{
                         color: '#ffffff',
