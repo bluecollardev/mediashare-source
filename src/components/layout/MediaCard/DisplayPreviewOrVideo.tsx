@@ -56,20 +56,22 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews are square (1:1) thumbnails; video playback uses 16:9 so
-  // landscape clips don't get crammed into a square and look cropped.
-  const containerAspect = mediaDisplayMode === 'video' ? 16 / 9 : 1 / 1;
+  // Image previews stay full-width 1:1. Video plays at 16:9 scaled down to
+  // ~70% width (cap 480px), centered, so non-square content doesn't blow
+  // up the layout.
+  const isVideo = mediaDisplayMode === 'video';
+  const containerAspect = isVideo ? 16 / 9 : 1 / 1;
 
   return (
     <View
       style={{
         aspectRatio: containerAspect,
-        width: '100%',
+        width: isVideo ? '70%' : '100%',
+        maxWidth: isVideo ? 480 : undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
         backgroundColor: '#000',
-        overflow: 'hidden',
         ...style,
       }}
     >
