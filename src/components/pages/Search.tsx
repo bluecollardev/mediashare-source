@@ -179,7 +179,7 @@ export const Search = ({ globalState }: PageProps & any) => {
             ) : null}
             {(contentType !== SupportedContentTypes.playlists) ? (
               <TrendingSection
-                title="Trending Media Items"
+                title="Trending Media"
                 list={popularMediaItems}
                 max={10}
                 onItemPress={(item) =>

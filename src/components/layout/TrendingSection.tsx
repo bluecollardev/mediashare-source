@@ -18,10 +18,22 @@ export interface TrendingSectionProps {
 export const TrendingSection = ({ title, list = [], max = 8, onItemPress = () => undefined }: TrendingSectionProps) => {
   const items = (list || []).slice(0, max);
   const cardWidth = Math.min(160, Dimensions.get('window').width * 0.42);
-  if (items.length === 0) return null;
   return (
     <View style={{ marginTop: 16, marginBottom: 8 }}>
       <SectionHeader title={title} />
+      {items.length === 0 ? (
+        <Text
+          style={{
+            color: theme.colors.placeholder,
+            fontSize: 12,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            fontStyle: 'italic',
+          }}
+        >
+          Loading...
+        </Text>
+      ) : null}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
