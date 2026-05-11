@@ -143,7 +143,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
         />
         <MediaComponentWithSearch
           globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loaded={!loading}
           loadData={loadData}
           defaultSearchTarget="media"
           showNetworkContentSwitch={true}

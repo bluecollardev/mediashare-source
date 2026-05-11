@@ -134,7 +134,11 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function searchIsFiltering(searchKey: string): boolean | undefined {
       const filters = getSearchFilters(searchKey);
       if (filters === undefined) return;
-      return !!filters?.text || filters?.tags?.length > 0;
+      return (
+        !!filters?.text ||
+        filters?.tags?.length > 0 ||
+        !!filters?.networkContent
+      );
     }
     
     function updateSearchFilters(searchKey: string, value: any) {

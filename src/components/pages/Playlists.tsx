@@ -189,7 +189,7 @@ export const Playlists = ({ globalState }: PageProps) => {
         />
         <PlaylistsComponentWithSearch
           globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loaded={!loading}
           loadData={loadData}
           defaultSearchTarget="playlists"
           showNetworkContentSwitch={true}

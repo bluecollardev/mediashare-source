@@ -109,7 +109,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
           setIsLoaded(true);
         });
       }
-    }, [isLoaded, isMountedRef]);
+    }, [loaded, isLoaded, isMountedRef]);
   
     useEffect(() => {
       if (searchFilters?.text) {
