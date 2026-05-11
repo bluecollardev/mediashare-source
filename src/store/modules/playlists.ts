@@ -12,12 +12,12 @@ export const playlistsActions = makeActions(playlistsActionNames);
 export const findUserPlaylists = createAsyncThunk(playlistsActions.findPlaylists.type, async (args: { text?: string; tags?: string[]; networkContent?: boolean }, thunkApi) => {
   const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [], networkContent } = args;
-  // When network content is included, hit /api/search with the
-  // network-only target — returns subscriber-content creators' content
-  // only, NOT a union with the user's own.
+  // "Include Network Content" → union of the user's own playlists with
+  // subscriber-content creators' public/subscription playlists. The
+  // /api/search?target=playlists branch already builds that union.
   if (networkContent) {
     return await (api as ApiService).search
-      .searchControllerFindAll({ target: 'network-playlists', text, tags })
+      .searchControllerFindAll({ target: 'playlists', text, tags })
       .toPromise();
   }
   return await (api as ApiService).playlists.playlistControllerFindAll({ text, tags }).toPromise();
@@ -29,7 +29,7 @@ export const getUserPlaylists = createAsyncThunk(
     const { api } = thunkApiWithState(thunkApi);
     if (opts?.networkContent) {
       return await (api as ApiService).search
-        .searchControllerFindAll({ target: 'network-playlists' })
+        .searchControllerFindAll({ target: 'playlists' })
         .toPromise();
     }
     return await (api as ApiService).playlists
