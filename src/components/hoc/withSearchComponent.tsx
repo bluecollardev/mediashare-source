@@ -295,7 +295,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     }}
                   >
                     <MaterialIcons
-                      name="clear"
+                      name="cancel"
                       color="#ffffff"
                       size={18}
                       style={{ marginRight: 4 }}
