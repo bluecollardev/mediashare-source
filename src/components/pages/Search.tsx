@@ -93,7 +93,7 @@ export const Search = ({ globalState }: PageProps & any) => {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(refresh, [dispatch]);
 
-  const { entities = [] as any[], loaded } = useAppSelector((state) => state?.search);
+  const { entities = [] as any[], loaded, loading } = useAppSelector((state) => state?.search);
   const searchResults = globalState?.searchIsFiltering(searchKey) ? entities : [];
   const popularPlaylists = useAppSelector((state) => state?.playlists?.popular) || [];
   const popularMediaItems = useAppSelector((state) => state?.mediaItems?.popular) || [];
@@ -129,7 +129,7 @@ export const Search = ({ globalState }: PageProps & any) => {
       <KeyboardAvoidingPageContent refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <SearchComponent
           globalState={globalState}
-          loaded={loaded}
+          loaded={!loading}
           loadData={loadData}
           defaultSearchTarget={SupportedContentTypes.playlists}
           showSearchTargetField={true}
@@ -156,7 +156,9 @@ export const Search = ({ globalState }: PageProps & any) => {
         />
         {searchResults.length === 0 ? (
           <ScrollView>
-            {globalState?.searchIsFiltering(searchKey) === true ? (
+            {/* If the user has tags filtering and still no results, "no results".
+                Otherwise show Popular Tags so they can pick one to refine. */}
+            {globalState?.getSearchFilters(searchKey)?.tags?.length > 0 ? (
               <NoContent messageButtonText="No results were found." icon="info" />
             ) : (
               <TagBlocks
