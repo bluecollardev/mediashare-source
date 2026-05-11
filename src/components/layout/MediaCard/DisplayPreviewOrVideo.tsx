@@ -99,6 +99,13 @@ const checkUrl = () => {
           loop: true,
           controls: true,
           playsInline: true,
+          // Strip PiP / download / remote-playback from the control bar so
+          // the only "popout-y" buttons left are play, seek, volume, and
+          // fullscreen. PiP on Chrome opens a tiny floating window which
+          // can be confused for "new tab".
+          controlsList: 'nopictureinpicture nodownload noremoteplayback',
+          disablePictureInPicture: true,
+          disableRemotePlayback: true,
           style: {
             width: '100%',
             height: '100%',
