@@ -19,11 +19,12 @@ export const findMediaItems = createAsyncThunk(mediaItemsActions.findMediaItems.
   console.log('findMediaItems...');
   const { api } = thunkApiWithState(thunkApi);
   const { text, tags = [], networkContent } = args;
-  // When network content is included, route through the search endpoint
-  // which unions owner content with master subscriber-content creators'.
+  // When network content is included, hit /api/search with the
+  // network-only target — returns subscriber-content creators' media
+  // only, NOT a union with the user's own.
   if (networkContent) {
     return await (api as ApiService).search
-      .searchControllerFindAll({ target: 'media', text, tags })
+      .searchControllerFindAll({ target: 'network-media', text, tags })
       .toPromise();
   }
   return await (api as ApiService).mediaItems.mediaItemControllerFindAll({ text, tags }).toPromise();
