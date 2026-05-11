@@ -56,20 +56,21 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
-  // Image previews stay 1:1. For video, drop the forced aspectRatio so the
-  // wrapper hugs the video's natural aspect (no black bars on either side).
+  // Both image and video share the same 1:1 bounding box so playback
+  // doesn't shift the layout — the video occupies exactly the slot the
+  // poster did. The video inside scales to fit (contain) so non-square
+  // content shows with bars rather than getting cropped.
   const isVideo = mediaDisplayMode === 'video';
 
   return (
     <View
       style={{
-        aspectRatio: isVideo ? undefined : 1 / 1,
+        aspectRatio: 1 / 1,
         width: '100%',
-        maxWidth: undefined,
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
-        backgroundColor: isVideo ? 'transparent' : '#000',
+        backgroundColor: '#000',
         ...style,
       }}
     >
@@ -94,13 +95,14 @@ const checkUrl = () => {
           src: mediaUrl,
           poster: imageSrc && !isDefaultImage ? imageSrc : undefined,
           autoPlay: true,
-          muted: true,
+          muted: false,
           loop: true,
           controls: true,
           playsInline: true,
           style: {
             width: '100%',
-            height: 'auto',
+            height: '100%',
+            objectFit: 'contain',
             display: 'block',
             backgroundColor: '#000',
           },
@@ -128,10 +130,10 @@ const checkUrl = () => {
           posterSource={imageSrc ? { uri: imageSrc } : undefined}
           posterStyle={{ resizeMode: 'contain' as any }}
           source={{ uri: mediaUrl }}
-          // Autoplay muted so Chrome/Safari allow it AND the native control
-          // overlay becomes visible. User can unmute via the controls.
+          // Sound on by default. Browsers may block autoplay-with-sound; if
+          // so, the native control overlay lets the user start playback.
           shouldPlay={true}
-          isMuted={true}
+          isMuted={false}
           useNativeControls={true}
           resizeMode={ResizeMode.CONTAIN}
           isLooping={true}
