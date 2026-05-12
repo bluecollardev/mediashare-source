@@ -50,6 +50,9 @@ import MediaItemEdit from './components/pages/MediaItemEdit';
 import SharePlaylistsWith from './components/pages/SharePlaylistsWith';
 import Shared from './components/pages/Shared';
 import AccountEdit from './components/pages/AccountEdit';
+import AccountManagement from './components/pages/AccountManagement';
+import ManageUsers from './components/pages/ManageUsers';
+import AccountSuspended from './components/pages/AccountSuspended';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
@@ -123,7 +126,9 @@ const AccountNavigation = ({ globalState }) => {
   }, []);
   return (
     <AccountStackNavigator.Navigator initialRouteName={'accountEdit'}>
-      <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
+      <AccountStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
+      <AccountStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
       <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
@@ -135,7 +140,9 @@ const NetworkNavigation = () => {
   return (
     <NetworkStackNavigator.Navigator initialRouteName={'account'}>
       <NetworkStackNavigator.Screen {...routeConfig.account} component={Shared} />
-      <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
+      <NetworkStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
       <NetworkStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
@@ -244,7 +251,7 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
     <RootNavigator.Navigator>
       {isCurrentUser ? (
         <>
-          <RootNavigator.Screen name="Private" component={PrivateMainNavigationWithGlobalState} options={{ headerShown: false }} />
+          <RootNavigator.Screen name="SuspendedGate" component={SuspendedGateWithGlobalState} options={{ headerShown: false }} />
           <RootNavigator.Screen name="Account" component={AccountNavigationWithGlobalState} options={{ headerShown: false, presentation: 'modal' }} />
         </>
       ) : (
@@ -255,6 +262,20 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
     </RootNavigator.Navigator>
   );
 };
+
+/**
+ * Authenticated route gate: a suspended user (state.user.entity.isDisabled)
+ * gets the AccountSuspended takeover instead of the regular nav tree —
+ * they can sign out but otherwise see nothing else.
+ */
+const SuspendedGate = () => {
+  const isSuspended = useAppSelector(
+    (state: any) => state?.user?.entity?.isDisabled === true
+  );
+  if (isSuspended) return <AccountSuspended />;
+  return <PrivateMainNavigationWithGlobalState />;
+};
+const SuspendedGateWithGlobalState = withGlobalStateProvider(SuspendedGate);
 
 const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
 

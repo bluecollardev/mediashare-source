@@ -16,6 +16,7 @@ import { reducer as mediaItemsReducer } from './modules/mediaItems';
 import { reducer as mediaItemReducer } from './modules/mediaItem';
 import { reducer as shareItemsReducer } from './modules/shareItems';
 import { reducer as tagsReducer } from './modules/tags';
+import { reducer as adminUsersReducer } from './modules/adminUsers';
 
 // Combine our reducers and export
 const rootReducer = combineReducers({
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
   mediaItems: mediaItemsReducer,
   shareItems: shareItemsReducer,
   tags: tagsReducer,
+  adminUsers: adminUsersReducer,
 });
 
 export { rootReducer };

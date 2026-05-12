@@ -117,6 +117,14 @@ const routeConfig = {
     name: 'accountEdit',
     options: { title: 'Manage Account', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
   },
+  editAccount: {
+    name: 'editAccount',
+    options: { title: 'Edit Account', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
+  manageUsers: {
+    name: 'manageUsers',
+    options: { title: 'Manage Users', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
   contact: {
     name: 'contact',
     options: {
