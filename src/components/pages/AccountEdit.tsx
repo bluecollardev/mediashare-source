@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Text } from 'react-native-paper';
+import { theme } from 'mediashare/styles';
 import * as R from 'remeda';
 import { from } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
@@ -26,7 +29,7 @@ const AccountEdit = ({ route }: AccountEditProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const profile = useProfile();
-  const [state, setState] = useState(R.pick(profile, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id']));
+  const [state, setState] = useState(R.pick(profile as any, ['username', 'email', 'firstName', 'lastName', 'phoneNumber', 'imageSrc', 'role', '_id', 'isAdmin', 'isDisabled'] as any));
   const withoutName = () => state?.username?.length<1 || state?.firstName?.length < 1 || state?.lastName?.length < 1 || state?.email?.length < 1 || state?.phoneNumber?.length < 1 ||validEmail   ;
 
   const fullName = state?.firstName && state?.lastName ? `${state?.firstName} ${state?.lastName}` : 'Unnamed User';
@@ -82,15 +85,47 @@ const AccountEdit = ({ route }: AccountEditProps) => {
               onUpdateAvatarClicked={() => pickImage()}
             />
           </View>
-          <View style={styles.formSection}>
-            <TextInput  label="Shared Type" value={state?.role} disabled={true}   >
-            </TextInput>
-            <HelperText style={{top:-11}} type="error">{''}</HelperText>
+          <View style={styles.statusRow}>
+            {state?.role ? (
+              <Text style={styles.statusRoleText}>
+                {(state.role as string) === 'admin'
+                  ? 'System'
+                  : (state.role as string)}
+              </Text>
+            ) : null}
+            {(state as any)?.isAdmin ? (
+              <View style={styles.statusBadge}>
+                <MaterialIcons
+                  name="verified-user"
+                  color={theme.colors.accent}
+                  size={12}
+                  style={{ marginRight: 4 }}
+                />
+                <Text
+                  style={[styles.statusBadgeText, { color: theme.colors.accent }]}
+                >
+                  Admin
+                </Text>
+              </View>
+            ) : null}
+            {(state as any)?.isDisabled ? (
+              <View style={styles.statusBadge}>
+                <MaterialIcons
+                  name="block"
+                  color={theme.colors.error}
+                  size={12}
+                  style={{ marginRight: 4 }}
+                />
+                <Text
+                  style={[styles.statusBadgeText, { color: theme.colors.error }]}
+                >
+                  Suspended
+                </Text>
+              </View>
+            ) : null}
           </View>
-          <View style={styles.formSection}>
-            <TextInput  onChangeText={(text) => onUpdate({ username: text })} label="Username*" value={state?.username?.toLowerCase()} disabled={true} />
-            <HelperText style={{top:-11}} type="error">{state?.username?.length===0? 'Required':''}</HelperText>
-          </View>
+          {/* Username is set at signup and never edited from this
+              screen — hide it on edit. */}
           <View style={styles.formSection}>
             <TextInput onChangeText={(text) => onUpdate({ firstName: text })} label="First Name*" value={state?.firstName} disabled={!isLoaded} />
             <HelperText style={{top:-11}} type="error">{state?.firstName?.length===0? 'Required':''}</HelperText>
@@ -163,6 +198,26 @@ const styles = StyleSheet.create({
   },
   formSection: {
     // marginBottom: 5,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  statusRoleText: {
+    color: theme.colors.text,
+    fontSize: 13,
+    marginRight: 12,
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  statusBadgeText: {
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   title: {
     fontWeight: 'bold',
