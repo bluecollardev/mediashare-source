@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import { MultiSelectIcon } from 'mediashare/components/form';
@@ -142,9 +142,23 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
     // console.log('wrapped component style');
     // console.log(wrappedComponentStyle); */
     
+    // On web, pin the search/filter UI to the top of the scrolling
+    // container so it stays visible as the user scrolls through
+    // results. `position: 'sticky'` is web-only (react-native-web
+    // passes it through). On native, fall back to default flow.
+    const stickyHeaderStyle =
+      Platform.OS === 'web'
+        ? ({
+            position: 'sticky' as any,
+            top: 0,
+            zIndex: 10,
+            backgroundColor: theme.colors.background,
+          } as any)
+        : undefined;
+
     return (
       <>
-        <>
+        <View style={stickyHeaderStyle}>
           {(forcedSearchMode ? forcedSearchMode : searchActive) ? (
             <View style={{ marginBottom: 10 }}>
               <Searchbar
@@ -159,6 +173,47 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                 onFocus={() => setFiltersExpanded(true)}
                 autoCapitalize="none"
               />
+            </View>
+          ) : null}
+          {/* Read-only chip display of selected tags while the filter
+              panel is collapsed — gives the user feedback about active
+              tag filters without exposing the dropdown control. */}
+          {!(filtersExpanded || shouldShowApplyButton()) &&
+            (forcedSearchMode ? forcedSearchMode : searchActive) &&
+            searchTags?.length > 0 ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                paddingHorizontal: 4,
+                marginBottom: 10,
+              }}
+            >
+              {searchTags.map((tagKey) => {
+                const label =
+                  mappedTags.find((t) => t.key === tagKey)?.value || tagKey;
+                return (
+                  // Plain View+Text instead of <Chip> so there's no
+                  // tappable area and no risk of a close-X glyph
+                  // sneaking in via library defaults.
+                  <View
+                    key={`collapsed-tag-${tagKey}`}
+                    style={{
+                      margin: 4,
+                      paddingHorizontal: 10,
+                      paddingVertical: 4,
+                      borderRadius: 14,
+                      backgroundColor: theme.colors.surface,
+                    }}
+                  >
+                    <Text
+                      style={{ color: theme.colors.text, fontSize: 12 }}
+                    >
+                      {label}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           ) : null}
           {filtersExpanded || shouldShowApplyButton() ? (
@@ -206,7 +261,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   onSelectedItemsChange={updateSearchTags}
                   selectedItems={searchTags}
                   hideSearch={true}
-                  showRemoveAll={true}
+                  showRemoveAll={false}
                   expandDropDowns={false}
                   readOnlyHeadings={false}
                   showDropDowns={true}
@@ -229,10 +284,10 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   </View>
                 </>
               ) : null}
-              
+
             </>
             ) : null}
-          {filtersExpanded || shouldShowApplyButton() || hasActiveFilters() ? (
+          {filtersExpanded || shouldShowApplyButton() ? (
             <>
               <View
                 style={{
@@ -242,7 +297,6 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                   marginTop: showNetworkContentSwitch ? 15 : 0,
                 }}
               >
-                {filtersExpanded || shouldShowApplyButton() ? (
                 <TouchableOpacity
                   accessibilityRole="button"
                   disabled={!shouldShowApplyButton()}
@@ -278,22 +332,17 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
                     Apply
                   </Text>
                 </TouchableOpacity>
-                ) : null}
                 {hasActiveFilters() ? (
                   <TouchableOpacity
                     accessibilityRole="button"
                     onPress={() => clearSearch()}
                     style={{
-                      // When the filter panel is collapsed and there are
-                      // active filters, Clear is the only visible action —
-                      // let it stretch to fill the row instead of sitting
-                      // as a fixed 96px button.
-                      width: filtersExpanded || shouldShowApplyButton() ? 96 : undefined,
-                      flexGrow: filtersExpanded || shouldShowApplyButton() ? 0 : 1,
+                      width: 96,
+                      flexGrow: 0,
                       flexShrink: 0,
-                      flexBasis: filtersExpanded || shouldShowApplyButton() ? 96 : 0,
+                      flexBasis: 96,
                       minHeight: 48,
-                      marginLeft: filtersExpanded || shouldShowApplyButton() ? 8 : 0,
+                      marginLeft: 8,
                       flexDirection: 'row',
                       backgroundColor: theme.colors.surface,
                       alignItems: 'center',
@@ -321,7 +370,7 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
               <Divider style={{ marginTop: showNetworkContentSwitch ? 15 : 0 }} />
             </>
           ) : null}
-        </>
+        </View>
         <WrappedComponent
           globalState={globalState}
           {...rest}
