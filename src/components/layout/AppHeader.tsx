@@ -116,9 +116,9 @@ const AppHeaderComponent = ({
             avatar ? <Avatar.Image style={{ marginHorizontal: 16 }} source={ { uri: avatar } } size={36}  />
             : <Avatar.Icon size={36} icon="person" />
           }
-    
+
         </TouchableWithoutFeedback>
-      ) : <Avatar.Icon size={36} icon="person" />}
+      ) : null}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}
     </Appbar.Header>
   );
