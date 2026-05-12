@@ -66,9 +66,22 @@ export const withSearchComponent = (WrappedComponent: any, searchKey: string) =>
 
     const mappedTags = useMemo(() => {
       const availableTags = Array.isArray(globalState?.tags) ? globalState.tags : [];
-      if (searchTarget?.[0] === SupportedContentTypes.playlists) return availableTags.filter((tag) => tag.isPlaylistTag);
-      if (searchTarget?.[0] === SupportedContentTypes.media) return availableTags.filter((tag) => tag.isMediaTag);
-      return availableTags;
+      let filtered = availableTags;
+      if (searchTarget?.[0] === SupportedContentTypes.playlists)
+        filtered = availableTags.filter((tag) => tag.isPlaylistTag);
+      else if (searchTarget?.[0] === SupportedContentTypes.media)
+        filtered = availableTags.filter((tag) => tag.isMediaTag);
+      // De-duplicate by key — some tags (e.g. 'pricing', 'pain-relief')
+      // exist as both a media-tag and a playlist-tag with the same key
+      // string; the 'all' target unions both, which makes React /
+      // SectionedMultiSelect complain about duplicate keys when the
+      // dropdown opens.
+      const seen = new Set<string>();
+      return filtered.filter((tag: any) => {
+        if (seen.has(tag.key)) return false;
+        seen.add(tag.key);
+        return true;
+      });
     }, [globalState?.tags, searchTarget]);
     ``
     const shouldShowApplyButton = () => {

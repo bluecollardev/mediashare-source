@@ -49,6 +49,7 @@ const mediaItemActionNames = [
   'upload_media_item',
   'get_feed_media_items',
   'save_feed_media_items',
+  'report_media_item',
 ] as const;
 
 export const mediaItemActions = makeActions(mediaItemActionNames);
@@ -190,6 +191,19 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
 
   return await Promise.all(dtoPromises);
 });
+
+export const reportMediaItem = createAsyncThunk(
+  mediaItemActions.reportMediaItem.type,
+  async (
+    args: { mediaId: string; reason?: string; comment?: string },
+    thunkApi
+  ) => {
+    const { api } = thunkApiWithState(thunkApi);
+    return await (api as ApiService).mediaItems
+      .mediaItemControllerReport(args)
+      .toPromise();
+  }
+);
 
 export const setActiveMediaItem = createAction<MediaItemDto, 'setActiveMediaItem'>('setActiveMediaItem');
 

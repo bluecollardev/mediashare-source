@@ -47,6 +47,35 @@ export interface PlaylistItemControllerUpdateRequest {
 export class PlaylistItemsApi extends BaseAPI {
 
     /**
+     * Report a playlist item as inappropriate. Increments
+     * reportedCount server-side. Manually added — backend at
+     * POST /api/playlist-items/:playlistItemId/report.
+     */
+    playlistItemControllerReport(
+        { playlistItemId, reason, comment }: { playlistItemId: string; reason?: string; comment?: string }
+    ): Observable<object>
+    playlistItemControllerReport(
+        { playlistItemId, reason, comment }: { playlistItemId: string; reason?: string; comment?: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>>
+    playlistItemControllerReport(
+        { playlistItemId, reason, comment }: { playlistItemId: string; reason?: string; comment?: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>> {
+        throwIfNullOrUndefined(playlistItemId, 'playlistItemId', 'playlistItemControllerReport');
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<object>({
+            url: '/api/playlist-items/{playlistItemId}/report'.replace('{playlistItemId}', encodeURI(playlistItemId)),
+            method: 'POST',
+            headers,
+            body: { reason, comment },
+        }, opts?.responseOpts);
+    };
+
+    /**
      */
     playlistItemControllerCreate({ createPlaylistItemDto }: PlaylistItemControllerCreateRequest): Observable<object>
     playlistItemControllerCreate({ createPlaylistItemDto }: PlaylistItemControllerCreateRequest, opts?: OperationOpts): Observable<RawAjaxResponse<object>>

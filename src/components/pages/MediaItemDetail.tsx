@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, useWindowDimensions } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
@@ -23,6 +23,9 @@ import {
 } from 'mediashare/hooks/navigation';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { theme } from 'mediashare/styles';
+import ReportContentDialog from 'mediashare/components/layout/ReportContentDialog';
+import { useSnack } from 'mediashare/hooks/useSnack';
+import { reportMediaItem } from 'mediashare/store/modules/mediaItem';
 
 // @ts-ignore
 export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
@@ -57,6 +60,9 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
   const { width, height } = useWindowDimensions();
   const isPortrait = height > width;
   const hasPlaylistContext = !!selectedPlaylist && playlistMediaItems.length > 0;
+
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const { element: reportSnack, onToggleSnackBar, setMessage } = useSnack();
 
   const activateMediaItem = (item: any) => {
     if (item?._id) {
@@ -144,6 +150,7 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
             likes={likesCount}
             shares={shareCount}
             views={viewCount}
+            onReport={() => setShowReportDialog(true)}
           >
             {!isPortrait && hasPlaylistContext ? (
               <View>
@@ -173,6 +180,24 @@ export const MediaItemDetail = ({ globalState = { tags: [] } }: PageProps) => {
             </View>
           ) : null}
         </ScrollView>
+        <ReportContentDialog
+          visible={showReportDialog}
+          onDismiss={() => setShowReportDialog(false)}
+          contextTitle={title}
+          onSubmit={async ({ reason, comment }) => {
+            try {
+              await (dispatch as any)(
+                reportMediaItem({ mediaId: _id as string, reason, comment })
+              );
+              setMessage('Thanks — your report has been submitted.');
+              onToggleSnackBar(true);
+            } catch (err: any) {
+              setMessage(err?.message || 'Failed to submit report');
+              onToggleSnackBar(false);
+            }
+          }}
+        />
+        {reportSnack}
       </PageContent>
     </PageContainer>
   );

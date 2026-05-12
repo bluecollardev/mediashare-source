@@ -139,8 +139,8 @@ const AccountEdit = ({ route }: AccountEditProps) => {
             <HelperText style={{top:-11}} type="error">{validEmail || state?.email?.length===0? 'Please enter valid email':''}</HelperText>
           </View>
           <View style={styles.formSection}>
-            <TextInput  onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber} disabled={!isLoaded} />
-            <HelperText  type="error">{state?.phoneNumber?.length===0? 'Required':''}</HelperText>
+            <TextInput onChangeText={(text) => onUpdate({ phoneNumber: text })} label="Phone Number*" value={state?.phoneNumber || ''} disabled={!isLoaded} />
+            <HelperText style={{top:-11}} type="error">{state?.phoneNumber?.length===0? 'Required':''}</HelperText>
           </View>
           <ActionButtons
             disablePrimary={withoutName()}

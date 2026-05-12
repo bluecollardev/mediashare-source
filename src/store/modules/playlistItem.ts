@@ -9,7 +9,7 @@ import { forkJoin } from 'rxjs';
 const mediaPlaceholder = 'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/temp/background-comp.jpg';
 
 // Define these in snake case or our converter won't work... we need to fix that
-const playlistItemActionNames = ['get_playlist_item', 'add_playlist_item', 'update_playlist_item', 'share_playlist_item', 'remove_playlist_item'] as const;
+const playlistItemActionNames = ['get_playlist_item', 'add_playlist_item', 'update_playlist_item', 'share_playlist_item', 'remove_playlist_item', 'report_playlist_item'] as const;
 
 export const playlistItemActions = makeActions(playlistItemActionNames);
 
@@ -62,6 +62,19 @@ export const deletePlaylistItem = createAsyncThunk(playlistItemActions.removePla
   await deleteFromStorage(key);
   return await (api as ApiService).playlistItems.playlistItemControllerRemove({ playlistItemId: id }).toPromise();
 });
+
+export const reportPlaylistItem = createAsyncThunk(
+  playlistItemActions.reportPlaylistItem.type,
+  async (
+    args: { playlistItemId: string; reason?: string; comment?: string },
+    thunkApi
+  ) => {
+    const { api } = thunkApiWithState(thunkApi);
+    return await (api as ApiService).playlistItems
+      .playlistItemControllerReport(args)
+      .toPromise();
+  }
+);
 
 export const setActivePlaylistItem = createAction<PlaylistItemDto, 'setActivePlaylistItem'>('setActivePlaylistItem');
 
