@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Text } from 'react-native-paper';
@@ -11,6 +11,7 @@ import {
   PageProps,
   KeyboardAvoidingPageContent,
 } from 'mediashare/components/layout';
+import MyQrCodeDialog from 'mediashare/components/layout/MyQrCodeDialog';
 import { theme } from 'mediashare/styles';
 
 interface MenuOption {
@@ -36,6 +37,7 @@ const AccountManagement = (_props: PageProps) => {
   const goToManageUsers = useRouteName(routeNames.manageUsers);
   const goToEditAccount = useRouteName(routeNames.editAccount);
   const goToReportedContent = useRouteName(routeNames.reportedContent);
+  const [showQrDialog, setShowQrDialog] = useState(false);
 
   const options: MenuOption[] = [
     ...(isAdmin
@@ -53,6 +55,13 @@ const AccountManagement = (_props: PageProps) => {
       title: 'Edit Account',
       description: 'Update your profile photo, name, email, and phone.',
       onPress: () => goToEditAccount(),
+    },
+    {
+      icon: 'qr-code-2',
+      title: 'My QR Code',
+      description:
+        'Show your personal invite QR — share it so others can connect with you.',
+      onPress: () => setShowQrDialog(true),
     },
     ...(isAdmin
       ? [
@@ -117,6 +126,10 @@ const AccountManagement = (_props: PageProps) => {
           </TouchableOpacity>
         ))}
       </KeyboardAvoidingPageContent>
+      <MyQrCodeDialog
+        visible={showQrDialog}
+        onDismiss={() => setShowQrDialog(false)}
+      />
     </PageContainer>
   );
 };
