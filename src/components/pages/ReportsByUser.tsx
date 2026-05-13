@@ -203,11 +203,11 @@ const ReporterRow: React.FC<{
                     </View>
                   )}
                   <View style={{ flex: 1 }}>
-                    <View style={styles.entryTitleRow}>
-                      <Text style={styles.entryTitle} numberOfLines={1}>
-                        {entry.title || '(untitled)'}
-                      </Text>
-                      {entry.isSuspended ? (
+                    <Text style={styles.entryTitle} numberOfLines={1}>
+                      {entry.title || '(untitled)'}
+                    </Text>
+                    {entry.isSuspended ? (
+                      <View style={styles.entrySuspendedRow}>
                         <View style={styles.entrySuspendedBadge}>
                           <MaterialIcons
                             name="block"
@@ -219,8 +219,8 @@ const ReporterRow: React.FC<{
                             Suspended
                           </Text>
                         </View>
-                      ) : null}
-                    </View>
+                      </View>
+                    ) : null}
                     {uploaderName ? (
                       <Text style={styles.entryUploader} numberOfLines={1}>
                         by {uploaderName}
@@ -229,9 +229,15 @@ const ReporterRow: React.FC<{
                       </Text>
                     ) : null}
                     <Text style={styles.entryMeta}>
+                      <Text style={styles.entryMetaLabel}>Reason:</Text>{' '}
                       {entry.reason || 'unspecified'}
-                      {entry.comment ? `  ·  ${entry.comment}` : ''}
                     </Text>
+                    {entry.comment ? (
+                      <Text style={styles.entryMeta}>
+                        <Text style={styles.entryMetaLabel}>Comment:</Text>{' '}
+                        {entry.comment}
+                      </Text>
+                    ) : null}
                     <Text style={styles.entryDate}>
                       {formatDate(entry.reportedAt)}
                     </Text>
@@ -557,13 +563,12 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontStyle: 'italic',
   },
-  entryTitleRow: {
+  entrySuspendedRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    marginTop: 4,
   },
   entrySuspendedBadge: {
-    marginLeft: 8,
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.error,
@@ -602,6 +607,10 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     fontSize: 12,
     marginTop: 2,
+  },
+  entryMetaLabel: {
+    color: theme.colors.textDarker,
+    fontFamily: theme.fonts.medium.fontFamily,
   },
   entryDate: {
     color: theme.colors.textDarker,
