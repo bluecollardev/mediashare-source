@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Portal, Text, Button, Dialog } from 'react-native-paper';
+import { Button, Dialog, IconButton, Portal, Text } from 'react-native-paper';
 import {
   Image,
   KeyboardAvoidingView,
@@ -27,6 +27,27 @@ interface IFromInput {
 }
 
 type Mode = 'email' | 'qr' | 'scan';
+
+// Fetch the QR PNG and offer it as a browser download — the QR
+// service we use doesn't send Content-Disposition, so a bare anchor
+// would just open the image. Web only; native should use Share /
+// expo-media-library in a follow-up.
+async function downloadQrImageWeb(qrSrc: string, filename: string) {
+  try {
+    const res = await fetch(qrSrc);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  } catch (err) {
+    console.log('[QR] download failed', err);
+  }
+}
 
 export default function ModalSheet({
   showDialog,
@@ -180,6 +201,18 @@ export default function ModalSheet({
                       resizeMode="contain"
                       accessibilityLabel="Invite QR code"
                     />
+                    {Platform.OS === 'web' ? (
+                      <IconButton
+                        icon="cloud-download"
+                        iconColor={theme.colors.text}
+                        size={20}
+                        onPress={() =>
+                          downloadQrImageWeb(qrSrc, 'invite-qr.png')
+                        }
+                        style={styles.qrDownloadBtn}
+                        accessibilityLabel="Download QR code"
+                      />
+                    ) : null}
                   </View>
                   <Text style={styles.qrHelp}>
                     Have the person scan this with their phone camera
@@ -366,6 +399,13 @@ const styles = StyleSheet.create({
   qrImage: {
     width: 240,
     height: 240,
+  },
+  qrDownloadBtn: {
+    position: 'absolute',
+    right: -4,
+    top: -4,
+    margin: 0,
+    backgroundColor: 'rgba(0,0,0,0.04)',
   },
   qrHelp: {
     color: theme.colors.text,

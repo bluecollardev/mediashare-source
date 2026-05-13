@@ -1,8 +1,32 @@
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet, View } from 'react-native';
-import { Button, Dialog, Portal, Text } from 'react-native-paper';
+import { Image, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Button, Dialog, IconButton, Portal, Text } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { theme } from 'mediashare/styles';
+
+/**
+ * On web, fetch the QR image and trigger a browser download with a
+ * sensible filename. api.qrserver.com doesn't set a
+ * Content-Disposition header, so a direct anchor would just open the
+ * image — fetching to a blob and downloading via an object URL is
+ * the reliable cross-browser path.
+ */
+async function downloadQrImage(qrSrc: string, filename: string) {
+  try {
+    const res = await fetch(qrSrc);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  } catch (err) {
+    console.log('[QR] download failed', err);
+  }
+}
 
 interface Props {
   visible: boolean;
@@ -41,7 +65,27 @@ export const MyQrCodeDialog: React.FC<Props> = ({ visible, onDismiss }) => {
           style={{ borderRadius: 10 }}
         >
           <Dialog.Content>
-            <Text style={styles.title}>Your QR Code</Text>
+            <View style={styles.header}>
+              <Text style={styles.title}>Your QR Code</Text>
+              {Platform.OS === 'web' ? (
+                <IconButton
+                  icon="cloud-download"
+                  iconColor={theme.colors.text}
+                  size={20}
+                  onPress={() =>
+                    downloadQrImage(
+                      qrSrc,
+                      `${(fullName || 'invite').replace(
+                        /\s+/g,
+                        '-'
+                      )}-qr.png`
+                    )
+                  }
+                  style={styles.downloadBtn}
+                  accessibilityLabel="Download QR code"
+                />
+              ) : null}
+            </View>
             {fullName ? (
               <Text style={styles.subtitle} numberOfLines={1}>
                 {fullName}
@@ -80,11 +124,22 @@ export const MyQrCodeDialog: React.FC<Props> = ({ visible, onDismiss }) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  downloadBtn: {
+    position: 'absolute',
+    right: -8,
+    top: -8,
+    margin: 0,
+  },
   title: {
     color: theme.colors.text,
     fontSize: 20,
     textAlign: 'center',
-    marginTop: 10,
   },
   subtitle: {
     color: theme.colors.textDarker,
