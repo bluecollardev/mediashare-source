@@ -19,7 +19,9 @@ export interface ReportedContentItem {
   contentType: 'mediaItem' | 'playlistItem';
   title?: string;
   imageSrc?: string;
+  uri?: string;
   createdBy?: string;
+  isSuspended?: boolean;
   reportedCount?: number;
   reports?: Array<{
     reason?: string;
@@ -36,6 +38,16 @@ export interface ReportedContentItem {
     lastName?: string;
     imageSrc?: string;
   }>;
+  uploader?: {
+    _id?: string;
+    sub?: string;
+    email?: string;
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    imageSrc?: string;
+    isDisabled?: boolean;
+  } | null;
 }
 
 export interface ReporterAbuseGroup {
@@ -45,7 +57,19 @@ export interface ReporterAbuseGroup {
     itemId: string;
     title?: string;
     imageSrc?: string;
+    uri?: string;
     contentType: 'mediaItem' | 'playlistItem';
+    uploaderSub?: string;
+    uploader?: {
+      _id?: string;
+      sub?: string;
+      email?: string;
+      username?: string;
+      firstName?: string;
+      lastName?: string;
+      imageSrc?: string;
+      isDisabled?: boolean;
+    } | null;
     reason?: string;
     comment?: string;
     reportedAt?: string;
@@ -58,6 +82,8 @@ export interface ReporterAbuseGroup {
     firstName?: string;
     lastName?: string;
     imageSrc?: string;
+    isDisabled?: boolean;
+    isAdmin?: boolean;
   } | null;
 }
 

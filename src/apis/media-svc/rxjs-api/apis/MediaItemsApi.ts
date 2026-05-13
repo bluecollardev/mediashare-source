@@ -47,6 +47,56 @@ export interface MediaItemControllerUpdateRequest {
 export class MediaItemsApi extends BaseAPI {
 
     /**
+     * Admin-only: suspend a media item (sets isSuspended=true) so
+     * feeds and search hide it from public surfaces.
+     */
+    mediaItemControllerSuspend(
+        { mediaId }: { mediaId: string }
+    ): Observable<object>
+    mediaItemControllerSuspend(
+        { mediaId }: { mediaId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>>
+    mediaItemControllerSuspend(
+        { mediaId }: { mediaId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>> {
+        throwIfNullOrUndefined(mediaId, 'mediaId', 'mediaItemControllerSuspend');
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<object>({
+            url: '/api/media-items/{mediaId}/suspend'.replace('{mediaId}', encodeURI(mediaId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    mediaItemControllerUnsuspend(
+        { mediaId }: { mediaId: string }
+    ): Observable<object>
+    mediaItemControllerUnsuspend(
+        { mediaId }: { mediaId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>>
+    mediaItemControllerUnsuspend(
+        { mediaId }: { mediaId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>> {
+        throwIfNullOrUndefined(mediaId, 'mediaId', 'mediaItemControllerUnsuspend');
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<object>({
+            url: '/api/media-items/{mediaId}/unsuspend'.replace('{mediaId}', encodeURI(mediaId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    /**
      * Report a media item as inappropriate. Increments reportedCount
      * server-side. Manually added — backend at
      * POST /api/media-items/:mediaId/report.

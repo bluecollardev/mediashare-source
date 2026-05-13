@@ -37,47 +37,71 @@ export const listAdminUsers = createAsyncThunk(
 export const deleteAdminUser = createAsyncThunk(
   adminUsersActions.deleteAdminUser.type,
   async (userId: string, thunkApi) => {
-    const { api } = thunkApiWithState(thunkApi);
-    await (api as ApiService).user
-      .userControllerDeleteUser({ userId })
-      .toPromise();
-    return userId;
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      await (api as ApiService).user
+        .userControllerDeleteUser({ userId })
+        .toPromise();
+      return userId;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
   }
 );
 
 export const inviteAdminUser = createAsyncThunk(
   adminUsersActions.inviteAdminUser.type,
   async (args: { email: string; username?: string }, thunkApi) => {
-    const { api } = thunkApiWithState(thunkApi);
-    const inviteDto: any = {
-      email: args.email,
-      username: args.username || args.email,
-    };
-    return await (api as ApiService).user
-      .userControllerInvite({ inviteDto })
-      .toPromise();
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      const inviteDto: any = {
+        email: args.email,
+        username: args.username || args.email,
+      };
+      return await (api as ApiService).user
+        .userControllerInvite({ inviteDto })
+        .toPromise();
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
   }
 );
+
+// rxjs ajax throws an AjaxError on non-2xx — its `response` field
+// holds the parsed server body, which is where our 403 / 422
+// messages live (e.g. "Admin accounts cannot be suspended."). Use
+// rejectWithValue so the dispatched action carries that message
+// for the UI to toast.
+const extractApiMessage = (err: any) =>
+  err?.response?.message || err?.message || 'Request failed';
 
 export const suspendAdminUser = createAsyncThunk(
   adminUsersActions.suspendAdminUser.type,
   async (userId: string, thunkApi) => {
-    const { api } = thunkApiWithState(thunkApi);
-    await (api as ApiService).user
-      .userControllerSuspendUser({ userId })
-      .toPromise();
-    return userId;
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      await (api as ApiService).user
+        .userControllerSuspendUser({ userId })
+        .toPromise();
+      return userId;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
   }
 );
 
 export const unsuspendAdminUser = createAsyncThunk(
   adminUsersActions.unsuspendAdminUser.type,
   async (userId: string, thunkApi) => {
-    const { api } = thunkApiWithState(thunkApi);
-    await (api as ApiService).user
-      .userControllerUnsuspendUser({ userId })
-      .toPromise();
-    return userId;
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      await (api as ApiService).user
+        .userControllerUnsuspendUser({ userId })
+        .toPromise();
+      return userId;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
   }
 );
 

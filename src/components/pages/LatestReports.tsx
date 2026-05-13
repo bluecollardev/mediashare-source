@@ -1,11 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Avatar, Divider, Searchbar, Text } from 'react-native-paper';
+import { Avatar, Divider, IconButton, Searchbar, Text } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'mediashare/store';
-import { listReportedContent } from 'mediashare/store/modules/reportedContent';
+import {
+  listReportedContent,
+  suspendContent,
+  unsuspendContent,
+} from 'mediashare/store/modules/reportedContent';
+import {
+  suspendAdminUser,
+  unsuspendAdminUser,
+} from 'mediashare/store/modules/adminUsers';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import {
   useViewMediaItemById,
   useViewPlaylistItemById,
@@ -37,10 +46,22 @@ interface ReportedRow {
   title?: string;
   imageSrc?: string;
   uri?: string;
+  isSuspended?: boolean;
   reportedCount?: number;
   reports?: any[];
   reporters?: any[];
+  uploader?: any;
 }
+
+const displayNameOf = (u: any, fallback = 'Unknown') => {
+  if (!u) return fallback;
+  return (
+    [u.firstName, u.lastName].filter(Boolean).join(' ').trim() ||
+    u.username ||
+    u.email ||
+    fallback
+  );
+};
 
 const formatDate = (iso?: string) => {
   if (!iso) return '';
@@ -66,8 +87,13 @@ const reporterLabel = (row: ReportedRow, sub?: string) => {
 const ReportRow: React.FC<{
   row: ReportedRow;
   onPress: () => void;
-}> = ({ row, onPress }) => {
+  onToggleContentSuspend: (row: ReportedRow) => void;
+  onToggleUploaderSuspend: (uploader: any, isSuspended: boolean) => void;
+}> = ({ row, onPress, onToggleContentSuspend, onToggleUploaderSuspend }) => {
   const count = row.reportedCount || 0;
+  const up = row.uploader || null;
+  const uploaderIsSuspended = !!up?.isDisabled;
+  const uploaderProtected = !up?._id;
   const mostRecent = useMemo(() => {
     const reports = row.reports || [];
     return [...reports].sort((a: any, b: any) => {
@@ -79,12 +105,13 @@ const ReportRow: React.FC<{
 
   return (
     <>
-      <TouchableOpacity
-        accessibilityRole="button"
-        onPress={onPress}
-        activeOpacity={0.7}
-        style={styles.row}
-      >
+      <View style={styles.row}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={onPress}
+          activeOpacity={0.7}
+          style={styles.rowMain}
+        >
         {row.imageSrc ? (
           <Avatar.Image
             size={48}
@@ -101,10 +128,19 @@ const ReportRow: React.FC<{
           </View>
         )}
         <View style={styles.copy}>
-          <View style={styles.titleRow}>
-            <Text style={styles.title} numberOfLines={1}>
-              {row.title || '(untitled)'}
-            </Text>
+          <Text style={styles.title} numberOfLines={1}>
+            {row.title || '(untitled)'}
+          </Text>
+          <Text style={styles.meta}>
+            {row.contentType === 'mediaItem' ? 'Media Item' : 'Playlist Item'}
+            {up
+              ? `  ·  by ${displayNameOf(up)}${
+                  up?.email ? `, ${up.email}` : ''
+                }`
+              : ''}
+            {row.isSuspended ? '  ·  Content suspended' : ''}
+          </Text>
+          <View style={styles.badgeRow}>
             <View
               style={[styles.badge, { backgroundColor: severityBg(count) }]}
             >
@@ -118,14 +154,22 @@ const ReportRow: React.FC<{
                 {count} {count === 1 ? 'report' : 'reports'}
               </Text>
             </View>
+            {row.isSuspended ? (
+              <View style={styles.suspendedBadge}>
+                <MaterialIcons
+                  name="block"
+                  size={11}
+                  color="#ffffff"
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={styles.suspendedBadgeText}>Suspended</Text>
+              </View>
+            ) : null}
           </View>
-          <Text style={styles.meta}>
-            {row.contentType === 'mediaItem' ? 'Media Item' : 'Playlist Item'}
-          </Text>
           {mostRecent ? (
             <View style={styles.reportBlock}>
               <Text style={styles.reportLine}>
-                <Text style={styles.reportLineLabel}>By:</Text>{' '}
+                <Text style={styles.reportLineLabel}>Reported By:</Text>{' '}
                 {reporterLabel(row, mostRecent.reporterSub)}
               </Text>
               <Text style={styles.reportLine}>
@@ -147,7 +191,33 @@ const ReportRow: React.FC<{
             </View>
           ) : null}
         </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+        <View style={styles.rowActions}>
+          <IconButton
+            icon={row.isSuspended ? 'visibility' : 'visibility-off'}
+            iconColor={
+              row.isSuspended ? theme.colors.success : theme.colors.accent
+            }
+            onPress={() => onToggleContentSuspend(row)}
+            size={20}
+          />
+          {up?._id ? (
+            <IconButton
+              icon={uploaderIsSuspended ? 'lock-open' : 'block'}
+              iconColor={
+                uploaderProtected
+                  ? theme.colors.default
+                  : uploaderIsSuspended
+                  ? theme.colors.success
+                  : theme.colors.accent
+              }
+              disabled={uploaderProtected}
+              onPress={() => onToggleUploaderSuspend(up, uploaderIsSuspended)}
+              size={20}
+            />
+          ) : null}
+        </View>
+      </View>
       <Divider />
     </>
   );
@@ -157,6 +227,7 @@ const LatestReports = (_props: PageProps) => {
   const dispatch = useDispatch();
   const viewMediaItem = useViewMediaItemById();
   const viewPlaylistItem = useViewPlaylistItemById();
+  const { element: snack, onToggleSnackBar, setMessage } = useSnack();
   const { entities = [] as any[], loaded } = useAppSelector(
     (state: any) => state?.reportedContent || {}
   );
@@ -167,6 +238,57 @@ const LatestReports = (_props: PageProps) => {
     } else {
       viewPlaylistItem({ playlistItemId: row._id, uri: row.uri });
     }
+  };
+
+  const refresh = () => (dispatch as any)(listReportedContent());
+
+  const onToggleContentSuspend = async (row: ReportedRow) => {
+    const wasSuspended = !!row.isSuspended;
+    const result: any = await (dispatch as any)(
+      wasSuspended
+        ? unsuspendContent({ contentType: row.contentType, itemId: row._id })
+        : suspendContent({ contentType: row.contentType, itemId: row._id })
+    );
+    if (result?.meta?.requestStatus === 'rejected') {
+      setMessage(
+        result?.payload?.message ||
+          result?.error?.message ||
+          'Failed to update content'
+      );
+      onToggleSnackBar(false);
+      return;
+    }
+    setMessage(wasSuspended ? 'Content unsuspended' : 'Content suspended');
+    onToggleSnackBar(true);
+    await refresh();
+  };
+
+  const onToggleUploaderSuspend = async (
+    uploader: any,
+    isSuspended: boolean
+  ) => {
+    if (!uploader?._id) return;
+    const result: any = await (dispatch as any)(
+      isSuspended
+        ? unsuspendAdminUser(uploader._id)
+        : suspendAdminUser(uploader._id)
+    );
+    if (result?.meta?.requestStatus === 'rejected') {
+      setMessage(
+        result?.payload?.message ||
+          result?.error?.message ||
+          'Failed to update user'
+      );
+      onToggleSnackBar(false);
+      return;
+    }
+    setMessage(
+      isSuspended
+        ? `Unsuspended ${displayNameOf(uploader)}`
+        : `Suspended ${displayNameOf(uploader)}`
+    );
+    onToggleSnackBar(true);
+    await refresh();
   };
 
   useEffect(() => {
@@ -244,10 +366,16 @@ const LatestReports = (_props: PageProps) => {
               `report_${r.contentType}_${r._id}`
             }
             renderItem={({ item }) => (
-              <ReportRow row={item} onPress={() => openItem(item)} />
+              <ReportRow
+                row={item}
+                onPress={() => openItem(item)}
+                onToggleContentSuspend={onToggleContentSuspend}
+                onToggleUploaderSuspend={onToggleUploaderSuspend}
+              />
             )}
           />
         )}
+        {snack}
       </KeyboardAvoidingPageContent>
     </PageContainer>
   );
@@ -270,8 +398,19 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     paddingHorizontal: 16,
     paddingVertical: 14,
+  },
+  rowMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  rowActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 4,
   },
   thumb: {
     marginRight: 12,
@@ -299,12 +438,34 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.medium.fontFamily,
     marginRight: 8,
   },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
   badge: {
+    // Hug the content — without alignSelf it stretches to fill the
+    // parent column.
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 12,
+  },
+  suspendedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.error,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    marginLeft: 6,
+  },
+  suspendedBadgeText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: 'bold',
   },
   badgeText: {
     color: '#000000',

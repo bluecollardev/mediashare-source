@@ -1,11 +1,26 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Avatar, Divider, Searchbar, Text } from 'react-native-paper';
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  Searchbar,
+  Text,
+} from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'mediashare/store';
-import { listReportsByUser } from 'mediashare/store/modules/reportedContent';
+import {
+  listReportsByUser,
+  suspendContent,
+  unsuspendContent,
+} from 'mediashare/store/modules/reportedContent';
+import {
+  suspendAdminUser,
+  unsuspendAdminUser,
+} from 'mediashare/store/modules/adminUsers';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import {
   useViewMediaItemById,
   useViewPlaylistItemById,
@@ -46,23 +61,46 @@ interface ReporterGroup {
     comment?: string;
     reportedAt?: string;
     uri?: string;
+    uploader?: any;
+    isSuspended?: boolean;
   }>;
   user?: any;
 }
+
+const displayNameOf = (u: any, fallback?: string) => {
+  if (!u) return fallback || 'Unknown';
+  return (
+    [u.firstName, u.lastName].filter(Boolean).join(' ').trim() ||
+    u.username ||
+    u.email ||
+    fallback ||
+    'Unknown'
+  );
+};
 
 const ReporterRow: React.FC<{
   group: ReporterGroup;
   expanded: boolean;
   onToggle: () => void;
   onItemPress: (entry: ReporterGroup['reports'][number]) => void;
-}> = ({ group, expanded, onToggle, onItemPress }) => {
+  onToggleSuspend: (target: any, isSuspended: boolean) => void;
+  onToggleContentSuspend: (
+    entry: ReporterGroup['reports'][number]
+  ) => void;
+}> = ({
+  group,
+  expanded,
+  onToggle,
+  onItemPress,
+  onToggleSuspend,
+  onToggleContentSuspend,
+}) => {
   const u = group.user;
-  const name =
-    [u?.firstName, u?.lastName].filter(Boolean).join(' ').trim() ||
-    u?.username ||
-    u?.email ||
-    group.reporterSub.slice(0, 8) + '…';
+  const name = displayNameOf(u, group.reporterSub.slice(0, 8) + '…');
   const count = group.reportCount || 0;
+  const isSuspended = !!u?.isDisabled;
+  // Admins can't be suspended server-side; lock the icon if so.
+  const isProtected = !!u?.isAdmin || !u?._id;
   return (
     <>
       <TouchableOpacity
@@ -83,11 +121,14 @@ const ReporterRow: React.FC<{
           </View>
         )}
         <View style={styles.copy}>
-          <View style={styles.titleRow}>
-            <Text style={styles.name} numberOfLines={1}>
-              {name}
-            </Text>
-            <View style={[styles.badge, { backgroundColor: severityBg(count) }]}>
+          <Text style={styles.name} numberOfLines={1}>
+            {name}
+          </Text>
+          <Text style={styles.meta}>{u?.email || group.reporterSub}</Text>
+          <View style={styles.badgeRow}>
+            <View
+              style={[styles.badge, { backgroundColor: severityBg(count) }]}
+            >
               <MaterialIcons
                 name="flag"
                 size={11}
@@ -99,10 +140,19 @@ const ReporterRow: React.FC<{
               </Text>
             </View>
           </View>
-          <Text style={styles.meta}>
-            {u?.email || group.reporterSub}
-          </Text>
         </View>
+        <IconButton
+          icon={isSuspended ? 'lock-open' : 'block'}
+          iconColor={
+            isProtected
+              ? theme.colors.default
+              : isSuspended
+              ? theme.colors.success
+              : theme.colors.accent
+          }
+          disabled={isProtected}
+          onPress={() => onToggleSuspend(u, isSuspended)}
+        />
         <MaterialIcons
           name={expanded ? 'expand-less' : 'expand-more'}
           size={24}
@@ -111,47 +161,116 @@ const ReporterRow: React.FC<{
       </TouchableOpacity>
       {expanded ? (
         <View style={styles.expandedWrap}>
-          {(group.reports || []).map((entry, idx) => (
-            <TouchableOpacity
-              key={`${group.reporterSub}_${entry.itemId}_${idx}`}
-              accessibilityRole="button"
-              activeOpacity={0.7}
-              onPress={() => onItemPress(entry)}
-              style={styles.entryRow}
-            >
-              {entry.imageSrc ? (
-                <Avatar.Image
-                  size={40}
-                  source={{ uri: entry.imageSrc }}
-                  style={styles.entryThumb}
-                />
-              ) : (
-                <View style={styles.entryThumbPlaceholder}>
-                  <MaterialIcons
-                    name={
-                      entry.contentType === 'mediaItem'
-                        ? 'play-arrow'
-                        : 'queue-music'
+          {(group.reports || []).map((entry, idx) => {
+            const up = entry.uploader || null;
+            const uploaderName = up
+              ? displayNameOf(up)
+              : entry.uploaderSub
+              ? 'Unknown uploader'
+              : null;
+            const uploaderIsSuspended = !!up?.isDisabled;
+            // Same self-protection as elsewhere: server refuses on
+            // admin accounts and missing _id; lock the button.
+            const uploaderProtected = !up?._id;
+            return (
+              <View
+                key={`${group.reporterSub}_${entry.itemId}_${idx}`}
+                style={styles.entryRow}
+              >
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  activeOpacity={0.7}
+                  onPress={() => onItemPress(entry)}
+                  style={styles.entryMain}
+                >
+                  {entry.imageSrc ? (
+                    <Avatar.Image
+                      size={40}
+                      source={{ uri: entry.imageSrc }}
+                      style={styles.entryThumb}
+                    />
+                  ) : (
+                    <View style={styles.entryThumbPlaceholder}>
+                      <MaterialIcons
+                        name={
+                          entry.contentType === 'mediaItem'
+                            ? 'play-arrow'
+                            : 'queue-music'
+                        }
+                        size={20}
+                        color={theme.colors.text}
+                      />
+                    </View>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.entryTitleRow}>
+                      <Text style={styles.entryTitle} numberOfLines={1}>
+                        {entry.title || '(untitled)'}
+                      </Text>
+                      {entry.isSuspended ? (
+                        <View style={styles.entrySuspendedBadge}>
+                          <MaterialIcons
+                            name="block"
+                            size={10}
+                            color="#ffffff"
+                            style={{ marginRight: 3 }}
+                          />
+                          <Text style={styles.entrySuspendedBadgeText}>
+                            Suspended
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+                    {uploaderName ? (
+                      <Text style={styles.entryUploader} numberOfLines={1}>
+                        by {uploaderName}
+                        {up?.email ? `  ·  ${up.email}` : ''}
+                        {uploaderIsSuspended ? '  ·  Suspended' : ''}
+                      </Text>
+                    ) : null}
+                    <Text style={styles.entryMeta}>
+                      {entry.reason || 'unspecified'}
+                      {entry.comment ? `  ·  ${entry.comment}` : ''}
+                    </Text>
+                    <Text style={styles.entryDate}>
+                      {formatDate(entry.reportedAt)}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={styles.entryActions}>
+                  <IconButton
+                    icon={
+                      entry.isSuspended ? 'visibility' : 'visibility-off'
                     }
+                    iconColor={
+                      entry.isSuspended
+                        ? theme.colors.success
+                        : theme.colors.accent
+                    }
+                    onPress={() => onToggleContentSuspend(entry)}
                     size={20}
-                    color={theme.colors.text}
                   />
+                  {up?._id ? (
+                    <IconButton
+                      icon={uploaderIsSuspended ? 'lock-open' : 'block'}
+                      iconColor={
+                        uploaderProtected
+                          ? theme.colors.default
+                          : uploaderIsSuspended
+                          ? theme.colors.success
+                          : theme.colors.accent
+                      }
+                      disabled={uploaderProtected}
+                      onPress={() =>
+                        onToggleSuspend(up, uploaderIsSuspended)
+                      }
+                      size={20}
+                    />
+                  ) : null}
                 </View>
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={styles.entryTitle} numberOfLines={1}>
-                  {entry.title || '(untitled)'}
-                </Text>
-                <Text style={styles.entryMeta}>
-                  {entry.reason || 'unspecified'}
-                  {entry.comment ? `  ·  ${entry.comment}` : ''}
-                </Text>
-                <Text style={styles.entryDate}>
-                  {formatDate(entry.reportedAt)}
-                </Text>
               </View>
-            </TouchableOpacity>
-          ))}
+            );
+          })}
         </View>
       ) : null}
       <Divider />
@@ -163,6 +282,7 @@ const ReportsByUser = (_props: PageProps) => {
   const dispatch = useDispatch();
   const viewMediaItem = useViewMediaItemById();
   const viewPlaylistItem = useViewPlaylistItemById();
+  const { element: snack, onToggleSnackBar, setMessage } = useSnack();
   const { byUser = [] as any[], byUserLoaded } = useAppSelector(
     (state: any) => state?.reportedContent || {}
   );
@@ -178,6 +298,69 @@ const ReportsByUser = (_props: PageProps) => {
       dispatch(listReportsByUser() as any);
     }, [dispatch])
   );
+
+  const onToggleContentSuspend = async (
+    entry: ReporterGroup['reports'][number]
+  ) => {
+    const wasSuspended = !!entry?.isSuspended;
+    const result: any = await (dispatch as any)(
+      wasSuspended
+        ? unsuspendContent({
+            contentType: entry.contentType,
+            itemId: entry.itemId,
+          })
+        : suspendContent({
+            contentType: entry.contentType,
+            itemId: entry.itemId,
+          })
+    );
+    if (result?.meta?.requestStatus === 'rejected') {
+      setMessage(
+        result?.payload?.message ||
+          result?.error?.message ||
+          'Failed to update content'
+      );
+      onToggleSnackBar(false);
+      return;
+    }
+    setMessage(
+      wasSuspended ? 'Content unsuspended' : 'Content suspended'
+    );
+    onToggleSnackBar(true);
+    await (dispatch as any)(listReportsByUser());
+  };
+
+  const onToggleSuspend = async (target: any, isSuspended: boolean) => {
+    if (!target?._id) return;
+    // createAsyncThunk-dispatched actions never throw — they resolve
+    // to either a fulfilled or rejected action. Check requestStatus
+    // and surface the server message (e.g. the AdminGuard's 403:
+    // "Admin accounts cannot be suspended.").
+    const result: any = await (dispatch as any)(
+      isSuspended
+        ? unsuspendAdminUser(target._id)
+        : suspendAdminUser(target._id)
+    );
+    if (result?.meta?.requestStatus === 'rejected') {
+      setMessage(
+        result?.payload?.message ||
+          result?.error?.message ||
+          'Failed to update user'
+      );
+      onToggleSnackBar(false);
+      return;
+    }
+    setMessage(
+      isSuspended
+        ? `Unsuspended ${displayNameOf(target)}`
+        : `Suspended ${displayNameOf(target)}`
+    );
+    onToggleSnackBar(true);
+    // Refetch so the badge + button state on every row reflects
+    // the new isDisabled status (the same user may appear as
+    // both a reporter and an uploader).
+    await (dispatch as any)(listReportsByUser());
+  };
 
   const safe: ReporterGroup[] = Array.isArray(byUser) ? byUser : [];
 
@@ -267,10 +450,13 @@ const ReportsByUser = (_props: PageProps) => {
                   )
                 }
                 onItemPress={openEntry}
+                onToggleSuspend={onToggleSuspend}
+                onToggleContentSuspend={onToggleContentSuspend}
               />
             )}
           />
         )}
+        {snack}
       </KeyboardAvoidingPageContent>
     </PageContainer>
   );
@@ -328,7 +514,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
   badge: {
+    // The badge must hug its content — without this it stretches
+    // to fill the parent column.
+    alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
@@ -351,6 +545,40 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.background,
+  },
+  entryMain: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  entryUploader: {
+    color: theme.colors.textDarker,
+    fontSize: 11,
+    marginTop: 2,
+    fontStyle: 'italic',
+  },
+  entryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  entrySuspendedBadge: {
+    marginLeft: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.error,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  entrySuspendedBadgeText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  entryActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   entryThumb: {
     marginRight: 10,

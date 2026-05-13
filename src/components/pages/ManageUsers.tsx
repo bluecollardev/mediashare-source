@@ -167,15 +167,21 @@ const ManageUsers = (_props: PageProps) => {
           showDialog={showInviteDialog}
           onDismiss={() => setShowInviteDialog(false)}
           onSubmit={async ({ email }: { email: string }) => {
-            try {
-              await (dispatch as any)(inviteAdminUser({ email }));
-              await (dispatch as any)(listAdminUsers());
-              setMessage(`Invited ${email}`);
-              onToggleSnackBar(true);
-            } catch (err: any) {
-              setMessage(err?.message || 'Failed to invite user');
+            const result: any = await (dispatch as any)(
+              inviteAdminUser({ email })
+            );
+            if (result?.meta?.requestStatus === 'rejected') {
+              setMessage(
+                result?.payload?.message ||
+                  result?.error?.message ||
+                  'Failed to invite user'
+              );
               onToggleSnackBar(false);
+              return;
             }
+            await (dispatch as any)(listAdminUsers());
+            setMessage(`Invited ${email}`);
+            onToggleSnackBar(true);
           }}
           userId={undefined as any}
         />
@@ -229,23 +235,26 @@ const ManageUsers = (_props: PageProps) => {
                 onEdit={() => editUser({ userId: item?._id })}
                 onToggleSuspend={async () => {
                   if (item?._id === currentUserId || item?.isAdmin) return;
-                  try {
-                    const action = item?.isDisabled
+                  const result: any = await (dispatch as any)(
+                    item?.isDisabled
                       ? unsuspendAdminUser(item._id)
-                      : suspendAdminUser(item._id);
-                    await (dispatch as any)(action);
+                      : suspendAdminUser(item._id)
+                  );
+                  if (result?.meta?.requestStatus === 'rejected') {
                     setMessage(
-                      item?.isDisabled
-                        ? 'User unsuspended'
-                        : 'User suspended'
-                    );
-                    onToggleSnackBar(true);
-                  } catch (err: any) {
-                    setMessage(
-                      err?.message || 'Failed to update user'
+                      result?.payload?.message ||
+                        result?.error?.message ||
+                        'Failed to update user'
                     );
                     onToggleSnackBar(false);
+                    return;
                   }
+                  setMessage(
+                    item?.isDisabled
+                      ? 'User unsuspended'
+                      : 'User suspended'
+                  );
+                  onToggleSnackBar(true);
                 }}
               />
             )}
@@ -331,21 +340,33 @@ const ManageUsers = (_props: PageProps) => {
       setShowSuspendDialog(false);
       return;
     }
-    try {
-      await Promise.all(
-        targets.map((u: any) =>
-          (dispatch as any)(suspendAdminUser(u._id))
-        )
-      );
+    const results = await Promise.all(
+      targets.map((u: any) => (dispatch as any)(suspendAdminUser(u._id)))
+    );
+    const rejected = results.filter(
+      (r: any) => r?.meta?.requestStatus === 'rejected'
+    );
+    if (rejected.length === results.length) {
       setMessage(
-        targets.length === 1
-          ? 'User suspended'
-          : `${targets.length} users suspended`
+        rejected[0]?.payload?.message ||
+          rejected[0]?.error?.message ||
+          'Failed to suspend users'
       );
-      onToggleSnackBar(true);
-    } catch (err: any) {
-      setMessage(err?.message || 'Failed to suspend users');
       onToggleSnackBar(false);
+    } else {
+      const succeeded = results.length - rejected.length;
+      setMessage(
+        rejected.length === 0
+          ? succeeded === 1
+            ? 'User suspended'
+            : `${succeeded} users suspended`
+          : `Suspended ${succeeded}; ${rejected.length} failed (${
+              rejected[0]?.payload?.message ||
+              rejected[0]?.error?.message ||
+              'error'
+            })`
+      );
+      onToggleSnackBar(rejected.length === 0);
     }
     setShowSuspendDialog(false);
     cancelBulkMode();
@@ -366,21 +387,33 @@ const ManageUsers = (_props: PageProps) => {
       setShowDeleteDialog(false);
       return;
     }
-    try {
-      await Promise.all(
-        targets.map((u: any) =>
-          (dispatch as any)(deleteAdminUser(u._id))
-        )
-      );
+    const results = await Promise.all(
+      targets.map((u: any) => (dispatch as any)(deleteAdminUser(u._id)))
+    );
+    const rejected = results.filter(
+      (r: any) => r?.meta?.requestStatus === 'rejected'
+    );
+    const succeeded = results.length - rejected.length;
+    if (rejected.length === results.length) {
       setMessage(
-        targets.length === 1
-          ? 'User deleted'
-          : `${targets.length} users deleted`
+        rejected[0]?.payload?.message ||
+          rejected[0]?.error?.message ||
+          'Failed to delete users'
       );
-      onToggleSnackBar(true);
-    } catch (err: any) {
-      setMessage(err?.message || 'Failed to delete users');
       onToggleSnackBar(false);
+    } else {
+      setMessage(
+        rejected.length === 0
+          ? succeeded === 1
+            ? 'User deleted'
+            : `${succeeded} users deleted`
+          : `Deleted ${succeeded}; ${rejected.length} failed (${
+              rejected[0]?.payload?.message ||
+              rejected[0]?.error?.message ||
+              'error'
+            })`
+      );
+      onToggleSnackBar(rejected.length === 0);
     }
     setShowDeleteDialog(false);
     cancelBulkMode();

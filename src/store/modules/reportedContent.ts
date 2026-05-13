@@ -15,6 +15,8 @@ import {
 const reportedContentActionNames = [
   'list_reported_content',
   'list_reports_by_user',
+  'suspend_content',
+  'unsuspend_content',
 ] as const;
 export const reportedContentActions = makeActions(reportedContentActionNames);
 
@@ -35,6 +37,57 @@ export const listReportsByUser = createAsyncThunk(
     return await (api as ApiService).admin
       .adminControllerListReportsByUser()
       .toPromise();
+  }
+);
+
+const extractApiMessage = (err: any) =>
+  err?.response?.message || err?.message || 'Request failed';
+
+export const suspendContent = createAsyncThunk(
+  reportedContentActions.suspendContent.type,
+  async (
+    args: { contentType: 'mediaItem' | 'playlistItem'; itemId: string },
+    thunkApi
+  ) => {
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      if (args.contentType === 'mediaItem') {
+        await (api as ApiService).mediaItems
+          .mediaItemControllerSuspend({ mediaId: args.itemId })
+          .toPromise();
+      } else {
+        await (api as ApiService).playlistItems
+          .playlistItemControllerSuspend({ playlistItemId: args.itemId })
+          .toPromise();
+      }
+      return args;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
+  }
+);
+
+export const unsuspendContent = createAsyncThunk(
+  reportedContentActions.unsuspendContent.type,
+  async (
+    args: { contentType: 'mediaItem' | 'playlistItem'; itemId: string },
+    thunkApi
+  ) => {
+    try {
+      const { api } = thunkApiWithState(thunkApi);
+      if (args.contentType === 'mediaItem') {
+        await (api as ApiService).mediaItems
+          .mediaItemControllerUnsuspend({ mediaId: args.itemId })
+          .toPromise();
+      } else {
+        await (api as ApiService).playlistItems
+          .playlistItemControllerUnsuspend({ playlistItemId: args.itemId })
+          .toPromise();
+      }
+      return args;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue({ message: extractApiMessage(err) });
+    }
   }
 );
 

@@ -47,6 +47,55 @@ export interface PlaylistItemControllerUpdateRequest {
 export class PlaylistItemsApi extends BaseAPI {
 
     /**
+     * Admin-only: suspend a playlist item (sets isSuspended=true).
+     */
+    playlistItemControllerSuspend(
+        { playlistItemId }: { playlistItemId: string }
+    ): Observable<object>
+    playlistItemControllerSuspend(
+        { playlistItemId }: { playlistItemId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>>
+    playlistItemControllerSuspend(
+        { playlistItemId }: { playlistItemId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>> {
+        throwIfNullOrUndefined(playlistItemId, 'playlistItemId', 'playlistItemControllerSuspend');
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<object>({
+            url: '/api/playlist-items/{playlistItemId}/suspend'.replace('{playlistItemId}', encodeURI(playlistItemId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    playlistItemControllerUnsuspend(
+        { playlistItemId }: { playlistItemId: string }
+    ): Observable<object>
+    playlistItemControllerUnsuspend(
+        { playlistItemId }: { playlistItemId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>>
+    playlistItemControllerUnsuspend(
+        { playlistItemId }: { playlistItemId: string },
+        opts?: OperationOpts
+    ): Observable<object | RawAjaxResponse<object>> {
+        throwIfNullOrUndefined(playlistItemId, 'playlistItemId', 'playlistItemControllerUnsuspend');
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<object>({
+            url: '/api/playlist-items/{playlistItemId}/unsuspend'.replace('{playlistItemId}', encodeURI(playlistItemId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    /**
      * Report a playlist item as inappropriate. Increments
      * reportedCount server-side. Manually added — backend at
      * POST /api/playlist-items/:playlistItemId/report.
