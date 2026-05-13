@@ -35,6 +35,7 @@ const AccountManagement = (_props: PageProps) => {
   );
   const goToManageUsers = useRouteName(routeNames.manageUsers);
   const goToEditAccount = useRouteName(routeNames.editAccount);
+  const goToReportedContent = useRouteName(routeNames.reportedContent);
 
   const options: MenuOption[] = [
     ...(isAdmin
@@ -53,6 +54,17 @@ const AccountManagement = (_props: PageProps) => {
       description: 'Update your profile photo, name, email, and phone.',
       onPress: () => goToEditAccount(),
     },
+    ...(isAdmin
+      ? [
+          {
+            icon: 'flag',
+            title: 'Reported Content',
+            description:
+              'Review media items and playlist items flagged by users.',
+            onPress: () => goToReportedContent(),
+          },
+        ]
+      : []),
   ];
 
   return (

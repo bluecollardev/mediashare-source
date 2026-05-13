@@ -52,6 +52,9 @@ import Shared from './components/pages/Shared';
 import AccountEdit from './components/pages/AccountEdit';
 import AccountManagement from './components/pages/AccountManagement';
 import ManageUsers from './components/pages/ManageUsers';
+import ReportedContent from './components/pages/ReportedContent';
+import LatestReports from './components/pages/LatestReports';
+import ReportsByUser from './components/pages/ReportsByUser';
 import AccountSuspended from './components/pages/AccountSuspended';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
@@ -129,6 +132,14 @@ const AccountNavigation = ({ globalState }) => {
       <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
       <AccountStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
       <AccountStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
+      <AccountStackNavigator.Screen {...routeConfig.reportedContent} component={ReportedContent} />
+      <AccountStackNavigator.Screen {...routeConfig.latestReports} component={LatestReports} />
+      <AccountStackNavigator.Screen {...routeConfig.reportsByUser} component={ReportsByUser} />
+      {/* Reported Content rows deep-link into the content detail
+          screens — register them here so navigation resolves
+          without hopping back to the Private stack. */}
+      <AccountStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
+      <AccountStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
       <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
@@ -143,6 +154,9 @@ const NetworkNavigation = () => {
       <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
       <NetworkStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
       <NetworkStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
+      <NetworkStackNavigator.Screen {...routeConfig.reportedContent} component={ReportedContent} />
+      <NetworkStackNavigator.Screen {...routeConfig.latestReports} component={LatestReports} />
+      <NetworkStackNavigator.Screen {...routeConfig.reportsByUser} component={ReportsByUser} />
       <NetworkStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />

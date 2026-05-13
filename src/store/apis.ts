@@ -10,6 +10,7 @@ import {
   PlaylistsApi,
   PlaylistItemsApi,
   ShareItemsApi,
+  AdminApi,
   // ViewsApi,
 } from 'mediashare/apis/media-svc/rxjs-api';
 import {
@@ -120,6 +121,7 @@ export function apiFactory(thunkApi: { state: any; }) {
     playlists: new PlaylistsApi(mediaApiConfiguration),
     playlistItems: new PlaylistItemsApi(mediaApiConfiguration),
     shareItems: new ShareItemsApi(mediaApiConfiguration),
+    admin: new AdminApi(mediaApiConfiguration),
     user: new UserApi(userApiConfiguration),
     email: new EmailApi(userApiConfiguration),
     views: undefined, // new ViewsApi(configuration),
