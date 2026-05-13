@@ -35,7 +35,9 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
   // const goToPlaylists = usePlaylists();
   // const playFromBeginning = useViewPlaylistItemById();
   
-  const appUserId = useAppSelector((state) => state?.user?.entity?._id);
+  // createdBy is a Cognito `sub`, not a Mongo ObjectId — match the
+  // user entity's `sub` field.
+  const appUserId = useAppSelector((state) => state?.user?.entity?.sub);
   const mediaItem = useAppSelector((state) => state?.playlistItem?.entity);
   
   const {
