@@ -14,7 +14,21 @@ import { useRouteName, useViewMediaItemById, useViewPlaylistById } from 'mediash
 import { SupportedContentTypes, withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { FlatList, RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import {
+  FlatList,
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+// Paper's Text — the bare `import { Text } from 'react-native'` got
+// resolved to the DOM Text constructor under our webpack setup
+// (React rendered it as a string tag → "Failed to construct 'Text'").
+import { Text } from 'react-native-paper';
 import { PageActions, PageContainer, KeyboardAvoidingPageContent, PageProps, MediaListItem, ActionButtons, NoContent, TrendingSection } from 'mediashare/components/layout';
 // import { RecentlyAdded } from 'mediashare/components/layout/RecentlyAdded';
 // import { RecentlyPlayed } from 'mediashare/components/layout/RecentlyPlayed';
@@ -41,7 +55,100 @@ export const SearchComponent = withSearchComponent(
     const sortedList = list.map((item) => item);
     sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
 
-    return <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
+    // Phone keeps the existing list. Tablet (≥768) → 3-up cards,
+    // desktop (≥1024) → 4-up. Selection mode falls back to list so
+    // the checkbox / bulk flows keep working untouched.
+    const { width } = useWindowDimensions();
+    const columns = selectable
+      ? 1
+      : width >= 1024
+      ? 4
+      : width >= 768
+      ? 3
+      : 1;
+
+    if (columns > 1) {
+      return (
+        <View style={styles.cardGrid}>
+          {sortedList.map((item) => renderCard(item))}
+        </View>
+      );
+    }
+    return (
+      <FlatList
+        data={sortedList}
+        renderItem={({ item }) => renderVirtualizedListItem(item)}
+        keyExtractor={({ _id }) => `playlist_${_id}`}
+      />
+    );
+
+    function renderCard(item) {
+      const {
+        _id = '',
+        title = '',
+        authorProfile = {} as AuthorProfile,
+        mediaIds = [],
+        mediaItems = [],
+        imageSrc = '',
+        contentType = 'media',
+      } = item;
+      const itemCount = mediaIds?.length || mediaItems?.length || 0;
+      const authorName = authorProfile?.authorName;
+      const typeLabel =
+        contentType === 'playlist'
+          ? 'Playlist'
+          : contentType === 'mediaItem'
+          ? 'Media'
+          : '';
+      const cellWidthPct = `${100 / columns}%` as any;
+      return (
+        <View
+          key={`search_card_${contentType}_${_id}`}
+          style={[styles.cardCell, { width: cellWidthPct }]}
+        >
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={() => onViewDetailClicked(item)}
+            activeOpacity={0.85}
+            style={styles.card}
+          >
+            <View style={styles.cardImageWrap}>
+              {imageSrc ? (
+                <Image
+                  source={{ uri: imageSrc }}
+                  style={styles.cardImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.cardImagePlaceholder}>
+                  <MaterialIcons
+                    name={
+                      contentType === 'playlist'
+                        ? 'queue-music'
+                        : 'play-arrow'
+                    }
+                    size={40}
+                    color={theme.colors.text}
+                  />
+                </View>
+              )}
+            </View>
+            <View style={styles.cardBody}>
+              <Text style={styles.cardTitle} numberOfLines={2}>
+                {title}
+              </Text>
+              <Text style={styles.cardMeta} numberOfLines={1}>
+                {typeLabel}
+                {contentType === 'playlist'
+                  ? `  ·  ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`
+                  : ''}
+                {authorName ? `  ·  by ${authorName}` : ''}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
 
     function renderVirtualizedListItem(item) {
       // TODO: Can we have just one or the other, either mediaIds or mediaItems?
@@ -349,5 +456,52 @@ const styles = StyleSheet.create({
   },
   deleteActionButton: {
     backgroundColor: theme.colors.error,
+  },
+  // Card grid is only rendered on tablet+ (width ≥ 768). Matches the
+  // My Playlists treatment.
+  cardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 8,
+  },
+  cardCell: {
+    padding: 8,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.default,
+    overflow: 'hidden',
+  },
+  cardImageWrap: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    backgroundColor: theme.colors.background,
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cardImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background,
+  },
+  cardBody: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  cardTitle: {
+    color: theme.colors.text,
+    fontSize: 14,
+    fontFamily: theme.fonts.medium.fontFamily,
+  },
+  cardMeta: {
+    color: theme.colors.textDarker,
+    fontSize: 12,
+    marginTop: 4,
   },
 });

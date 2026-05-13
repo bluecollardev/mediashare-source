@@ -325,6 +325,25 @@ const amplifyConfig = {
 console.log(amplifyConfig);
 Amplify.configure(amplifyConfig);
 
+// On web, react-native-web ScrollView/FlatList become divs with
+// overflow:auto and the browser draws a visible scrollbar. Inject
+// a one-shot CSS rule that hides the scrollbar everywhere (still
+// scrollable via wheel / trackpad / keyboard / touch). No-op on
+// native because there's no `document`.
+if (typeof document !== 'undefined' && !document.getElementById('__hide-scrollbars')) {
+  const styleEl = document.createElement('style');
+  styleEl.id = '__hide-scrollbars';
+  styleEl.textContent = `
+    /* Webkit (Chrome, Safari, Edge) */
+    *::-webkit-scrollbar { width: 0 !important; height: 0 !important; background: transparent !important; }
+    *::-webkit-scrollbar-track { background: transparent !important; }
+    *::-webkit-scrollbar-thumb { background: transparent !important; }
+    /* Firefox + standard */
+    * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+  `;
+  document.head.appendChild(styleEl);
+}
+
 function App() {
   const [fontsLoaded] = useFonts({
     'CircularStd-Black': require('./assets/fonts/CircularStd-Black.otf'),
