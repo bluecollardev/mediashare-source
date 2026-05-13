@@ -49,6 +49,7 @@ const mediaItemActionNames = [
   'upload_media_item',
   'get_feed_media_items',
   'save_feed_media_items',
+  'report_media_item',
 ] as const;
 
 export const mediaItemActions = makeActions(mediaItemActionNames);
@@ -88,19 +89,27 @@ export const addMediaItem = createAsyncThunk(
         key: videoKey,
         title,
         description,
-        summary,
+        // Optional string fields on the API DTO use Length(5, …) under
+        // @IsOptional — class-validator only skips on null/undefined,
+        // so an empty string still fails. Omit empties.
+        ...(summary && summary.length >= 5 ? { summary } : {}),
         visibility: visibility || MediaVisibilityType.Private,
         tags: tags || [],
-        imageSrc: awsUrl + getImagePath(sanitizedKey) + '.jpeg',
-        // video: awsUrl + getVideoPath(sanitizedKey),
+        ...(image ? { imageSrc: awsUrl + getImagePath(sanitizedKey) + '.jpeg' } : {}),
         uri: awsUrl + getVideoPath(sanitizedKey),
         isPlayable: true,
-        eTag: '',
       };
 
       return await (api as ApiService).mediaItems.mediaItemControllerCreate({ createMediaItemDto }).toPromise();
     } catch (err) {
       console.log(err);
+      // Surface the failure so the redux loading state flips off and
+      // the caller can show a toast. Without this, the fulfilled
+      // reducer fires with payload=undefined and the page spinner
+      // hangs.
+      return thunkApi.rejectWithValue({
+        message: (err as Error)?.message || 'Failed to upload media item',
+      });
     }
   }
 );
@@ -182,6 +191,19 @@ export const saveFeedMediaItems = createAsyncThunk(mediaItemActions.saveFeedMedi
 
   return await Promise.all(dtoPromises);
 });
+
+export const reportMediaItem = createAsyncThunk(
+  mediaItemActions.reportMediaItem.type,
+  async (
+    args: { mediaId: string; reason?: string; comment?: string },
+    thunkApi
+  ) => {
+    const { api } = thunkApiWithState(thunkApi);
+    return await (api as ApiService).mediaItems
+      .mediaItemControllerReport(args)
+      .toPromise();
+  }
+);
 
 export const setActiveMediaItem = createAction<MediaItemDto, 'setActiveMediaItem'>('setActiveMediaItem');
 

@@ -49,6 +49,9 @@ export interface MediaCardProps {
   views?: number;
   shares?: number;
   elevation?: number;
+  // Pass-through to MediaCardTitle — when set, renders a Report
+  // link on the author line.
+  onReport?: () => void;
 }
 
 export const MediaCard: React.FC<MediaCardProps> = ({
@@ -90,6 +93,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
   likes = 0,
   views = 0,
   shares = 0,
+  onReport,
 }: MediaCardProps) => {
   // TODO: Finish default to private!
   const [selectedVisibility, setSelectedVisibility] = useState([visibility || 'private']);
@@ -211,6 +215,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({
           shares={shares}
           views={views}
           onActionsClicked={onActionsClicked}
+          onReport={onReport}
           style={!showMediaPreview ? { marginTop: 0, marginBottom: 5 } : { marginBottom: 5 }}
         />
         <Card.Content style={{ marginBottom: 15, marginTop: 0, paddingTop: 0 }}>

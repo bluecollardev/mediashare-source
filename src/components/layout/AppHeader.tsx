@@ -42,9 +42,13 @@ const AppHeaderComponent = ({
   const route = useRoute();
   const goToAccount = useGoToAccount();
   
-  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters } = globalState;
+  const { forcedSearchMode, searchIsActive, setSearchIsActive, clearSearchFilters, forcedSearchActive, searchFiltersActive, searchFilters, searchIsFiltering, filtersExpanded, setFiltersExpanded } = globalState;
   const displaySearch = searchIsActive(route?.name);
   const forceSearchDisplay = forcedSearchMode(route?.name);
+  // Orange filter icon should reflect whether real filters are active
+  // (text / tags / networkContent), not just whether a filter object
+  // has been written — Clear writes an empty filter object.
+  const hasActiveFilters = typeof searchIsFiltering === 'function' && searchIsFiltering(route?.name) === true;
   
   const avatar = globalState?.user?.imageSrc;
   const title = options?.headerTitle !== undefined ? options?.headerTitle : options?.title !== undefined ? options?.title : '';
@@ -86,7 +90,25 @@ const AppHeaderComponent = ({
         }}
       />
       {showDisplayControls ? renderDisplayControls() : null}
-      {searchable ? <Appbar.Action icon={searchIcon} color={searchIcon === 'filter-list' ? theme.colors.accent : '#ffffff'} onPress={() => toggleSearch()} /> : null}
+      {searchable ? (
+        <Appbar.Action
+          icon={searchIcon}
+          color={hasActiveFilters ? theme.colors.accent : '#ffffff'}
+          onPress={() => toggleSearch()}
+          style={{
+            transform: [{
+              // Only the filter-list icon should flip — rotating the
+              // magnifying glass doesn't convey expand/collapse state.
+              rotate:
+                searchIcon === 'filter-list' &&
+                typeof filtersExpanded === 'function' &&
+                filtersExpanded(route?.name)
+                  ? '180deg'
+                  : '0deg',
+            }],
+          }}
+        />
+      ) : null}
       {/* {showNotifications ? <Appbar.Action icon={notificationsIcon} color={unreadNofifications ? theme.colors.text : theme.colors.secondary} onPress={notificationsClickHandler} /> : null} */}
       {showAccount ? (
         <TouchableWithoutFeedback onPress={() => goToAccount()}>
@@ -94,9 +116,9 @@ const AppHeaderComponent = ({
             avatar ? <Avatar.Image style={{ marginHorizontal: 16 }} source={ { uri: avatar } } size={36}  />
             : <Avatar.Icon size={36} icon="person" />
           }
-    
+
         </TouchableWithoutFeedback>
-      ) : <Avatar.Icon size={36} icon="person" />}
+      ) : null}
       {showLogout ? <Appbar.Action icon="logout" onPress={() => accountLogout()} /> : null}
     </Appbar.Header>
   );
@@ -133,10 +155,15 @@ const AppHeaderComponent = ({
   }
   
   function toggleSearch() {
-    if (displaySearch) {
-      clearSearchFilters(route.name);
-    } else {
+    // Ensure the search context is active for this route, then flip the
+    // filter-panel expansion state. One click on this icon should always
+    // show/hide filters — never silently clear them.
+    if (!displaySearch && !forceSearchDisplay) {
       setSearchIsActive(route?.name, true);
+    }
+    if (typeof setFiltersExpanded === 'function') {
+      const current = filtersExpanded ? filtersExpanded(route?.name) : false;
+      setFiltersExpanded(route?.name, !current);
     }
   }
 

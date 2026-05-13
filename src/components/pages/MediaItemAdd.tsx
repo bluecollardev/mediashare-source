@@ -7,6 +7,7 @@ import { addMediaItem } from 'mediashare/store/modules/mediaItem';
 import { CreateMediaItemDto, MediaVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
 import { UploadResult } from 'mediashare/hooks/useUploader';
 import { useMediaItems } from 'mediashare/hooks/navigation';
+import { useSnack } from 'mediashare/hooks/useSnack';
 import { mapAvailableTags, mapSelectedTagKeysToTagKeyValue } from 'mediashare/store/modules/tags';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import {
@@ -52,10 +53,12 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
   }
 
   const goToMediaItems = useMediaItems();
+  const { element: snackbar, onToggleSnackBar, setMessage } = useSnack();
 
   return (
     <PageContainer>
       <Loader loading={uploading}/>
+      {snackbar}
       <KeyboardAvoidingPageContent>
         <ScrollView>
           <MediaCard
@@ -131,7 +134,20 @@ export const MediaItemAdd = ({ globalState = { tags: [] } }: PageProps) => {
       eTag: '',
     };
 
-    await dispatch(addMediaItem(dto));
+    const action: any = await dispatch(addMediaItem(dto));
+    // createAsyncThunk wraps rejection in a 'rejected' action; surface
+    // it as a toast and keep the user on the page so they can retry.
+    if (action?.meta?.requestStatus === 'rejected') {
+      setMessage(
+        action?.payload?.message ||
+          action?.error?.message ||
+          'Failed to upload media item. Please try again.'
+      );
+      onToggleSnackBar(false);
+      setIsSaved(false);
+      setUploading(false);
+      return;
+    }
 
     setVisibility(MediaVisibilityType.Private);
     setSelectedTagKeys([]);

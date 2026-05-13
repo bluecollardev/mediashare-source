@@ -117,8 +117,10 @@ const pickUser = (user: Partial<ProfileDto & UserDto>) =>
     'sharedItems',
     'transactionId',
     'transactionDate',
-    'transactionEndDate'
-  ]);
+    'transactionEndDate',
+    'isAdmin',
+    'isDisabled',
+  ] as any);
 
 const userSlice = createSlice({
   name: 'user',

@@ -1,3 +1,4 @@
+export * from './AdminApi';
 export * from './DefaultApi';
 export * from './MediaItemsApi';
 export * from './PlaylistItemsApi';

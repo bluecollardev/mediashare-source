@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View } from 'react-native';
+import { StyleSheet, FlatList, Text, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { routeNames } from 'mediashare/routes';
 import { useAppSelector } from 'mediashare/store';
@@ -7,7 +8,7 @@ import { deleteMediaItem } from 'mediashare/store/modules/mediaItem';
 import { findMediaItems } from 'mediashare/store/modules/mediaItems';
 import { withGlobalStateConsumer } from 'mediashare/core/globalState';
 import { withSearchComponent } from 'mediashare/components/hoc/withSearchComponent';
-import { useRouteName, useEditMediaItemById } from 'mediashare/hooks/navigation';
+import { useRouteName, useEditMediaItemById, useViewMediaItemById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { AuthorProfile } from 'mediashare/models/AuthorProfile';
 import { MediaItemDto } from 'mediashare/apis/media-svc/rxjs-api';
@@ -33,6 +34,7 @@ export const MediaComponent = ({
   showActions = true,
   onViewDetail,
   onChecked = () => undefined,
+  currentUserSub,
 }: {
   navigation: any;
   list: MediaItemDto[];
@@ -40,18 +42,35 @@ export const MediaComponent = ({
   selectable: boolean;
   showActions?: boolean;
   onChecked?: (checked: boolean, item?: any) => void;
+  currentUserSub?: string;
 }) => {
   const sortedList = list.map((item) => item) || [];
   sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
 
+  const countLabel = sortedList.length === 1
+    ? '1 media item'
+    : `${sortedList.length} media items`;
+
   return (
     <View>
+      <Text
+        style={{
+          color: theme.colors.text,
+          opacity: 0.7,
+          fontSize: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+        }}
+      >
+        {countLabel}
+      </Text>
       <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `media_item_${_id}`} />
     </View>
   );
 
   function renderVirtualizedListItem(item) {
-    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', imageSrc, visibility } = item;
+    const { _id = '', title = '', authorProfile = {} as AuthorProfile, description = '', imageSrc, visibility, createdBy } = item;
+    const isOwner = !!currentUserSub && createdBy === currentUserSub;
     return (
       <>
         <MediaListItem
@@ -63,9 +82,9 @@ export const MediaComponent = ({
           image={imageSrc}
           showPlayableIcon={false}
           showActions={showActions}
-          iconRight="edit"
+          iconRight={isOwner ? 'edit' : 'visibility'}
           iconRightColor={theme.colors.default}
-          selectable={selectable}
+          selectable={selectable && isOwner}
           onViewDetail={() => onViewDetail(item)}
           onChecked={(checked) => onChecked(checked, item)}
         />
@@ -85,6 +104,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const addFromFeed = useRouteName(routeNames.addFromFeed);
   const addMedia = useRouteName(routeNames.mediaItemAdd);
   const editMedia = useEditMediaItemById();
+  const viewMedia = useViewMediaItemById();
 
   const [isSelectable, setIsSelectable] = useState(false);
   const [actionMode, setActionMode] = useState(actionModes.default);
@@ -92,14 +112,21 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   const onRefresh = useCallback(refresh, [dispatch]);
 
   const { entities, selected, loaded, loading } = useAppSelector((state) => state?.mediaItems);
+  const currentUserSub = useAppSelector((state) => state?.user?.entity?.sub);
   
   const [clearSelectionKey, setClearSelectionKey] = useState(createRandomRenderKey());
   useEffect(() => {
     clearCheckboxSelection();
     console.log('Media useEffect ONCE');
-    // console.log('Media useEffect loadData...');
-    // loadData().then();
   }, []);
+
+  // Refetch on focus so newly created / deleted items appear after
+  // returning from MediaItemAdd / MediaItemEdit.
+  useFocusEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
@@ -128,9 +155,11 @@ export const Media = ({ navigation, globalState }: PageProps) => {
         />
         <MediaComponentWithSearch
           globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loaded={!loading}
           loadData={loadData}
           defaultSearchTarget="media"
+          showNetworkContentSwitch={true}
+          networkContent={false}
           key={clearSelectionKey}
           navigation={navigation}
           list={entities}
@@ -138,6 +167,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
           selectable={isSelectable}
           onViewDetail={onEditItem}
           onChecked={updateSelection}
+          currentUserSub={currentUserSub}
         />
         {globalState.searchIsFiltering('media') === undefined && entities.length === 0
           ? (
@@ -194,6 +224,7 @@ export const Media = ({ navigation, globalState }: PageProps) => {
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
+      networkContent: !!search?.networkContent,
     };
 
     await dispatch(findMediaItems(args));
@@ -206,7 +237,12 @@ export const Media = ({ navigation, globalState }: PageProps) => {
   }
 
   async function onEditItem(item: MediaItemDto) {
-    await editMedia ({ mediaId: item._id, uri: item.uri });
+    const isOwner = !!currentUserSub && (item as any).createdBy === currentUserSub;
+    if (isOwner) {
+      await editMedia({ mediaId: item._id, uri: item.uri });
+    } else {
+      await viewMedia({ mediaId: item._id, uri: item.uri });
+    }
   }
 
   function activateDeleteMode() {

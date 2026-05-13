@@ -11,7 +11,18 @@ import { withGlobalStateConsumer } from 'mediashare/core/globalState'
 import { useRouteName, useViewPlaylistById } from 'mediashare/hooks/navigation';
 import { withLoadingSpinner } from 'mediashare/components/hoc/withLoadingSpinner';
 import { FAB, Divider } from 'react-native-paper';
-import { Alert, FlatList, RefreshControl, StyleSheet } from 'react-native'
+import {
+  Alert,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useFocusEffect } from '@react-navigation/native';
 import {
   PageActions,
@@ -41,7 +52,101 @@ export const PlaylistsComponent = ({ list = [], onViewDetailClicked, selectable 
   const sortedList = list.map((item) => item);
   sortedList.sort((dtoA, dtoB) => (dtoA.title > dtoB.title ? 1 : -1));
 
-  return <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />;
+  const countLabel = sortedList.length === 1
+    ? '1 playlist'
+    : `${sortedList.length} playlists`;
+
+  // Phone keeps the existing list; tablet (≥768) gets 2-up cards,
+  // desktop (≥1024) gets 3-up. In selection mode (delete/share) we
+  // fall back to the list everywhere so the existing checkbox flow
+  // keeps working untouched.
+  const { width } = useWindowDimensions();
+  const columns = selectable
+    ? 1
+    : width >= 1024
+    ? 4
+    : width >= 768
+    ? 3
+    : 1;
+
+  return (
+    <View>
+      <Text
+        style={{
+          color: theme.colors.text,
+          opacity: 0.7,
+          fontSize: 12,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+        }}
+      >
+        {countLabel}
+      </Text>
+      {columns > 1 ? (
+        <View style={styles.cardGrid}>
+          {sortedList.map((item) => renderCard(item))}
+        </View>
+      ) : (
+        <FlatList data={sortedList} renderItem={({ item }) => renderVirtualizedListItem(item)} keyExtractor={({ _id }) => `playlist_${_id}`} />
+      )}
+    </View>
+  );
+
+  function renderCard(item) {
+    const {
+      _id = '',
+      title = '',
+      authorProfile = {} as AuthorProfile,
+      mediaIds = [],
+      mediaItems = [],
+      imageSrc = '',
+      visibility,
+    } = item;
+    const itemCount = mediaIds?.length || mediaItems?.length || 0;
+    const authorName = authorProfile?.authorName;
+    const cellWidthPct = `${100 / columns}%` as any;
+    return (
+      <View
+        key={`playlist_card_${_id}`}
+        style={[styles.cardCell, { width: cellWidthPct }]}
+      >
+        <TouchableOpacity
+          accessibilityRole="button"
+          onPress={() => onViewDetailClicked(item)}
+          activeOpacity={0.85}
+          style={styles.card}
+        >
+          <View style={styles.cardImageWrap}>
+            {imageSrc ? (
+              <Image
+                source={{ uri: imageSrc }}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.cardImagePlaceholder}>
+                <MaterialIcons
+                  name="queue-music"
+                  size={40}
+                  color={theme.colors.text}
+                />
+              </View>
+            )}
+          </View>
+          <View style={styles.cardBody}>
+            <Text style={styles.cardTitle} numberOfLines={2}>
+              {title}
+            </Text>
+            <Text style={styles.cardMeta} numberOfLines={1}>
+              {itemCount} {itemCount === 1 ? 'item' : 'items'}
+              {authorName ? `  ·  by ${authorName}` : ''}
+              {visibility ? `  ·  ${visibility}` : ''}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   function renderVirtualizedListItem(item) {
     // TODO: Can we have just one or the other, either mediaIds or mediaItems?
@@ -108,7 +213,9 @@ export const Playlists = ({ globalState }: PageProps) => {
       console.log('Playlists useFocusEffect...');
       clearCheckboxSelection();
       checkIfAccountIsDeactivated();
-      // loadData().then();
+      // Refetch on focus so newly created / deleted playlists appear
+      // after returning from PlaylistAdd / PlaylistEdit.
+      loadData();
     }, []),
   );
 
@@ -170,9 +277,11 @@ export const Playlists = ({ globalState }: PageProps) => {
         />
         <PlaylistsComponentWithSearch
           globalState={globalState}
-          loaded={(!loaded && !loading) || (loaded && entities.length > 0)}
+          loaded={!loading}
           loadData={loadData}
           defaultSearchTarget="playlists"
+          showNetworkContentSwitch={true}
+          networkContent={false}
           key={clearSelectionKey}
           list={entities}
           onViewDetailClicked={(item) => viewPlaylist({ playlistId: item._id })}
@@ -237,6 +346,7 @@ export const Playlists = ({ globalState }: PageProps) => {
     const args = {
       text: search?.text ? search.text : '',
       tags: search?.tags || [],
+      networkContent: !!search?.networkContent,
     };
 
     if (args.text || args.tags.length > 0) {
@@ -244,7 +354,7 @@ export const Playlists = ({ globalState }: PageProps) => {
       await dispatch(findUserPlaylists(args));
     } else {
       console.log('Playlists loadData getUserPlaylists...');
-      await dispatch(getUserPlaylists());
+      await dispatch(getUserPlaylists({ networkContent: args.networkContent }));
     }
   }
 
@@ -331,5 +441,51 @@ const styles = StyleSheet.create({
   },
   deleteActionButton: {
     backgroundColor: theme.colors.error,
+  },
+  // Card grid is only rendered on tablet+ (width ≥ 768).
+  cardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 8,
+  },
+  cardCell: {
+    padding: 8,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.default,
+    overflow: 'hidden',
+  },
+  cardImageWrap: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    backgroundColor: theme.colors.background,
+  },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  cardImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.background,
+  },
+  cardBody: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  cardTitle: {
+    color: theme.colors.text,
+    fontSize: 14,
+    fontFamily: theme.fonts.medium.fontFamily,
+  },
+  cardMeta: {
+    color: theme.colors.textDarker,
+    fontSize: 12,
+    marginTop: 4,
   },
 });

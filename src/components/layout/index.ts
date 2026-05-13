@@ -23,4 +23,5 @@ export * from './SharedList';
 export * from './ShareItemCard';
 export * from './SectionHeader';
 export * from './TopActionButtons';
+export * from './TrendingSection';
 export * from './UploadPlaceholder';

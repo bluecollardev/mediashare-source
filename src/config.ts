@@ -1,5 +1,10 @@
-import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
+
+// Fallback when Constants.expoConfig.extra is empty (app.json doesn't
+// populate `awsUrl` in this repo). Without it, uri/imageSrc start with
+// "undefined" and the API rejects them.
+const DEFAULT_AWS_URL =
+  'https://mediashare0079445c24114369af875159b71aee1c04439-dev.s3.us-west-2.amazonaws.com/public/';
 
 const environments = {
   local: {
@@ -11,7 +16,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   development: {
@@ -23,7 +28,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   staging: {
@@ -35,7 +40,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   },
   production: {
@@ -47,7 +52,7 @@ const environments = {
     VideoRoot: 'videos/',
     UploadRoot: 'uploads/',
     ImageRoot: 'thumbnails/',
-    AwsUrl: Constants.expoConfig.extra?.awsUrl,
+    AwsUrl: Constants.expoConfig.extra?.awsUrl || DEFAULT_AWS_URL,
     MaxUpload: 104857600,
   }
 };
@@ -57,8 +62,15 @@ const commonConfigs = {
   facebookAppId: '189foo bar884439',
 }
 
-// TODO: Fix / implement releaseChannel
-const env = 'staging'; // Updates.releaseChannel || 'development';
+// Localhost-on-web uses the `local` environment (talks to API on 3000/3001).
+// Everything else defaults to `staging`. EAS Updates' `releaseChannel`
+// integration is intentionally not used here — `expo-updates` isn't in the
+// wrapper's dependency graph, and webpack errors at module load if it's imported.
+const isLocalhostWeb =
+  typeof window !== 'undefined' &&
+  !!window.location &&
+  /^(localhost|127\.0\.0\.1|\[?::1\]?)$/.test(window.location.hostname);
+const env: keyof typeof environments = isLocalhostWeb ? 'local' : 'staging';
 console.log(`Building using release channel [${env}]: ${JSON.stringify(environments[env])}`);
 
 export default {

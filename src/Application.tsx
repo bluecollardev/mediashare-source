@@ -50,6 +50,12 @@ import MediaItemEdit from './components/pages/MediaItemEdit';
 import SharePlaylistsWith from './components/pages/SharePlaylistsWith';
 import Shared from './components/pages/Shared';
 import AccountEdit from './components/pages/AccountEdit';
+import AccountManagement from './components/pages/AccountManagement';
+import ManageUsers from './components/pages/ManageUsers';
+import ReportedContent from './components/pages/ReportedContent';
+import LatestReports from './components/pages/LatestReports';
+import ReportsByUser from './components/pages/ReportsByUser';
+import AccountSuspended from './components/pages/AccountSuspended';
 import Contact from './components/pages/Contact';
 import SharedWithContact from './components/pages/SharedWithContact';
 import SharedByContact from './components/pages/SharedByContact';
@@ -123,7 +129,17 @@ const AccountNavigation = ({ globalState }) => {
   }, []);
   return (
     <AccountStackNavigator.Navigator initialRouteName={'accountEdit'}>
-      <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <AccountStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
+      <AccountStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
+      <AccountStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
+      <AccountStackNavigator.Screen {...routeConfig.reportedContent} component={ReportedContent} />
+      <AccountStackNavigator.Screen {...routeConfig.latestReports} component={LatestReports} />
+      <AccountStackNavigator.Screen {...routeConfig.reportsByUser} component={ReportsByUser} />
+      {/* Reported Content rows deep-link into the content detail
+          screens — register them here so navigation resolves
+          without hopping back to the Private stack. */}
+      <AccountStackNavigator.Screen {...routeConfig.mediaItemDetail} component={MediaItemDetail} />
+      <AccountStackNavigator.Screen {...routeConfig.playlistItemDetail} component={PlaylistItemDetail} />
       <NetworkStackNavigator.Screen {...routeConfig.invitation} component={Invitation} />
     </AccountStackNavigator.Navigator>
   );
@@ -135,7 +151,12 @@ const NetworkNavigation = () => {
   return (
     <NetworkStackNavigator.Navigator initialRouteName={'account'}>
       <NetworkStackNavigator.Screen {...routeConfig.account} component={Shared} />
-      <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.accountEdit} component={AccountManagement} />
+      <NetworkStackNavigator.Screen {...routeConfig.editAccount} component={AccountEdit} initialParams={{ userId: null }} />
+      <NetworkStackNavigator.Screen {...routeConfig.manageUsers} component={ManageUsers} />
+      <NetworkStackNavigator.Screen {...routeConfig.reportedContent} component={ReportedContent} />
+      <NetworkStackNavigator.Screen {...routeConfig.latestReports} component={LatestReports} />
+      <NetworkStackNavigator.Screen {...routeConfig.reportsByUser} component={ReportsByUser} />
       <NetworkStackNavigator.Screen {...routeConfig.contact} component={Contact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedByContact} component={SharedByContact} />
       <NetworkStackNavigator.Screen {...routeConfig.sharedWithContact} component={SharedWithContact} />
@@ -244,7 +265,7 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
     <RootNavigator.Navigator>
       {isCurrentUser ? (
         <>
-          <RootNavigator.Screen name="Private" component={PrivateMainNavigationWithGlobalState} options={{ headerShown: false }} />
+          <RootNavigator.Screen name="SuspendedGate" component={SuspendedGateWithGlobalState} options={{ headerShown: false }} />
           <RootNavigator.Screen name="Account" component={AccountNavigationWithGlobalState} options={{ headerShown: false, presentation: 'modal' }} />
         </>
       ) : (
@@ -256,26 +277,44 @@ const RootNavigation = ({ isCurrentUser = undefined, isLoggedIn = false }) => {
   );
 };
 
+/**
+ * Authenticated route gate: a suspended user (state.user.entity.isDisabled)
+ * gets the AccountSuspended takeover instead of the regular nav tree —
+ * they can sign out but otherwise see nothing else.
+ */
+const SuspendedGate = () => {
+  const isSuspended = useAppSelector(
+    (state: any) => state?.user?.entity?.isDisabled === true
+  );
+  if (isSuspended) return <AccountSuspended />;
+  return <PrivateMainNavigationWithGlobalState />;
+};
+const SuspendedGateWithGlobalState = withGlobalStateProvider(SuspendedGate);
+
 const RootNavigationWithGlobalState = withGlobalStateProvider(RootNavigation);
+
+// Browsers drop Set-Cookie whose Domain doesn't match the current page's host
+// (Domain=localhost is rejected outright, and a staging/prod domain is rejected
+// when running on localhost). Only use cookieStorage when the current host is
+// actually within the configured cookie domain; otherwise fall back to Amplify's
+// default localStorage.
+const cookieDomain = Config.CookieDomain;
+const pageHost =
+  typeof window !== 'undefined' && window.location ? window.location.hostname : '';
+const useCookieStorage =
+  Platform.OS === 'web' &&
+  !!cookieDomain &&
+  cookieDomain !== 'localhost' &&
+  (pageHost === cookieDomain || pageHost.endsWith('.' + cookieDomain));
 
 const amplifyConfig = {
   ...awsmobile,
-  ...(Platform.OS === 'web' ? { Auth: {
+  ...(useCookieStorage ? { Auth: {
       cookieStorage: {
-        // - Cookie domain (only required if cookieStorage is provided)
-        // TODO: Set this to localhost when running locally
-        // domain: 'localhost',
-        domain: Config.CookieDomain || 'localhost',
-        // (optional) - Cookie path
+        domain: cookieDomain,
         path: '/',
-        // (optional) - Cookie expiration in days
-        // expires: 365,
-        // (optional) - See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
         sameSite: 'lax',
-        // (optional) - Cookie secure flag
-        // Either true or false, indicating if the cookie transmission requires a secure protocol (https).
-        // TODO: Enable https, this should only be set to false when running locally!
-        secure: false
+        secure: false,
       },
     } } : {}),
   // Fix AWS Pinpoint connection issues
@@ -285,6 +324,25 @@ const amplifyConfig = {
 };
 console.log(amplifyConfig);
 Amplify.configure(amplifyConfig);
+
+// On web, react-native-web ScrollView/FlatList become divs with
+// overflow:auto and the browser draws a visible scrollbar. Inject
+// a one-shot CSS rule that hides the scrollbar everywhere (still
+// scrollable via wheel / trackpad / keyboard / touch). No-op on
+// native because there's no `document`.
+if (typeof document !== 'undefined' && !document.getElementById('__hide-scrollbars')) {
+  const styleEl = document.createElement('style');
+  styleEl.id = '__hide-scrollbars';
+  styleEl.textContent = `
+    /* Webkit (Chrome, Safari, Edge) */
+    *::-webkit-scrollbar { width: 0 !important; height: 0 !important; background: transparent !important; }
+    *::-webkit-scrollbar-track { background: transparent !important; }
+    *::-webkit-scrollbar-thumb { background: transparent !important; }
+    /* Firefox + standard */
+    * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+  `;
+  document.head.appendChild(styleEl);
+}
 
 function App() {
   const [fontsLoaded] = useFonts({

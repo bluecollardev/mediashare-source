@@ -117,6 +117,26 @@ const routeConfig = {
     name: 'accountEdit',
     options: { title: 'Manage Account', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
   },
+  editAccount: {
+    name: 'editAccount',
+    options: { title: 'Edit Account', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
+  manageUsers: {
+    name: 'manageUsers',
+    options: { title: 'Manage Users', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
+  reportedContent: {
+    name: 'reportedContent',
+    options: { title: 'Reported Content', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
+  latestReports: {
+    name: 'latestReports',
+    options: { title: 'Latest Reports', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
+  reportsByUser: {
+    name: 'reportsByUser',
+    options: { title: 'Reports by User', header: (props) => <AppHeader {...props} showAccount={false} showLogout={true} /> },
+  },
   contact: {
     name: 'contact',
     options: {

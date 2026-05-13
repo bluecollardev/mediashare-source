@@ -147,7 +147,6 @@ const defaultStyles = StyleSheet.create({
   secondaryButton: {
     width: 64,
     height: 41,
-    // flex: Platform.OS === 'android' ? 0 : 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

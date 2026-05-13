@@ -225,16 +225,47 @@ const components: any = StyleSheet.create({
         fontSize: 17,
         fontFamily: theme.fonts.regular.fontFamily,
       },
+      // Empty-state text ("Sorry, no items...") and other secondary copy —
+      // override the library's default dark color so it's readable on the
+      // dark surface.
+      itemTextNotSelectable: {
+        color: theme.colors.placeholder,
+      },
+      noItemsComponent: {
+        color: theme.colors.text,
+        fontSize: 14,
+        fontFamily: theme.fonts.thin.fontFamily,
+        padding: 20,
+        textAlign: 'center',
+      },
+      noResultsText: {
+        color: theme.colors.text,
+        fontSize: 14,
+        fontFamily: theme.fonts.thin.fontFamily,
+        padding: 20,
+        textAlign: 'center',
+      },
+      selectedItemText: {
+        color: theme.colors.text,
+      },
       button: {
-        height: 41,
+        minHeight: 48,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.29)',
+        justifyContent: 'center',
+        alignItems: 'center',
       },
       secondaryButton: {
-        height: 41,
+        minHeight: 48,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.29)',
         backgroundColor: '#121212',
+        justifyContent: 'center',
+        alignItems: 'center',
       },
     },
   },

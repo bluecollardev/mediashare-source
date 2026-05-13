@@ -96,7 +96,9 @@ const PlaylistItemEdit = ({
             key={playlistItemId}
             title={title}
             description={description}
-            sortIndex={String(sortIndex)}
+            // sortIndex intentionally omitted — ordering is managed
+            // via the drag-and-drop UI on the Edit Playlist page,
+            // not by typing a number on each item.
             mediaSrc={mediaUri}
             showImage={true}
             image={image}
@@ -117,7 +119,6 @@ const PlaylistItemEdit = ({
             }}
             onTitleChange={setTitle}
             onDescriptionChange={setDescription}
-            onSortIndexChange={setSortIndex}
             isEdit={true}
             isPlayable={true}
             topDrawer={() => (
