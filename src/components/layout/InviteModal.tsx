@@ -14,6 +14,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { useAppSelector } from 'mediashare/store';
 import { theme } from 'mediashare/styles';
+import { buildInviteUrl, buildQrImageUrl } from 'mediashare/core/utils/qr-invite';
+import { downloadQrImageWeb } from 'mediashare/core/utils/qr-download';
 
 interface AccountCardProps {
   userId: string;
@@ -27,27 +29,6 @@ interface IFromInput {
 }
 
 type Mode = 'email' | 'qr' | 'scan';
-
-// Fetch the QR PNG and offer it as a browser download — the QR
-// service we use doesn't send Content-Disposition, so a bare anchor
-// would just open the image. Web only; native should use Share /
-// expo-media-library in a follow-up.
-async function downloadQrImageWeb(qrSrc: string, filename: string) {
-  try {
-    const res = await fetch(qrSrc);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 500);
-  } catch (err) {
-    console.log('[QR] download failed', err);
-  }
-}
 
 export default function ModalSheet({
   showDialog,
@@ -74,11 +55,9 @@ export default function ModalSheet({
   const origin =
     typeof window !== 'undefined' && window.location?.origin
       ? window.location.origin
-      : 'https://pocketpt.afehrpt.com';
-  const inviteUrl = `${origin}/invite${inviterSub ? `?from=${encodeURIComponent(inviterSub)}` : ''}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(
-    inviteUrl
-  )}`;
+      : undefined;
+  const inviteUrl = buildInviteUrl(inviterSub, origin);
+  const qrSrc = buildQrImageUrl(inviteUrl);
 
   const submitForm: SubmitHandler<IFromInput> = async (data) => {
     if (!data.email) return;

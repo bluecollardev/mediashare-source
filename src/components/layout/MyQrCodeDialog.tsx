@@ -3,30 +3,8 @@ import { Image, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Button, Dialog, IconButton, Portal, Text } from 'react-native-paper';
 import { useAppSelector } from 'mediashare/store';
 import { theme } from 'mediashare/styles';
-
-/**
- * On web, fetch the QR image and trigger a browser download with a
- * sensible filename. api.qrserver.com doesn't set a
- * Content-Disposition header, so a direct anchor would just open the
- * image — fetching to a blob and downloading via an object URL is
- * the reliable cross-browser path.
- */
-async function downloadQrImage(qrSrc: string, filename: string) {
-  try {
-    const res = await fetch(qrSrc);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 500);
-  } catch (err) {
-    console.log('[QR] download failed', err);
-  }
-}
+import { buildInviteUrl, buildQrImageUrl } from 'mediashare/core/utils/qr-invite';
+import { downloadQrImageWeb } from 'mediashare/core/utils/qr-download';
 
 interface Props {
   visible: boolean;
@@ -50,11 +28,9 @@ export const MyQrCodeDialog: React.FC<Props> = ({ visible, onDismiss }) => {
   const origin =
     typeof window !== 'undefined' && window.location?.origin
       ? window.location.origin
-      : 'https://pocketpt.afehrpt.com';
-  const inviteUrl = `${origin}/invite${sub ? `?from=${encodeURIComponent(sub)}` : ''}`;
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(
-    inviteUrl
-  )}`;
+      : undefined;
+  const inviteUrl = buildInviteUrl(sub, origin);
+  const qrSrc = buildQrImageUrl(inviteUrl);
 
   return (
     <SafeAreaView>
@@ -73,7 +49,7 @@ export const MyQrCodeDialog: React.FC<Props> = ({ visible, onDismiss }) => {
                   iconColor={theme.colors.text}
                   size={20}
                   onPress={() =>
-                    downloadQrImage(
+                    downloadQrImageWeb(
                       qrSrc,
                       `${(fullName || 'invite').replace(
                         /\s+/g,
