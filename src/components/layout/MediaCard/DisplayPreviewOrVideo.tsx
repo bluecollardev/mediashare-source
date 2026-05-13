@@ -1,6 +1,6 @@
 import React, { useEffect, useState ,useRef} from 'react';
 import { Audio, ResizeMode, Video } from 'expo-av';
-import { ImageBackground, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, ImageBackground, Platform, TouchableWithoutFeedback, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { usePreviewImage } from 'mediashare/hooks/usePreviewImage';
 
@@ -56,6 +56,12 @@ const checkUrl = () => {
     if (status) triggerAudio(ref);
   }, [ref, status]);
   
+  // Both image and video share the same 1:1 bounding box so playback
+  // doesn't shift the layout — the video occupies exactly the slot the
+  // poster did. The video inside scales to fit (contain) so non-square
+  // content shows with bars rather than getting cropped.
+  const isVideo = mediaDisplayMode === 'video';
+
   return (
     <View
       style={{
@@ -64,6 +70,7 @@ const checkUrl = () => {
         height: 'auto',
         marginLeft: 'auto',
         marginRight: 'auto',
+        backgroundColor: '#000',
         ...style,
       }}
     >
@@ -79,16 +86,61 @@ const checkUrl = () => {
             </TouchableWithoutFeedback>
           ) : null}
         </ImageBackground>
+      ) : mediaDisplayMode === 'video' && mediaSrc && Platform.OS === 'web' ? (
+        // Plain HTML5 video on web. width:100% + height:auto = video sizes
+        // to the wrapper width at its NATURAL aspect ratio, so the wrapper
+        // hugs it (no black bars). display:block kills the inline
+        // baseline whitespace that <video> elements otherwise get.
+        React.createElement('video', {
+          src: mediaUrl,
+          poster: imageSrc && !isDefaultImage ? imageSrc : undefined,
+          autoPlay: true,
+          muted: false,
+          loop: true,
+          controls: true,
+          playsInline: true,
+          // Strip PiP / download / remote-playback from the control bar so
+          // the only "popout-y" buttons left are play, seek, volume, and
+          // fullscreen. PiP on Chrome opens a tiny floating window which
+          // can be confused for "new tab".
+          controlsList: 'nopictureinpicture nodownload noremoteplayback',
+          disablePictureInPicture: true,
+          disableRemotePlayback: true,
+          style: {
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+            backgroundColor: '#000',
+          },
+        })
       ) : mediaDisplayMode === 'video' && mediaSrc ? (
         <Video
           ref={video}
-          style={{ width: '100%', height: '100%' }}
-          usePoster={true}
-          posterSource={imageSrc}
-          source={{
-            uri: mediaUrl,
-          }}
+          // Force the inner <video> element into the wrapper's box via
+          // absolute positioning. Native AVPlayer/MediaPlayer (iOS/Android)
+          // honors resizeMode; HTML5 <video> on web honors object-fit.
+          style={
+            {
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+            } as any
+          }
+          videoStyle={{ objectFit: 'contain' as any }}
+          // Only attach a poster when we have a real image source; otherwise
+          // the underlying <img> renders broken alt-text in the corner.
+          usePoster={!!imageSrc && !isDefaultImage}
+          posterSource={imageSrc ? { uri: imageSrc } : undefined}
+          posterStyle={{ resizeMode: 'contain' as any }}
+          source={{ uri: mediaUrl }}
+          // Sound on by default. Browsers may block autoplay-with-sound; if
+          // so, the native control overlay lets the user start playback.
           shouldPlay={true}
+          isMuted={false}
           useNativeControls={true}
           resizeMode={ResizeMode.CONTAIN}
           isLooping={true}

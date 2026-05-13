@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, useWindowDimensions } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'mediashare/store';
@@ -17,7 +17,9 @@ import {
   MappedPlaylistMediaItem,
   selectMappedPlaylistMediaItems,
 } from 'mediashare/store/modules/playlist';
-import { addPlaylistItem } from 'mediashare/store/modules/playlistItem';
+import { addPlaylistItem, reportPlaylistItem } from 'mediashare/store/modules/playlistItem';
+import ReportContentDialog from 'mediashare/components/layout/ReportContentDialog';
+import { useSnack } from 'mediashare/hooks/useSnack';
 
 // @ts-ignore
 export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PageProps) => {
@@ -33,7 +35,9 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
   // const goToPlaylists = usePlaylists();
   // const playFromBeginning = useViewPlaylistItemById();
   
-  const appUserId = useAppSelector((state) => state?.user?.entity?._id);
+  // createdBy is a Cognito `sub`, not a Mongo ObjectId — match the
+  // user entity's `sub` field.
+  const appUserId = useAppSelector((state) => state?.user?.entity?.sub);
   const mediaItem = useAppSelector((state) => state?.playlistItem?.entity);
   
   const {
@@ -63,7 +67,10 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
   
   const { width, height, scale } = useWindowDimensions();
   const isPortrait = height > width;
-  
+
+  const [showReportDialog, setShowReportDialog] = useState(false);
+  const { element: reportSnack, onToggleSnackBar, setMessage } = useSnack();
+
   return (
     <PageContainer>
       <PageContent>
@@ -89,6 +96,7 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
             likes={likesCount}
             shares={shareCount}
             views={viewCount}
+            onReport={() => setShowReportDialog(true)}
           >
             {!isPortrait ? (
               <MediaList
@@ -112,6 +120,28 @@ export const PlaylistItemDetail = ({ route, globalState = { tags: [] } }: PagePr
             />
           ) : null}
         </ScrollView>
+        <ReportContentDialog
+          visible={showReportDialog}
+          onDismiss={() => setShowReportDialog(false)}
+          contextTitle={title}
+          onSubmit={async ({ reason, comment }) => {
+            try {
+              await (dispatch as any)(
+                reportPlaylistItem({
+                  playlistItemId: _id as string,
+                  reason,
+                  comment,
+                })
+              );
+              setMessage('Thanks — your report has been submitted.');
+              onToggleSnackBar(true);
+            } catch (err: any) {
+              setMessage(err?.message || 'Failed to submit report');
+              onToggleSnackBar(false);
+            }
+          }}
+        />
+        {reportSnack}
       </PageContent>
     </PageContainer>
   );

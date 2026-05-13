@@ -32,7 +32,7 @@ const actionModes = { delete: 'delete', default: 'default' };
 export const Shared = ({ globalState }: PageProps) => {
   const dispatch = useDispatch();
   
-  const editProfile = useRouteWithParams(routeNames.accountEdit);
+  const editProfile = useRouteWithParams(routeNames.editAccount);
   const viewProfileById = useViewProfileById();
   const { element, onToggleSnackBar, setMessage } = useSnack();
   

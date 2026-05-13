@@ -1,7 +1,8 @@
 import { MediaCardSocial } from 'mediashare/components/layout/MediaCard/MediaCardSocial'
 import React from 'react';
 import { Avatar, Card, IconButton, Title, Text, Button } from 'react-native-paper'
-import { View, StyleSheet, Platform, Alert } from 'react-native';
+import { View, StyleSheet, Platform, Alert, TouchableOpacity } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { getAuthorText } from 'mediashare/utils';
 import { theme } from 'mediashare/styles';
@@ -24,6 +25,10 @@ export interface MediaCardTitleProps {
   shares?: number;
   views?: number;
   onActionsClicked?: () => void;
+  // When provided, render a "Report" link floated to the right of
+  // the "by <author>" line. Detail pages (File Details, Playlist
+  // Item Details) wire this to a report-content dialog.
+  onReport?: () => void;
   style?: any;
 }
 
@@ -38,6 +43,7 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
   shares = undefined,
   views = undefined,
   onActionsClicked = () => {},
+  onReport,
   style = {},
 }: MediaCardTitleProps) => {
   const nav = useNavigation();
@@ -45,13 +51,37 @@ export const MediaCardTitle: React.FC<MediaCardTitleProps> = ({
     <Card.Title
       style={{ ...defaultStyles.component, ...style }}
       title={
-        <>
-          <Title style={defaultStyles.titleText}>
-            {title} {authorProfile?.authorName ? <Text style={defaultStyles.author}>{"\n"}by {authorProfile?.authorName}</Text> : null}
-            {authorProfile?.authorUsername ? <Text style={defaultStyles.username}> ({authorProfile?.authorUsername})</Text> : null}
-          </Title>
-        </>
-        
+        <View>
+          <Title style={defaultStyles.titleText}>{title}</Title>
+          {authorProfile?.authorName ? (
+            <View style={defaultStyles.authorRow}>
+              <Text style={defaultStyles.author}>
+                by {authorProfile.authorName}
+                {authorProfile?.authorUsername ? (
+                  <Text style={defaultStyles.username}>
+                    {' '}
+                    ({authorProfile.authorUsername})
+                  </Text>
+                ) : null}
+              </Text>
+              {onReport ? (
+                <TouchableOpacity
+                  accessibilityRole="button"
+                  onPress={onReport}
+                  style={defaultStyles.reportButton}
+                >
+                  <MaterialIcons
+                    name="flag"
+                    size={14}
+                    color={theme.colors.error}
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={defaultStyles.reportText}>Report</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          ) : null}
+        </View>
       }
       titleStyle={defaultStyles.title}
       titleNumberOfLines={3}
@@ -133,6 +163,23 @@ const defaultStyles = StyleSheet.create({
     fontFamily: theme.fonts.thin.fontFamily,
     fontSize: 13,
     marginBottom: 2,
+  },
+  authorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  reportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  reportText: {
+    color: theme.colors.error,
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   line2: {
     marginTop: 5,

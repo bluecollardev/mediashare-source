@@ -64,7 +64,10 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
   const [isLoaded, setIsLoaded] = useState(loaded);
   const [isSaved, setIsSaved] = useState(false);
 
-  const appUserId = useAppSelector((state) => state?.user?.entity?._id);
+  // createdBy on playlists is the Cognito `sub` (set server-side from
+  // the JWT). Compare against the same field on our user entity —
+  // entity._id is the Mongo ObjectId and won't match.
+  const appUserId = useAppSelector((state) => state?.user?.entity?.sub);
   // @ts-ignore
   const {
     _id,
@@ -210,7 +213,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
                 primaryIcon="live-tv"
               />
             ) : null}
-            {!build.forFreeUser && allowEdit ? (
+            {allowEdit ? (
               <ActionButtons
                 containerStyles={{ marginHorizontal: 0, marginBottom: 15 }}
                 showSecondary={Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0}
@@ -249,7 +252,7 @@ export const PlaylistDetail = ({ navigation, route, globalState = { tags: [] } }
         ) : null}
       </PageActions>
       {element}
-      {!build.forFreeUser && !isSelectable && !disableControls ? (
+      {(!build.forFreeUser || allowEdit) && !isSelectable && !disableControls ? (
         <FAB.Group
           visible={true}
           open={fabState.open}

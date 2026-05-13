@@ -164,6 +164,61 @@ export class UserApi extends BaseAPI {
     };
 
     /**
+     * Admin-only: suspend a user (sets isDisabled=true). Manually
+     * added — backend at POST /api/user/admin/users/:userId/suspend.
+     */
+    userControllerSuspendUser({ userId }: { userId: string }): Observable<void>
+    userControllerSuspendUser({ userId }: { userId: string }, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
+    userControllerSuspendUser({ userId }: { userId: string }, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+        throwIfNullOrUndefined(userId, 'userId', 'userControllerSuspendUser');
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<void>({
+            url: '/api/user/admin/users/{userId}/suspend'.replace('{userId}', encodeURI(userId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    /**
+     * Admin-only: unsuspend a user (sets isDisabled=false).
+     */
+    userControllerUnsuspendUser({ userId }: { userId: string }): Observable<void>
+    userControllerUnsuspendUser({ userId }: { userId: string }, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>>
+    userControllerUnsuspendUser({ userId }: { userId: string }, opts?: OperationOpts): Observable<void | RawAjaxResponse<void>> {
+        throwIfNullOrUndefined(userId, 'userId', 'userControllerUnsuspendUser');
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+        return this.request<void>({
+            url: '/api/user/admin/users/{userId}/unsuspend'.replace('{userId}', encodeURI(userId)),
+            method: 'POST',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    /**
+     * Admin-only: list all users. Manually added (matches the
+     * /api/user/admin/users route on the backend) — will be present
+     * in the next openapi regeneration but inlined here so the
+     * frontend doesn't need a regen-and-copy cycle.
+     */
+    userControllerListAdmin(): Observable<Array<UserDto>>
+    userControllerListAdmin(opts?: OperationOpts): Observable<RawAjaxResponse<Array<UserDto>>>
+    userControllerListAdmin(opts?: OperationOpts): Observable<Array<UserDto> | RawAjaxResponse<Array<UserDto>>> {
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        return this.request<Array<UserDto>>({
+            url: '/api/user/admin/users',
+            method: 'GET',
+            headers,
+        }, opts?.responseOpts);
+    };
+
+    /**
      */
     userControllerGetCurrentUser(): Observable<UserDto>
     userControllerGetCurrentUser(opts?: OperationOpts): Observable<RawAjaxResponse<UserDto>>

@@ -37,6 +37,8 @@ export interface GlobalStateProps {
   setSearchIsActive?: (searchKey: string, value: any) => void;
   forcedSearchMode?: (searchKey: string) => any;
   setForcedSearchMode?: (searchKey: string, value: any) => void;
+  filtersExpanded?: (searchKey: string) => boolean;
+  setFiltersExpanded?: (searchKey: string, value: boolean) => void;
   tags?: TagDto[];
   displayMode?: 'list' | 'article';
   setDisplayMode: (value) => void;
@@ -59,6 +61,7 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     const [searchFilters, setSearchFilters] = useState(new Map());
     const [searchFiltersActive, setSearchFiltersActive] = useState(new Map());
     const [forcedSearchActive, setForcedSearchActive] = useState(new Map());
+    const [filtersExpandedMap, setFiltersExpandedMap] = useState(new Map());
     const [displayMode, setDisplayMode] = useState(INITIAL_DISPLAY_MODE);
 
     const user = useUser();
@@ -109,6 +112,8 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
         searchFilters,
         searchFiltersActive,
         forcedSearchActive,
+        filtersExpanded,
+        setFiltersExpanded,
         tags,
         displayMode,
         setDisplayMode,
@@ -129,7 +134,22 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function searchIsFiltering(searchKey: string): boolean | undefined {
       const filters = getSearchFilters(searchKey);
       if (filters === undefined) return;
-      return !!filters?.text || filters?.tags?.length > 0;
+      // Route-aware semantics: on the Search page, networkContent is
+      // always on (toggle is hidden) so it doesn't count as a filter,
+      // and the "All Types" target is the default — picking Playlists
+      // or Media Items deviates from default and counts as a filter.
+      // On Library pages, target equals the route default and is never
+      // user-changed, but the networkContent toggle is a real filter.
+      const onSearchPage = searchKey === 'search';
+      const networkContentIsFilter = !onSearchPage && !!filters?.networkContent;
+      const targetIsFilter =
+        onSearchPage && !!filters?.target && filters.target !== 'all';
+      return (
+        !!filters?.text ||
+        filters?.tags?.length > 0 ||
+        networkContentIsFilter ||
+        targetIsFilter
+      );
     }
     
     function updateSearchFilters(searchKey: string, value: any) {
@@ -167,6 +187,19 @@ export const GlobalStateProviderWrapper = (WrappedComponent: any) => {
     function setForcedSearchMode(searchKey: string, value: boolean) {
       forcedSearchActive.set(searchKey, value);
       setForcedSearchActive(new Map(forcedSearchActive));
+    }
+
+    function filtersExpanded(searchKey: string): boolean {
+      // Default: expanded when search isn't yet active for the key (so the
+      // user lands in a "ready to configure" state).
+      const explicit = filtersExpandedMap.get(searchKey);
+      if (typeof explicit === 'boolean') return explicit;
+      return !searchIsActive(searchKey);
+    }
+
+    function setFiltersExpanded(searchKey: string, value: boolean) {
+      filtersExpandedMap.set(searchKey, value);
+      setFiltersExpandedMap(new Map(filtersExpandedMap));
     }
   };
 };

@@ -28,6 +28,7 @@ import {
   UploadPlaceholder,
   AppDialog,
 } from 'mediashare/components/layout';
+import DraggableMediaList from 'mediashare/components/layout/DraggableMediaList';
 import { routeNames } from 'mediashare/routes';
 import { createRandomRenderKey } from 'mediashare/core/utils/uuid';
 import { PlaylistVisibilityType } from 'mediashare/apis/media-svc/rxjs-api';
@@ -71,6 +72,24 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   const [showDeleteItemsDialog, setShowDeleteItemsDialog] = useState(false);
   
   const playlistMediaItems: MappedPlaylistMediaItem[] = selectMappedPlaylistMediaItems(selected) || [];
+  // Local override: lets the user drag rows around without round-
+  // tripping through redux on every move. The selector still drives
+  // the initial order and any out-of-band updates (loadData,
+  // additions, deletes).
+  const [orderedItems, setOrderedItems] = useState<MappedPlaylistMediaItem[]>(
+    playlistMediaItems
+  );
+  useEffect(() => {
+    setOrderedItems(playlistMediaItems);
+    // Re-sync whenever the underlying playlist's items array changes
+    // identity (e.g., loadData, add, remove). JSON.stringify on the
+    // ids array is cheap and stable enough as a dependency.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    JSON.stringify(
+      (playlistMediaItems || []).map((i: any) => i?._id)
+    ),
+  ]);
   
   const options = [];
   for (const value in PlaylistVisibilityType) {
@@ -206,15 +225,16 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
               primaryIcon={!(Array.isArray(playlistMediaItems) && playlistMediaItems.length > 0) ? 'playlist-add' : 'playlist-add'}
               onPrimaryClicked={() => addToPlaylist({ playlistId })}
             />
-            <MediaList
+            <DraggableMediaList
               key={clearSelectionKey}
-              list={playlistMediaItems}
+              list={orderedItems}
               showImage={true}
               selectable={isSelectable}
               showActions={!isSelectable}
-              onViewDetail={(item) => viewMediaItem({ mediaId: item._id, uri: item.uri })}
+              onViewDetail={(item: any) => viewMediaItem({ mediaId: item._id, uri: item.uri })}
               addItem={onAddItem}
               removeItem={onRemoveItem}
+              onReorder={(next: any[]) => setOrderedItems(next)}
             />
           </MediaCard>
         </ScrollView>
@@ -261,8 +281,10 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
 
   async function savePlaylist() {
     setIsSaved(true);
-    // @ts-ignore
-    const mediaIds: string[] = selected.mediaItems.map((item) => item._id as string) || [];
+    // Use the locally-reordered list so drag-and-drop persists.
+    const mediaIds: string[] = orderedItems.map((item: any) =>
+      item.mediaItemId as string
+    ) || [];
     if (isSelectable) {
       const filtered = mediaIds.filter((id) => !selectedItems.includes(id));
       await saveWithIds(filtered);
@@ -277,8 +299,11 @@ const PlaylistEdit = ({ navigation, route, globalState = { tags: [] } }: PagePro
   }
 
   async function savePlaylistItems() {
-    // We manage by mediaItemId, as the _id can be either a playlistItemId or a mediaItemId
-    const mediaIds = playlistMediaItems.map((item) => item.mediaItemId) || [];
+    // Use the locally-reordered list so drag-and-drop changes
+    // actually persist. Items keep their mediaItemId — sortIndex is
+    // implicit in array position because the backend stores
+    // mediaIds in order.
+    const mediaIds = orderedItems.map((item: any) => item.mediaItemId) || [];
     if (isSelectable) {
       const filtered = mediaIds.filter((id) => !selectedItems.includes(id));
       await saveWithIds(filtered);
